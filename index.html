@@ -1240,7 +1240,7 @@
                 <tbody id="selectedTableBody">
                   <tr>
                     <td colspan="6" class="empty">
-                      Escolha um laboratório acima e adicione exames para montar seu orçamento.
+                      Escolha um laboratório abaixo e adicione exames para montar seu orçamento.
                     </td>
                   </tr>
                 </tbody>
@@ -1896,27 +1896,30 @@
     const MODO_INATIVO = "border-color:#e2e8f0;background:#f8fafc;color:var(--text);";
 
     function setModo(modo) {
-      const labSection = document.getElementById("labSelectorSection");
-      const resumoPrecos = document.getElementById("resumoPrecos");
+      const labSection    = document.getElementById("labSelectorSection");
+      const resumoPrecos  = document.getElementById("resumoPrecos");
       const resumoInfoBox = document.getElementById("resumoInfoBox");
-      const fotoResumo = document.getElementById("fotoResumo");
+      const fotoResumo    = document.getElementById("fotoResumo");
+      const tableWrap     = document.querySelector(".table-wrap");
 
       if (modo === "foto") {
         secaoFoto.style.display    = "block";
         secaoDigitar.style.display = "none";
-        if (labSection) labSection.style.display = "block";
-        if (resumoPrecos) resumoPrecos.style.display = "none";
+        if (labSection)    labSection.style.display    = "block";
+        if (resumoPrecos)  resumoPrecos.style.display  = "none";
         if (resumoInfoBox) resumoInfoBox.style.display = "none";
-        if (fotoResumo) fotoResumo.style.display = "block";
+        if (fotoResumo)    fotoResumo.style.display    = "block";
+        if (tableWrap)     tableWrap.style.display     = "none";
         btnModoFoto.style.cssText    = btnModoFoto.style.cssText.replace(/border-color:[^;]+;background:[^;]+;color:[^;]+;/g,"") + MODO_ATIVO;
         btnModoDigitar.style.cssText = btnModoDigitar.style.cssText.replace(/border-color:[^;]+;background:[^;]+;color:[^;]+;/g,"") + MODO_INATIVO;
       } else {
         secaoFoto.style.display    = "none";
         secaoDigitar.style.display = "block";
-        if (labSection) labSection.style.display = "block";
-        if (resumoPrecos) resumoPrecos.style.display = "block";
+        if (labSection)    labSection.style.display    = "block";
+        if (resumoPrecos)  resumoPrecos.style.display  = "block";
         if (resumoInfoBox) resumoInfoBox.style.display = "block";
-        if (fotoResumo) fotoResumo.style.display = "none";
+        if (fotoResumo)    fotoResumo.style.display    = "none";
+        if (tableWrap)     tableWrap.style.display     = "";
         btnModoDigitar.style.cssText = btnModoDigitar.style.cssText.replace(/border-color:[^;]+;background:[^;]+;color:[^;]+;/g,"") + MODO_ATIVO;
         btnModoFoto.style.cssText    = btnModoFoto.style.cssText.replace(/border-color:[^;]+;background:[^;]+;color:[^;]+;/g,"") + MODO_INATIVO;
       }
