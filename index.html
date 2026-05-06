@@ -5,7 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>DrApp Exames – Os Melhores Laboratórios do Brasil com Preços Especiais</title>
-  <meta name="description" content="Faça exames no Hermes Pardini e A+ Medicina Diagnóstica (Grupo Fleury) com descontos de até 30%. Sem assinatura, sem mensalidade. Só pague o que usar." />
+  <meta name="description" content="Faça exames na Hermes Pardini e A+ Medicina Diagnóstica (Grupo Fleury) com descontos de até 30%. Sem assinatura, sem mensalidade. Só pague o que usar." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -1046,7 +1046,7 @@
     <div class="hero-inner">
       <div class="hero-eyebrow">
         <span class="hero-eyebrow-dot"></span>
-        +1.326.000 exames realizados no Estado de SP
+        +1.326.000 exames realizados no Brasil
       </div>
 
       <h1>Exames nos <em>melhores laboratórios</em><br>do Brasil, a preços especiais.</h1>
@@ -1054,7 +1054,7 @@
       <p class="hero-sub">Hermes Pardini · A+ Medicina Diagnóstica · Grupo Fleury</p>
 
       <p class="hero-desc">
-        No DrApp você acessa os laboratórios de maior confiança do país com descontos de até 30% — sem assinatura, sem mensalidade, sem taxas escondidas.<br><em>Você paga apenas o que usar.</em>
+        No DrApp você acessa os laboratórios de maior confiança do país com descontos de até 30% — sem assinatura, sem mensalidade, sem taxas escondidas. Você paga apenas o que usar.
       </p>
 
       <div class="hero-actions">
@@ -1133,7 +1133,7 @@
         <div class="benefit-icon blue">🏥</div>
         <div class="benefit-title">Os melhores laboratórios do Brasil</div>
         <div class="benefit-text">
-          Hermes Pardini e A+ Medicina Diagnóstica do Grupo Fleury — referências nacionais em qualidade diagnóstica, disponíveis para você a preço acessível.
+          Hermes Pardini, A+ Medicina Diagnóstica e Grupo Fleury — referências nacionais em qualidade diagnóstica, disponíveis para você a preço acessível.
         </div>
       </div>
 
@@ -1329,8 +1329,15 @@
                   <div id="cpfNome" class="cpf-result-value">-</div>
                 </div>
                 <div class="cpf-result-item">
-                  <div class="cpf-result-label">Data de nascimento</div>
+                  <div class="cpf-result-label" style="display:flex;align-items:center;justify-content:space-between;">
+                    Data de nascimento
+                    <button type="button" id="btnEditarNasc" title="Alterar data" style="background:none;border:none;cursor:pointer;font-size:14px;color:var(--blue);font-weight:700;padding:0;font-family:inherit;">✏️ alterar</button>
+                  </div>
                   <div id="cpfNascimento" class="cpf-result-value">-</div>
+                  <div id="nascEditorWrap" style="display:none;margin-top:8px;display:none;">
+                    <input type="date" id="nascInput" style="height:40px;border-radius:10px;border:1.5px solid var(--cyan);padding:0 10px;font-size:15px;font-family:inherit;outline:none;width:100%;">
+                    <button type="button" id="btnNascOk" style="margin-top:8px;width:100%;height:38px;background:var(--blue);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;">✔ Confirmar data</button>
+                  </div>
                 </div>
               </div>
               <div class="cpf-confirm-actions">
@@ -1429,6 +1436,7 @@
       <span class="footer-lab-pill">Hermes Pardini</span>
       <span class="footer-lab-pill">A+ Medicina Diagnóstica</span>
       <span class="footer-lab-pill">Grupo Fleury</span>
+      <span class="footer-lab-pill">APM</span>
     </div>
     <div class="footer-copy">© 2024 DrApp · Todos os direitos reservados · drapp.com.br</div>
     <div style="margin-top:14px;">
@@ -2012,6 +2020,27 @@
       cpfConfirmado = true;
       mostrarStatusCpf("Dados confirmados com sucesso.", "success");
       atualizarBotoes();
+    });
+
+    // ── Editar data de nascimento ─────────────────────────────
+    const nascEditorWrap = document.getElementById("nascEditorWrap");
+    const nascInput      = document.getElementById("nascInput");
+    const btnNascOk      = document.getElementById("btnNascOk");
+    const btnEditarNasc  = document.getElementById("btnEditarNasc");
+
+    btnEditarNasc.addEventListener("click", function () {
+      nascEditorWrap.style.display = nascEditorWrap.style.display === "none" ? "block" : "none";
+    });
+
+    btnNascOk.addEventListener("click", function () {
+      const val = nascInput.value; // "YYYY-MM-DD"
+      if (!val) return;
+      const [ano, mes, dia] = val.split("-");
+      const MESES = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
+      const nascFormatado = dia + "/" + MESES[parseInt(mes,10)-1] + "/" + ano;
+      cpfNascimento.textContent = nascFormatado;
+      if (dadosCpfValidados) dadosCpfValidados.nascimento = nascFormatado;
+      nascEditorWrap.style.display = "none";
     });
 
     btnCpfWrong.addEventListener("click", function () {
