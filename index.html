@@ -1498,6 +1498,16 @@
     let cpfValidado = false;
     let cpfConfirmado = false;
     let dadosCpfValidados = null;
+    let mapeamentoLabs = {}; // { siglaHermes → siglaAplus }
+
+    // Carrega mapeamento de correspondências entre labs
+    (async function carregarMapeamento() {
+      try {
+        const r = await fetch(APPS_SCRIPT_URL + "?action=mapeamento");
+        const d = await r.json();
+        if (d.mapeamento) mapeamentoLabs = d.mapeamento;
+      } catch (_) {}
+    })();
 
     function moeda(valor) {
       return Number(valor || 0).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
@@ -1814,14 +1824,18 @@
         return;
       }
 
-      // Agrupa por sigla (ou nome se não tiver sigla)
+      // Agrupa por sigla usando mapeamento de correspondências entre labs
       const mapa = {};
       selecionados.forEach(item => {
-        const chave = item.id || item.nome;
-        if (!mapa[chave]) mapa[chave] = { id: item.id, nome: item.nome, codigo: item.codigo, categoria: item.categoria, aplus: null, hermes: null };
         const lab = (item.laboratorio || "").toLowerCase();
-        if (lab.includes("a+") || lab.includes("medicina")) mapa[chave].aplus = item;
-        else if (lab.includes("hermes") || lab.includes("pardini")) mapa[chave].hermes = item;
+        const isHermes = lab.includes("hermes") || lab.includes("pardini");
+        // Se for Hermes e tiver mapeamento para A+, usa a sigla A+ como chave canônica
+        const chave = isHermes
+          ? (mapeamentoLabs[item.id] || item.id || item.nome)
+          : (item.id || item.nome);
+        if (!mapa[chave]) mapa[chave] = { id: chave, nome: item.nome, codigo: item.codigo, categoria: item.categoria, aplus: null, hermes: null };
+        if (!isHermes) mapa[chave].aplus = item;
+        else           mapa[chave].hermes = item;
       });
 
       selectedTableBody.innerHTML = "";
