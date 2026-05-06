@@ -1199,6 +1199,30 @@
               </button>
             </div>
 
+            <!-- Lab selector — dentro do card, logo abaixo dos botões de modo -->
+            <div id="labSelectorSection" style="display:none;margin-bottom:20px;">
+              <div class="lab-selector-title" style="margin-bottom:10px;">Em qual laboratório deseja orçar?</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+                <button type="button" class="lab-tab" id="tabAplus" data-lab="A+ Medicina Diagnóstica"
+                  style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 8px;border-radius:12px;border:2px solid #e2e8f0;background:#f8fafc;cursor:pointer;transition:all .2s;font-size:12px;font-weight:600;color:var(--text);">
+                  <img src="logo-aplus.png" alt="A+" style="height:32px;object-fit:contain;display:block;">
+                  <span>A+ Medicina</span>
+                </button>
+                <button type="button" class="lab-tab" id="tabHermes" data-lab="Hermes Pardini"
+                  style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 8px;border-radius:12px;border:2px solid #e2e8f0;background:#f8fafc;cursor:pointer;transition:all .2s;font-size:12px;font-weight:600;color:var(--text);">
+                  <img src="logo-hermes.png" alt="Hermes" style="height:32px;object-fit:contain;display:block;">
+                  <span>Hermes Pardini</span>
+                </button>
+                <button type="button" id="tabAmbos"
+                  style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 8px;border-radius:12px;border:2px solid #e2e8f0;background:#f8fafc;cursor:pointer;transition:all .2s;font-size:12px;font-weight:600;color:var(--text);">
+                  <span style="font-size:22px;">⚖️</span>
+                  <span>Comparar ambos</span>
+                </button>
+              </div>
+              <input type="checkbox" class="lab-checkbox" value="Hermes Pardini" hidden>
+              <input type="checkbox" class="lab-checkbox" value="A+ Medicina Diagnóstica" hidden>
+            </div>
+
             <!-- Seção foto -->
             <div id="secaoFoto">
               <p style="font-size:17px;font-weight:700;color:var(--text);margin-bottom:14px;margin-top:4px;">Anexe a foto do seu pedido médico:</p>
@@ -1231,17 +1255,21 @@
               <table>
                 <thead>
                   <tr>
-                    <th>Exame</th>
-                    <th>Particular</th>
-                    <th>DrApp</th>
-                    <th>Desconto</th>
-                    <th>Observações / Preparo</th>
+                    <th>Sigla</th>
+                    <th>Descrição</th>
+                    <th>TUSS</th>
+                    <th style="color:var(--aplus);">Particular A+</th>
+                    <th style="color:var(--aplus);">DrApp A+</th>
+                    <th style="color:var(--aplus);">Desc. A+</th>
+                    <th style="color:var(--hermes);">Particular Hermes</th>
+                    <th style="color:var(--hermes);">DrApp Hermes</th>
+                    <th style="color:var(--hermes);">Desc. Hermes</th>
                     <th></th>
                   </tr>
                 </thead>
                 <tbody id="selectedTableBody">
                   <tr>
-                    <td colspan="6" class="empty">
+                    <td colspan="10" class="empty">
                       Escolha um laboratório abaixo e adicione exames para montar seu orçamento.
                     </td>
                   </tr>
@@ -1252,30 +1280,6 @@
             <div id="mobileSelectedList" class="mobile-selected-list"></div>
           </div>
 
-          <!-- Lab selector — separate card -->
-          <div id="labSelectorSection" class="card" style="margin-top:16px;">
-            <div class="lab-selector-title" style="margin-bottom:10px;">Em qual laboratório deseja orçar?</div>
-            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
-              <button type="button" class="lab-tab" id="tabAplus" data-lab="A+ Medicina Diagnóstica"
-                style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 8px;border-radius:12px;border:2px solid #e2e8f0;background:#f8fafc;cursor:pointer;transition:all .2s;font-size:12px;font-weight:600;color:var(--text);">
-                <img src="logo-aplus.png" alt="A+" style="height:32px;object-fit:contain;display:block;">
-                <span>A+ Medicina</span>
-              </button>
-              <button type="button" class="lab-tab" id="tabHermes" data-lab="Hermes Pardini"
-                style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 8px;border-radius:12px;border:2px solid #e2e8f0;background:#f8fafc;cursor:pointer;transition:all .2s;font-size:12px;font-weight:600;color:var(--text);">
-                <img src="logo-hermes.png" alt="Hermes" style="height:32px;object-fit:contain;display:block;">
-                <span>Hermes Pardini</span>
-              </button>
-              <button type="button" id="tabAmbos"
-                style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 8px;border-radius:12px;border:2px solid #e2e8f0;background:#f8fafc;cursor:pointer;transition:all .2s;font-size:12px;font-weight:600;color:var(--text);">
-                <span style="font-size:22px;">⚖️</span>
-                <span>Comparar ambos</span>
-              </button>
-            </div>
-            <!-- Checkboxes ocultos mantidos para compatibilidade JS -->
-            <input type="checkbox" class="lab-checkbox" value="Hermes Pardini" hidden>
-            <input type="checkbox" class="lab-checkbox" value="A+ Medicina Diagnóstica" hidden>
-          </div>
         </div>
 
         <!-- ─── RIGHT: SUMMARY + CHECKOUT ────────────── -->
@@ -1331,7 +1335,7 @@
                 <div class="cpf-result-item">
                   <div class="cpf-result-label" style="display:flex;align-items:center;justify-content:space-between;">
                     Data de nascimento
-                    <button type="button" id="btnEditarNasc" title="Alterar data" style="background:none;border:none;cursor:pointer;font-size:14px;color:var(--blue);font-weight:700;padding:0;font-family:inherit;">✏️ alterar</button>
+                    <button type="button" id="btnEditarNasc" style="background:var(--blue);color:#fff;border:none;border-radius:8px;padding:4px 10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">✏️ alterar</button>
                   </div>
                   <div id="cpfNascimento" class="cpf-result-value">-</div>
                   <div id="nascEditorWrap" style="display:none;margin-top:8px;display:none;">
@@ -1804,56 +1808,80 @@
 
     function renderTabela() {
       if (!selecionados.length) {
-        selectedTableBody.innerHTML = `<tr><td colspan="6" class="empty">Escolha um laboratório e adicione exames para montar seu orçamento.</td></tr>`;
+        selectedTableBody.innerHTML = `<tr><td colspan="10" class="empty">Escolha um laboratório abaixo e adicione exames para montar seu orçamento.</td></tr>`;
         mobileSelectedList.innerHTML = "";
         atualizarBotaoContinuar();
         return;
       }
+
+      // Agrupa por sigla (ou nome se não tiver sigla)
+      const mapa = {};
+      selecionados.forEach(item => {
+        const chave = item.id || item.nome;
+        if (!mapa[chave]) mapa[chave] = { id: item.id, nome: item.nome, codigo: item.codigo, categoria: item.categoria, aplus: null, hermes: null };
+        const lab = (item.laboratorio || "").toLowerCase();
+        if (lab.includes("a+") || lab.includes("medicina")) mapa[chave].aplus = item;
+        else if (lab.includes("hermes") || lab.includes("pardini")) mapa[chave].hermes = item;
+      });
+
       selectedTableBody.innerHTML = "";
       mobileSelectedList.innerHTML = "";
-      selecionados.forEach(item => {
-        const rid = encodeURIComponent(item.id);
-        const rlab = encodeURIComponent(item.laboratorio || "");
+
+      const vazio = `<td style="color:#cbd5e1;text-align:center;">—</td>`;
+
+      Object.entries(mapa).forEach(([chave, ex]) => {
+        const rid = encodeURIComponent(chave);
+
+        function tdPreco(item) { return item ? `<td style="color:#94a3b8;text-decoration:line-through;font-size:15px;">${moeda(item.precoParticular)}</td>` : vazio; }
+        function tdDrapp(item) { return item ? `<td style="font-weight:800;color:var(--text);">${moeda(item.precoDrapp)}</td>` : vazio; }
+        function tdDesc(item)  { return item ? `<td><span class="discount-badge">${percentualDesconto(item.precoParticular, item.precoDrapp)}%</span></td>` : vazio; }
+
         const tr = document.createElement("tr");
         tr.innerHTML = `
-          <td>
-            <div class="exam-name">${textoSeguro(item.nome)}</div>
-            <div class="exam-code">${item.id ? "SIGLA: " + item.id : ""}${item.codigo ? " · TUSS: " + item.codigo : ""}${item.categoria ? " · " + item.categoria : ""}</div>
-            ${item.laboratorio ? `<div class="lab-pill ${classeLaboratorio(item.laboratorio)}">${textoSeguro(item.laboratorio)}</div>` : ""}
-          </td>
-          <td style="color:#94a3b8;text-decoration:line-through;">${moeda(item.precoParticular)}</td>
-          <td style="font-weight:800;color:var(--text);">${moeda(item.precoDrapp)}</td>
-          <td><span class="discount-badge">${percentualDesconto(item.precoParticular, item.precoDrapp)}%</span></td>
-          <td class="exam-info">${montarBlocoInfo(item)}</td>
-          <td><button type="button" class="remove-btn" onclick="removerExameDecode('${rid}','${rlab}')">Remover</button></td>`;
+          <td style="font-weight:700;color:var(--blue);font-size:14px;white-space:nowrap;">${textoSeguro(ex.id)}</td>
+          <td><div class="exam-name">${textoSeguro(ex.nome)}</div>${ex.categoria ? `<div class="exam-code">${textoSeguro(ex.categoria)}</div>` : ""}</td>
+          <td style="font-size:13px;color:var(--muted);">${textoSeguro(ex.codigo)}</td>
+          ${tdPreco(ex.aplus)}${tdDrapp(ex.aplus)}${tdDesc(ex.aplus)}
+          ${tdPreco(ex.hermes)}${tdDrapp(ex.hermes)}${tdDesc(ex.hermes)}
+          <td><button type="button" class="remove-btn" onclick="removerExameGrupo('${rid}')">Remover</button></td>`;
         selectedTableBody.appendChild(tr);
 
+        // Mobile card
         const card = document.createElement("div");
         card.className = "selected-card";
+        const blocoLab = (item, nomeLab, cls) => item ? `
+          <div style="margin-bottom:10px;">
+            <div class="lab-pill ${cls}" style="margin-bottom:6px;">${nomeLab}</div>
+            <div class="selected-card-prices">
+              <div class="selected-price-box"><div class="selected-price-label">Particular</div><div class="selected-price-value old">${moeda(item.precoParticular)}</div></div>
+              <div class="selected-price-box"><div class="selected-price-label">DrApp</div><div class="selected-price-value">${moeda(item.precoDrapp)}</div></div>
+            </div>
+            <span class="discount-badge" style="margin-top:6px;display:inline-block;">${percentualDesconto(item.precoParticular, item.precoDrapp)}%</span>
+          </div>` : "";
         card.innerHTML = `
           <div class="selected-card-header">
             <div>
-              <div class="exam-name">${textoSeguro(item.nome)}</div>
-              <div class="exam-code">${item.id ? "SIGLA: " + item.id : ""}${item.codigo ? " · TUSS: " + item.codigo : ""}${item.categoria ? " · " + item.categoria : ""}</div>
-              ${item.laboratorio ? `<div class="lab-pill ${classeLaboratorio(item.laboratorio)}">${textoSeguro(item.laboratorio)}</div>` : ""}
+              <div class="exam-name">${textoSeguro(ex.nome)}</div>
+              <div class="exam-code">${ex.id ? "SIGLA: " + ex.id : ""}${ex.codigo ? " · TUSS: " + ex.codigo : ""}</div>
             </div>
-            <button type="button" class="remove-btn" onclick="removerExameDecode('${rid}','${rlab}')">Remover</button>
+            <button type="button" class="remove-btn" onclick="removerExameGrupo('${rid}')">Remover</button>
           </div>
-          <div class="selected-card-prices">
-            <div class="selected-price-box">
-              <div class="selected-price-label">Preço particular</div>
-              <div class="selected-price-value old">${moeda(item.precoParticular)}</div>
-            </div>
-            <div class="selected-price-box">
-              <div class="selected-price-label">Preço DrApp</div>
-              <div class="selected-price-value">${moeda(item.precoDrapp)}</div>
-            </div>
-          </div>
-          <div style="margin-top:8px;"><span class="discount-badge">${percentualDesconto(item.precoParticular, item.precoDrapp)}%</span></div>
-          <div class="selected-card-info">${montarBlocoInfo(item)}</div>`;
+          ${blocoLab(ex.aplus,  "A+ Medicina",    "aplus")}
+          ${blocoLab(ex.hermes, "Hermes Pardini",  "hermes")}`;
         mobileSelectedList.appendChild(card);
       });
+
       atualizarBotaoContinuar();
+    }
+
+    function removerExameGrupo(chaveEncoded) {
+      const chave = decodeURIComponent(chaveEncoded);
+      selecionados = selecionados.filter(i => (i.id || i.nome) !== chave);
+      renderTabela();
+      atualizarResumo();
+      atualizarBotaoContinuar();
+      atualizarBotoes();
+      if (!selecionados.length) checkoutCard.classList.remove("active");
     }
 
     function atualizarResumo() {
@@ -1933,7 +1961,7 @@
       if (modo === "foto") {
         secaoFoto.style.display    = "block";
         secaoDigitar.style.display = "none";
-        if (labSection)    labSection.style.display    = "block";
+        if (labSection)    labSection.style.display    = "none";
         if (resumoPrecos)  resumoPrecos.style.display  = "none";
         if (resumoInfoBox) resumoInfoBox.style.display = "none";
         if (fotoResumo)    fotoResumo.style.display    = "block";
@@ -1948,6 +1976,7 @@
         if (resumoInfoBox) resumoInfoBox.style.display = "block";
         if (fotoResumo)    fotoResumo.style.display    = "none";
         if (tableWrap)     tableWrap.style.display     = "";
+        setLab(true, true); // auto-seleciona "Comparar ambos"
         btnModoDigitar.style.cssText = btnModoDigitar.style.cssText.replace(/border-color:[^;]+;background:[^;]+;color:[^;]+;/g,"") + MODO_ATIVO;
         btnModoFoto.style.cssText    = btnModoFoto.style.cssText.replace(/border-color:[^;]+;background:[^;]+;color:[^;]+;/g,"") + MODO_INATIVO;
       }
@@ -2113,7 +2142,8 @@
     atualizarBotaoContinuar();
     atualizarBotoes();
     setModo("foto");
-    window.removerExameDecode = removerExameDecode;
+    window.removerExameDecode  = removerExameDecode;
+    window.removerExameGrupo   = removerExameGrupo;
 
     // ─── UPLOAD ───────────────────────────────────────────────
     const uploadInput     = document.getElementById("uploadPedido");
