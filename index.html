@@ -1045,7 +1045,7 @@
         +1.326.000 exames realizados no Brasil
       </div>
 
-      <h1>Exames nos <em>melhores labs</em><br>do Brasil,<br>a preços especiais.</h1>
+      <h1>Exames nos <em>melhores laboratórios</em><br>do Brasil, a preços especiais.</h1>
 
       <p class="hero-sub">Hermes Pardini · A+ Medicina Diagnóstica · Grupo Fleury</p>
 
@@ -1085,6 +1085,12 @@
       <span class="trust-label">Laboratórios parceiros</span>
       <div class="trust-divider"></div>
       <div class="trust-logos">
+        <div class="trust-logo-wrap" title="DrApp">
+          <img src="logo-drapp.png" alt="DrApp"
+            onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+          <span class="lab-badge-trust drapp" style="display:none;">DrApp</span>
+        </div>
+        <div class="trust-divider"></div>
         <div class="trust-logo-wrap" title="Grupo Fleury">
           <img src="logo-fleury.png" alt="Grupo Fleury"
             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
@@ -1149,6 +1155,33 @@
     </div>
   </section>
 
+  <!-- ═══ POR QUE CONFIAR ════════════════════════════════════ -->
+  <section style="background:#f8fafc;padding:48px 0 40px;border-top:1px solid #e8edf3;border-bottom:1px solid #e8edf3;">
+    <div class="page">
+      <div style="text-align:center;margin-bottom:28px;">
+        <div class="section-label" style="color:var(--blue);">Por que confiar no DrApp?</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;max-width:900px;margin:0 auto;">
+        <div style="display:flex;gap:14px;align-items:flex-start;background:#fff;border-radius:14px;padding:20px;border:1px solid #e2e8f0;box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+          <span style="font-size:26px;flex-shrink:0;">🏆</span>
+          <span style="font-size:14px;color:var(--text);line-height:1.6;"><strong>+1,3 milhão</strong> de exames já realizados no Brasil</span>
+        </div>
+        <div style="display:flex;gap:14px;align-items:flex-start;background:#fff;border-radius:14px;padding:20px;border:1px solid #e2e8f0;box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+          <span style="font-size:26px;flex-shrink:0;">🔒</span>
+          <span style="font-size:14px;color:var(--text);line-height:1.6;"><strong>Dados protegidos.</strong> Orçamento sigiloso e sem compromisso</span>
+        </div>
+        <div style="display:flex;gap:14px;align-items:flex-start;background:#fff;border-radius:14px;padding:20px;border:1px solid #e2e8f0;box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+          <span style="font-size:26px;flex-shrink:0;">📲</span>
+          <span style="font-size:14px;color:var(--text);line-height:1.6;">Atendimento e suporte <strong>via WhatsApp</strong> — ágil e humano</span>
+        </div>
+        <div style="display:flex;gap:14px;align-items:flex-start;background:#fff;border-radius:14px;padding:20px;border:1px solid #e2e8f0;box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+          <span style="font-size:26px;flex-shrink:0;">🚗</span>
+          <span style="font-size:14px;color:var(--text);line-height:1.6;"><strong>Coleta em domicílio</strong> disponível — sem taxa de visita</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ═══ TOOL — ORÇAMENTO ══════════════════════════════════ -->
   <section class="tool-section" id="orcamento">
     <div class="tool-section-header">
@@ -1163,60 +1196,71 @@
         <!-- ─── LEFT: SEARCH ─────────────────────────── -->
         <div class="left-column">
           <div class="card">
-            <h2 class="section-title">Faça seu orçamento</h2>
-            <p class="section-subtitle subtitle-destaque">
-              Selecione o laboratório desejado para começar.
-            </p>
-            <p class="section-subtitle">
-              Escolha um ou ambos os laboratórios para comparar preços e montar seu orçamento.
-            </p>
 
-            <div class="lab-selector-title">Laboratórios disponíveis</div>
-            <div class="lab-selector">
-              <label class="lab-option" data-lab="Hermes Pardini">
-                <input type="checkbox" class="lab-checkbox" value="Hermes Pardini" />
-                <img src="logo-hermes.png" alt="Hermes Pardini" class="lab-logo"
-                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-                <div class="lab-fallback" style="display:none;">Hermes</div>
-                <div class="lab-info">
-                  <strong>Hermes Pardini</strong>
-                  <span>Grupo Fleury · Preços especiais DrApp</span>
-                </div>
-              </label>
-
-              <label class="lab-option" data-lab="A+ Medicina Diagnóstica">
-                <input type="checkbox" class="lab-checkbox" value="A+ Medicina Diagnóstica" />
-                <img src="logo-aplus.png" alt="A+ Medicina Diagnóstica" class="lab-logo"
-                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-                <div class="lab-fallback" style="display:none;">A+</div>
-                <div class="lab-info">
-                  <strong>A+ Medicina Diagnóstica</strong>
-                  <span>Grupo Fleury · Preços especiais DrApp</span>
-                </div>
-              </label>
+            <!-- Modo: foto ou digitar -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px;">
+              <button id="btnModoFoto" type="button" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:18px 12px;border-radius:14px;border:2px solid var(--blue);background:var(--blue);color:#fff;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;line-height:1.3;">
+                <span style="font-size:28px;">📷</span>Enviar foto<br>do pedido médico
+              </button>
+              <button id="btnModoDigitar" type="button" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:18px 12px;border-radius:14px;border:2px solid #e2e8f0;background:#f8fafc;color:var(--text);font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;line-height:1.3;">
+                <span style="font-size:28px;">🔍</span>Digitar os<br>nomes dos exames
+              </button>
             </div>
 
-            <div class="upload-acoes">
-              <label class="upload-botao">
-                📎 Enviar pedido médico
-                <input type="file" id="uploadPedido" accept="image/*" multiple hidden>
-              </label>
-              <label class="upload-botao" style="background:var(--blue);">
-                📷 Fotografar pedido médico
-                <input type="file" id="uploadFoto" accept="image/*" capture="environment" hidden>
-              </label>
-              <label class="upload-add-botao" title="Adicionar mais arquivos">
-                +
-                <input type="file" id="uploadPedidoMais" accept="image/*" multiple hidden>
-              </label>
+            <!-- Laboratório -->
+            <div class="lab-selector-title" style="margin-bottom:10px;">Em qual laboratório deseja orçar?</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px;">
+              <button type="button" class="lab-tab" id="tabAplus" data-lab="A+ Medicina Diagnóstica"
+                style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 8px;border-radius:12px;border:2px solid #e2e8f0;background:#f8fafc;cursor:pointer;transition:all .2s;font-size:12px;font-weight:600;color:var(--text);">
+                <img src="logo-aplus.png" alt="A+" style="height:32px;object-fit:contain;"
+                  onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
+                <span style="display:none;font-size:13px;font-weight:800;color:#0088bb;">A+</span>
+                <span>A+ Medicina</span>
+              </button>
+              <button type="button" class="lab-tab" id="tabHermes" data-lab="Hermes Pardini"
+                style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 8px;border-radius:12px;border:2px solid #e2e8f0;background:#f8fafc;cursor:pointer;transition:all .2s;font-size:12px;font-weight:600;color:var(--text);">
+                <img src="logo-hermes.png" alt="Hermes" style="height:32px;object-fit:contain;"
+                  onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
+                <span style="display:none;font-size:13px;font-weight:800;color:#cb1040;">H</span>
+                <span>Hermes Pardini</span>
+              </button>
+              <button type="button" id="tabAmbos"
+                style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 8px;border-radius:12px;border:2px solid #e2e8f0;background:#f8fafc;cursor:pointer;transition:all .2s;font-size:12px;font-weight:600;color:var(--text);">
+                <span style="font-size:22px;">⚖️</span>
+                <span>Comparar ambos</span>
+              </button>
             </div>
 
-            <div id="uploadPreview" class="upload-preview"></div>
+            <!-- Checkboxes ocultos mantidos para compatibilidade JS -->
+            <input type="checkbox" class="lab-checkbox" value="Hermes Pardini" hidden>
+            <input type="checkbox" class="lab-checkbox" value="A+ Medicina Diagnóstica" hidden>
 
-            <div class="autocomplete-wrap" style="margin-top:20px;">
-              <input type="text" id="buscaExame" class="autocomplete-input"
-                placeholder="Ou digitar o nome do exame: ex. hemograma, TSH, glicose..." autocomplete="off" />
-              <div id="suggestions" class="suggestions"></div>
+            <!-- Seção foto -->
+            <div id="secaoFoto">
+              <div class="upload-acoes">
+                <label class="upload-botao">
+                  📎 Escolher arquivo
+                  <input type="file" id="uploadPedido" accept="image/*" multiple hidden>
+                </label>
+                <label class="upload-botao" style="background:var(--blue);" id="labelFotografar">
+                  📷 Fotografar agora
+                  <input type="file" id="uploadFoto" accept="image/*" capture="environment" hidden>
+                </label>
+                <label class="upload-add-botao" title="Adicionar mais arquivos">
+                  +
+                  <input type="file" id="uploadPedidoMais" accept="image/*" multiple hidden>
+                </label>
+              </div>
+              <div id="uploadPreview" class="upload-preview"></div>
+            </div>
+
+            <!-- Seção digitar -->
+            <div id="secaoDigitar" style="display:none;">
+              <div class="autocomplete-wrap" style="margin-top:4px;">
+                <input type="text" id="buscaExame" class="autocomplete-input"
+                  placeholder="Digite o nome do exame: ex. hemograma, TSH, glicose..." autocomplete="off" />
+                <div id="suggestions" class="suggestions"></div>
+              </div>
             </div>
 
             <div id="loadingBox" class="loading-box" style="display:none;">Buscando exames...</div>
@@ -1237,7 +1281,7 @@
                 <tbody id="selectedTableBody">
                   <tr>
                     <td colspan="6" class="empty">
-                      Escolha um laboratório acima e digite o nome do exame para começar seu orçamento.
+                      Escolha um laboratório acima e adicione exames para montar seu orçamento.
                     </td>
                   </tr>
                 </tbody>
@@ -1246,8 +1290,23 @@
 
             <div id="mobileSelectedList" class="mobile-selected-list"></div>
           </div>
+        </div>
 
-          <!-- ─── CHECKOUT ───────────────────────────── -->
+        <!-- ─── RIGHT: SUMMARY + CHECKOUT ────────────── -->
+        <div class="right-column">
+          <!-- Resumo -->
+          <div class="card">
+            <h2 class="section-title">Resumo da solicitação</h2>
+            <div class="summary-box">
+              <div class="summary-row"><span>Total particular</span><span id="totalParticular">R$ 0,00</span></div>
+              <div class="summary-row total"><span>Total DrApp</span><span id="totalDrapp">R$ 0,00</span></div>
+              <div class="summary-row saving"><span>💰 Você economiza</span><span id="totalEconomia">R$ 0,00</span></div>
+            </div>
+            <div class="info-box">Revise os exames selecionados antes de seguir para o fechamento.</div>
+            <button id="btnContinuar" class="primary-btn" disabled>Continuar para fechar orçamento →</button>
+          </div>
+
+          <!-- Fechar orçamento (checkout) -->
           <div id="checkoutCard" class="card checkout-card">
             <h2 class="section-title">Fechar orçamento</h2>
             <p class="section-subtitle">Preencha seus dados para concluir a solicitação dos exames escolhidos.</p>
@@ -1303,62 +1362,9 @@
 
             <div class="checkout-note">O botão só será liberado após validação e confirmação do CPF.</div>
           </div>
-        </div>
-
-        <!-- ─── RIGHT: SUMMARY ───────────────────────── -->
-        <div class="right-column">
-          <div class="card">
-            <h2 class="section-title">Resumo da solicitação</h2>
-
-            <div class="summary-box">
-              <div class="summary-row">
-                <span>Total particular</span>
-                <span id="totalParticular">R$ 0,00</span>
-              </div>
-              <div class="summary-row total">
-                <span>Total DrApp</span>
-                <span id="totalDrapp">R$ 0,00</span>
-              </div>
-              <div class="summary-row saving">
-                <span>💰 Você economiza</span>
-                <span id="totalEconomia">R$ 0,00</span>
-              </div>
-            </div>
-
-            <div class="info-box">
-              Revise os exames selecionados antes de seguir para o fechamento.
-            </div>
-
-            <button id="btnContinuar" class="primary-btn" disabled>
-              Continuar para fechar orçamento →
-            </button>
-          </div>
-
-          <!-- TRUST MINI CARD -->
-          <div class="card" style="background: linear-gradient(135deg,#f0f9ff,#e6f3fb); border-color:#cde8f4;">
-            <div style="font-size:13px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:14px;">Por que confiar no DrApp?</div>
-            <ul style="list-style:none;display:flex;flex-direction:column;gap:12px;">
-              <li style="display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--text);line-height:1.5;">
-                <span style="font-size:18px;">🏆</span>
-                <span><strong>+1,3 milhão</strong> de exames já realizados no Brasil</span>
-              </li>
-              <li style="display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--text);line-height:1.5;">
-                <span style="font-size:18px;">🔒</span>
-                <span><strong>Dados protegidos.</strong> Orçamento sigiloso e sem compromisso</span>
-              </li>
-              <li style="display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--text);line-height:1.5;">
-                <span style="font-size:18px;">📲</span>
-                <span>Atendimento e suporte <strong>via WhatsApp</strong> — ágil e humano</span>
-              </li>
-              <li style="display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--text);line-height:1.5;">
-                <span style="font-size:18px;">🚗</span>
-                <span><strong>Coleta em domicílio</strong> disponível — sem taxa de visita</span>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
+        </div><!-- /right-column -->
+      </div><!-- /main-grid -->
+    </div><!-- /page -->
   </section>
 
   <!-- ═══ TESTIMONIALS ═══════════════════════════════════════ -->
@@ -1454,7 +1460,13 @@
     const errorBox          = document.getElementById("errorBox");
     const checkoutCard      = document.getElementById("checkoutCard");
     const labCheckboxes     = Array.from(document.querySelectorAll(".lab-checkbox"));
-    const labOptions        = Array.from(document.querySelectorAll(".lab-option"));
+    const tabAplus          = document.getElementById("tabAplus");
+    const tabHermes         = document.getElementById("tabHermes");
+    const tabAmbos          = document.getElementById("tabAmbos");
+    const btnModoFoto       = document.getElementById("btnModoFoto");
+    const btnModoDigitar    = document.getElementById("btnModoDigitar");
+    const secaoFoto         = document.getElementById("secaoFoto");
+    const secaoDigitar      = document.getElementById("secaoDigitar");
 
     let imagensPedido = [];
 
@@ -1496,20 +1508,28 @@
 
     function formatarNascimento(valor) {
       if (!valor) return "";
+      const MESES = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
       const texto = String(valor).trim();
-      if (texto.includes("T")) {
-        const parteData = texto.split("T")[0];
-        if (/^\d{4}-\d{2}-\d{2}$/.test(parteData)) {
-          const [ano, mes, dia] = parteData.split("-");
-          return `${dia}/${mes}/${ano}`;
-        }
+
+      let dia, mes, ano;
+
+      // ISO com hora: 1981-03-09T03:00:00+03:00
+      if (/^\d{4}-\d{2}-\d{2}T/.test(texto)) {
+        [ano, mes, dia] = texto.split("T")[0].split("-");
       }
-      if (/^\d{4}-\d{2}-\d{2}$/.test(texto)) {
-        const [ano, mes, dia] = texto.split("-");
-        return `${dia}/${mes}/${ano}`;
+      // ISO simples: 1981-03-09
+      else if (/^\d{4}-\d{2}-\d{2}$/.test(texto)) {
+        [ano, mes, dia] = texto.split("-");
       }
-      if (/^\d{2}\/\d{2}\/\d{4}$/.test(texto)) return texto;
-      return texto;
+      // dd/MM/yyyy (Hub do Desenvolvedor)
+      else if (/^\d{2}\/\d{2}\/\d{4}$/.test(texto)) {
+        [dia, mes, ano] = texto.split("/");
+      }
+      else return texto;
+
+      const idx = parseInt(mes, 10) - 1;
+      if (idx < 0 || idx > 11) return texto;
+      return `${String(dia).padStart(2,"0")}/${MESES[idx]}/${ano}`;
     }
 
     function mostrarLoading(mostrar) { loadingBox.style.display = mostrar ? "block" : "none"; }
@@ -1522,10 +1542,23 @@
       return labCheckboxes.filter(cb => cb.checked).map(cb => cb.value);
     }
 
+    const TAB_ATIVO = "border-color:var(--blue);background:rgba(0,109,199,0.08);color:var(--blue);";
+    const TAB_INATIVO = "border-color:#e2e8f0;background:#f8fafc;color:var(--text);";
+
     function atualizarVisualLabs() {
-      labOptions.forEach(option => {
-        option.classList.toggle("selected", option.querySelector(".lab-checkbox").checked);
-      });
+      const cbAplus  = labCheckboxes.find(c => c.value === "A+ Medicina Diagnóstica");
+      const cbHermes = labCheckboxes.find(c => c.value === "Hermes Pardini");
+      tabAplus.style.cssText  = tabAplus.style.cssText.replace(/border-color:[^;]+;background:[^;]+;color:[^;]+;/g,"") + (cbAplus.checked  ? TAB_ATIVO : TAB_INATIVO);
+      tabHermes.style.cssText = tabHermes.style.cssText.replace(/border-color:[^;]+;background:[^;]+;color:[^;]+;/g,"") + (cbHermes.checked ? TAB_ATIVO : TAB_INATIVO);
+      const ambos = cbAplus.checked && cbHermes.checked;
+      tabAmbos.style.cssText  = tabAmbos.style.cssText.replace(/border-color:[^;]+;background:[^;]+;color:[^;]+;/g,"") + (ambos ? TAB_ATIVO : TAB_INATIVO);
+    }
+
+    function setLab(aplus, hermes) {
+      labCheckboxes.find(c => c.value === "A+ Medicina Diagnóstica").checked = aplus;
+      labCheckboxes.find(c => c.value === "Hermes Pardini").checked = hermes;
+      atualizarVisualLabs();
+      mostrarErro(false);
     }
 
     function temExamesOuFotos() { return selecionados.length > 0 || imagensPedido.length > 0; }
@@ -1856,16 +1889,31 @@
       if (!e.target.closest(".autocomplete-wrap")) suggestions.style.display = "none";
     });
 
-    labCheckboxes.forEach(cb => {
-      cb.addEventListener("change", () => {
-        atualizarVisualLabs();
-        mostrarErro(false);
-        if (obterLabsSelecionados().length === 0) {
-          suggestions.style.display = "none"; suggestions.innerHTML = "";
-          mostrarErro(true, "Selecione pelo menos um laboratório para pesquisar.");
-        }
-      });
-    });
+    // ── Lab tabs ──────────────────────────────────────────────
+    tabAplus.addEventListener("click",  () => { setLab(true, false); });
+    tabHermes.addEventListener("click", () => { setLab(false, true); });
+    tabAmbos.addEventListener("click",  () => { setLab(true, true);  });
+
+    // ── Modo: foto vs digitar ─────────────────────────────────
+    const MODO_ATIVO   = "border-color:var(--blue);background:var(--blue);color:#fff;";
+    const MODO_INATIVO = "border-color:#e2e8f0;background:#f8fafc;color:var(--text);";
+
+    function setModo(modo) {
+      if (modo === "foto") {
+        secaoFoto.style.display    = "block";
+        secaoDigitar.style.display = "none";
+        btnModoFoto.style.cssText    = btnModoFoto.style.cssText.replace(/border-color:[^;]+;background:[^;]+;color:[^;]+;/g,"") + MODO_ATIVO;
+        btnModoDigitar.style.cssText = btnModoDigitar.style.cssText.replace(/border-color:[^;]+;background:[^;]+;color:[^;]+;/g,"") + MODO_INATIVO;
+      } else {
+        secaoFoto.style.display    = "none";
+        secaoDigitar.style.display = "block";
+        btnModoDigitar.style.cssText = btnModoDigitar.style.cssText.replace(/border-color:[^;]+;background:[^;]+;color:[^;]+;/g,"") + MODO_ATIVO;
+        btnModoFoto.style.cssText    = btnModoFoto.style.cssText.replace(/border-color:[^;]+;background:[^;]+;color:[^;]+;/g,"") + MODO_INATIVO;
+      }
+    }
+
+    btnModoFoto.addEventListener("click",    () => setModo("foto"));
+    btnModoDigitar.addEventListener("click", () => setModo("digitar"));
 
     cpfInput.addEventListener("input", function () {
       this.value = mascaraCPF(this.value);
@@ -2001,6 +2049,7 @@
     atualizarVisualLabs();
     atualizarBotaoContinuar();
     atualizarBotoes();
+    setModo("foto");
     window.removerExameDecode = removerExameDecode;
 
     // ─── UPLOAD ───────────────────────────────────────────────
