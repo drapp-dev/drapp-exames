@@ -812,7 +812,9 @@
     .field-error { font-size: 13px; color: var(--danger); display: none; }
 
     .checkout-actions { display: flex; gap: 12px; margin-top: 20px; }
-    .checkout-note { margin-top: 14px; font-size: 17px; color: var(--muted); line-height: 1.6; }
+    .checkout-note { margin-top: 10px; font-size: 15px; line-height: 1.5; text-align: center; }
+    @keyframes blink-alert { 0%, 100% { color: var(--muted); } 50% { color: var(--danger); } }
+    .checkout-note.piscando { animation: blink-alert 1.2s ease-in-out infinite; }
 
     .cpf-row { display: grid; grid-template-columns: 1fr 180px; gap: 12px; align-items: end; }
 
@@ -1352,10 +1354,11 @@
 
             <div class="checkout-actions">
               <button id="btnVoltarOrçamento" class="secondary-btn" type="button">← Voltar ao Orçamento</button>
-              <button id="btnFinalizar" class="primary-btn" type="button" disabled>Finalizar solicitação →</button>
+              <div style="flex:1;display:flex;flex-direction:column;">
+                <button id="btnFinalizar" class="primary-btn" type="button" disabled>Finalizar solicitação →</button>
+                <div id="checkoutNote" class="checkout-note piscando">O botão só será liberado após validação e confirmação do CPF.</div>
+              </div>
             </div>
-
-            <div class="checkout-note">O botão só será liberado após validação e confirmação do CPF.</div>
           </div>
         </div><!-- /right-column -->
       </div><!-- /main-grid -->
@@ -1564,12 +1567,13 @@
 
     function atualizarBotoes() {
       atualizarBotaoContinuar();
-      btnFinalizar.disabled = !(
-        temExamesOuFotos() &&
+      const liberado = temExamesOuFotos() &&
         validarTelefone(telefoneInput.value) &&
         validarEmail(emailInput.value) &&
-        cpfValidado && cpfConfirmado
-      );
+        cpfValidado && cpfConfirmado;
+      btnFinalizar.disabled = !liberado;
+      const nota = document.getElementById("checkoutNote");
+      if (nota) nota.style.display = liberado ? "none" : "block";
     }
 
     function mascaraCPF(valor) {
@@ -2042,8 +2046,9 @@
           checkoutCard.innerHTML = `
             <div style="text-align:center;padding:40px 20px;">
               <div style="font-size:48px;margin-bottom:16px;">✅</div>
-              <h3 style="color:var(--primary);margin-bottom:8px;">Pedido enviado com sucesso!</h3>
-              <p style="color:var(--muted);">Nossa equipe entrará em contato em breve pelo WhatsApp ou e-mail informado.</p>
+              <h3 style="color:var(--success);margin-bottom:8px;">Pedido enviado com sucesso!</h3>
+              <p style="color:var(--muted);margin-bottom:28px;">Nossa equipe entrará em contato em breve pelo WhatsApp ou e-mail informado.</p>
+              <button onclick="location.reload()" style="background:var(--blue);color:#fff;border:none;border-radius:14px;font-size:16px;font-weight:700;padding:0 28px;height:50px;cursor:pointer;font-family:inherit;">+ Fazer outro pedido</button>
             </div>`;
         } else {
           throw new Error(data.mensagem || data.erro || "Erro desconhecido");
