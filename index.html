@@ -1,0 +1,2017 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DrApp Exames – Os Melhores Laboratórios do Brasil com Preços Especiais</title>
+  <meta name="description" content="Faça exames na Hermes Pardini e A+ Medicina Diagnóstica (Grupo Fleury) com descontos de até 30%. Sem assinatura, sem mensalidade. Só pague o que usar." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue:       #006dc7;
+      --blue-dark:  #004e93;
+      --blue-deep:  #003570;
+      --cyan:       #51c9d2;
+      --cyan-light: #a8e9ed;
+      --orange:     #f58319;
+      --orange-dark:#d96a08;
+      --white:      #ffffff;
+      --text:       #16324a;
+      --muted:      #5f7487;
+      --line:       #d9e5ee;
+      --danger:     #b91c1c;
+      --success:    #166534;
+      --soft-blue:  #eff7fb;
+      --soft-orange:#fff7ee;
+      --hermes:     #cb1040;
+      --aplus:      #00b0f0;
+    }
+
+    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+
+    body {
+      font-family: 'Inter', Arial, sans-serif;
+      background: #f0f6fb;
+      color: var(--text);
+    }
+
+    /* ─── NAVBAR ─────────────────────────────────────── */
+    .navbar {
+      background: var(--blue-deep);
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.25);
+    }
+
+    .navbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .navbar-logo-box {
+      background: #fff;
+      border-radius: 10px;
+      padding: 5px 10px;
+      font-size: 20px;
+      font-weight: 900;
+      color: var(--blue);
+      letter-spacing: -0.5px;
+      line-height: 1;
+    }
+
+    .navbar-logo-box span { color: var(--orange); }
+
+    .navbar-tagline {
+      font-size: 13px;
+      color: rgba(255,255,255,0.65);
+      font-weight: 500;
+    }
+
+    .navbar-cta {
+      background: var(--orange);
+      color: #fff;
+      font-weight: 700;
+      font-size: 14px;
+      padding: 10px 20px;
+      border-radius: 10px;
+      text-decoration: none;
+      transition: background 0.18s, transform 0.18s;
+      white-space: nowrap;
+    }
+
+    .navbar-cta:hover { background: var(--orange-dark); transform: translateY(-1px); }
+
+    /* ─── HERO ───────────────────────────────────────── */
+    .hero {
+      background: linear-gradient(145deg, var(--blue-deep) 0%, var(--blue) 55%, #1a8ed4 100%);
+      padding: 60px 24px 0;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -80px; right: -80px;
+      width: 420px; height: 420px;
+      border-radius: 50%;
+      background: rgba(81,201,210,0.12);
+      pointer-events: none;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: 40px; left: -60px;
+      width: 280px; height: 280px;
+      border-radius: 50%;
+      background: rgba(245,131,25,0.08);
+      pointer-events: none;
+    }
+
+    .hero-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 999px;
+      padding: 6px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--cyan-light);
+      margin-bottom: 22px;
+      letter-spacing: 0.3px;
+    }
+
+    .hero-eyebrow-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--cyan);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.6; transform: scale(1.3); }
+    }
+
+    .hero h1 {
+      font-size: clamp(32px, 5vw, 62px);
+      font-weight: 900;
+      color: #fff;
+      line-height: 1.05;
+      letter-spacing: -1.5px;
+      margin-bottom: 8px;
+    }
+
+    .hero h1 em {
+      font-style: normal;
+      color: var(--cyan);
+    }
+
+    .hero-sub {
+      font-size: clamp(18px, 2.5vw, 26px);
+      font-weight: 700;
+      color: var(--orange);
+      margin-bottom: 18px;
+      line-height: 1.3;
+    }
+
+    .hero-desc {
+      font-size: clamp(15px, 1.5vw, 18px);
+      color: rgba(255,255,255,0.82);
+      max-width: 680px;
+      line-height: 1.7;
+      margin-bottom: 32px;
+      font-weight: 400;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 44px;
+    }
+
+    .btn-hero-primary {
+      background: var(--orange);
+      color: #fff;
+      font-weight: 800;
+      font-size: 17px;
+      padding: 16px 34px;
+      border-radius: 14px;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: background 0.18s, transform 0.15s, box-shadow 0.18s;
+      box-shadow: 0 8px 24px rgba(245,131,25,0.4);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-hero-primary:hover {
+      background: var(--orange-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(245,131,25,0.5);
+    }
+
+    .btn-hero-secondary {
+      background: rgba(255,255,255,0.12);
+      color: #fff;
+      font-weight: 700;
+      font-size: 16px;
+      padding: 16px 28px;
+      border-radius: 14px;
+      text-decoration: none;
+      border: 1px solid rgba(255,255,255,0.25);
+      cursor: pointer;
+      transition: background 0.18s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-hero-secondary:hover { background: rgba(255,255,255,0.2); }
+
+    /* ─── STATS STRIP ────────────────────────────────── */
+    .stats-strip {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: rgba(255,255,255,0.12);
+      border-radius: 20px 20px 0 0;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.15);
+      border-bottom: none;
+    }
+
+    .stat-item {
+      background: rgba(255,255,255,0.08);
+      padding: 22px 20px;
+      text-align: center;
+      backdrop-filter: blur(4px);
+    }
+
+    .stat-number {
+      font-size: clamp(26px, 3vw, 38px);
+      font-weight: 900;
+      color: #fff;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .stat-number em { font-style: normal; color: var(--cyan); }
+
+    .stat-label {
+      font-size: 13px;
+      color: rgba(255,255,255,0.65);
+      font-weight: 500;
+      line-height: 1.4;
+    }
+
+    /* ─── TRUST BAR (logos) ──────────────────────────── */
+    .trust-bar {
+      background: #fff;
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .trust-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .trust-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      white-space: nowrap;
+    }
+
+    .trust-divider {
+      width: 1px;
+      height: 28px;
+      background: var(--line);
+    }
+
+    .trust-logos {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .trust-logo-wrap {
+      display: flex;
+      align-items: center;
+    }
+
+    .trust-logo-wrap img {
+      height: 34px;
+      width: auto;
+      object-fit: contain;
+      filter: grayscale(30%);
+      opacity: 0.85;
+      transition: opacity 0.2s, filter 0.2s;
+    }
+
+    .trust-logo-wrap img:hover { opacity: 1; filter: none; }
+
+    .lab-badge-trust {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 800;
+      border: 1.5px solid transparent;
+    }
+
+    .lab-badge-trust.hermes { background: rgba(203,16,64,0.08); color: var(--hermes); border-color: rgba(203,16,64,0.2); }
+    .lab-badge-trust.aplus  { background: rgba(0,176,240,0.08); color: #0088bb; border-color: rgba(0,176,240,0.22); }
+    .lab-badge-trust.fleury { background: rgba(0,109,199,0.07); color: var(--blue); border-color: rgba(0,109,199,0.2); }
+    .lab-badge-trust.apm    { background: rgba(245,131,25,0.08); color: var(--orange-dark); border-color: rgba(245,131,25,0.22); }
+    .lab-badge-trust.drapp  { background: rgba(0,53,112,0.07); color: var(--blue-deep); border-color: rgba(0,53,112,0.18); }
+
+    /* ─── BENEFITS ───────────────────────────────────── */
+    .benefits-section {
+      background: #fff;
+      padding: 56px 24px;
+    }
+
+    .section-label {
+      text-align: center;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--blue);
+      margin-bottom: 10px;
+    }
+
+    .section-heading {
+      text-align: center;
+      font-size: clamp(24px, 3vw, 38px);
+      font-weight: 900;
+      color: var(--text);
+      line-height: 1.2;
+      margin-bottom: 8px;
+    }
+
+    .section-heading em { font-style: normal; color: var(--orange); }
+
+    .section-sub {
+      text-align: center;
+      font-size: 16px;
+      color: var(--muted);
+      max-width: 560px;
+      margin: 0 auto 48px;
+      line-height: 1.6;
+    }
+
+    .benefits-grid {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .benefit-card {
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 28px 24px;
+      background: #fff;
+      transition: box-shadow 0.2s, transform 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .benefit-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+    }
+
+    .benefit-card:nth-child(1)::before { background: var(--orange); }
+    .benefit-card:nth-child(2)::before { background: var(--blue); }
+    .benefit-card:nth-child(3)::before { background: var(--cyan); }
+
+    .benefit-card:hover {
+      box-shadow: 0 12px 40px rgba(0,109,199,0.12);
+      transform: translateY(-3px);
+    }
+
+    .benefit-icon {
+      width: 52px; height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      margin-bottom: 18px;
+    }
+
+    .benefit-icon.orange { background: rgba(245,131,25,0.12); }
+    .benefit-icon.blue   { background: rgba(0,109,199,0.10); }
+    .benefit-icon.cyan   { background: rgba(81,201,210,0.12); }
+
+    .benefit-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 10px;
+      line-height: 1.3;
+    }
+
+    .benefit-text {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .benefit-highlight {
+      display: inline-block;
+      margin-top: 14px;
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--orange);
+    }
+
+    /* ─── TOOL SECTION ───────────────────────────────── */
+    .tool-section {
+      background: linear-gradient(180deg, var(--blue) 0%, var(--blue-dark) 100%);
+      padding: 60px 24px 48px;
+    }
+
+    .tool-section-header {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+
+    .tool-section-header .section-label { color: var(--cyan-light); }
+
+    .tool-section-header .section-heading { color: #fff; }
+
+    .tool-section-header .section-sub { color: rgba(255,255,255,0.7); }
+
+    .page {
+      max-width: 1220px;
+      margin: 0 auto;
+    }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1.45fr 0.85fr;
+      gap: 24px;
+      align-items: flex-start;
+    }
+
+    .left-column, .right-column {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      align-self: start;
+    }
+
+    .card {
+      background: var(--white);
+      border-radius: 20px;
+      padding: 28px;
+      box-shadow: 0 16px 48px rgba(0,30,60,0.22);
+      border: 1px solid rgba(255,255,255,0.18);
+    }
+
+    .section-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .section-subtitle {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 18px;
+      line-height: 1.6;
+    }
+
+    .subtitle-destaque {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--orange);
+    }
+
+    /* ─── LAB SELECTOR ───────────────────────────────── */
+    .lab-selector-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+
+    .lab-selector {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .lab-option {
+      position: relative;
+      border: 2px solid #d6e7f3;
+      background: #fafcfe;
+      border-radius: 16px;
+      padding: 14px;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-height: 80px;
+    }
+
+    .lab-option:hover {
+      border-color: var(--cyan);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(0,109,199,0.1);
+    }
+
+    .lab-option.selected { box-shadow: 0 8px 24px rgba(15,23,42,0.12); }
+
+    .lab-option[data-lab="Hermes Pardini"].selected {
+      border-color: var(--hermes);
+      background: rgba(203,16,64,0.05);
+    }
+
+    .lab-option[data-lab="A+ Medicina Diagnóstica"].selected {
+      border-color: var(--aplus);
+      background: rgba(0,176,240,0.06);
+    }
+
+    .lab-option input { display: none; }
+
+    .lab-logo {
+      width: 64px; height: 34px;
+      object-fit: contain; flex-shrink: 0;
+      background: #fff; border-radius: 8px;
+    }
+
+    .lab-fallback {
+      width: 64px; height: 34px;
+      border-radius: 8px;
+      background: #edf7fb;
+      color: var(--blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 12px;
+      flex-shrink: 0;
+      text-align: center;
+      padding: 4px;
+    }
+
+    .lab-info strong { display: block; font-size: 14px; color: var(--text); margin-bottom: 4px; }
+    .lab-info span   { display: block; font-size: 12px; color: var(--muted); line-height: 1.4; }
+
+    /* ─── AUTOCOMPLETE ───────────────────────────────── */
+    .autocomplete-wrap { position: relative; }
+
+    .autocomplete-input {
+      width: 100%; height: 56px;
+      border-radius: 14px;
+      border: 1.5px solid #d1d5db;
+      padding: 0 18px;
+      font-size: 16px;
+      outline: none;
+      color: var(--text);
+      background: #fff;
+      font-family: inherit;
+      transition: border-color 0.18s, box-shadow 0.18s;
+    }
+
+    .autocomplete-input:focus {
+      border-color: var(--cyan);
+      box-shadow: 0 0 0 4px rgba(81,201,210,0.18);
+    }
+
+    .suggestions {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0; right: 0;
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      box-shadow: 0 16px 40px rgba(15,23,42,0.16);
+      overflow: hidden;
+      z-index: 30;
+      display: none;
+      max-height: 480px;
+      overflow-y: auto;
+    }
+
+    .suggestion-group { border-bottom: 1px solid #edf2f7; }
+    .suggestion-group:last-child { border-bottom: none; }
+
+    .suggestion-group-header {
+      position: sticky; top: 0; z-index: 1;
+      background: #f4fbfd;
+      color: var(--text);
+      font-size: 13px; font-weight: 800;
+      padding: 10px 16px;
+      border-bottom: 1px solid #e3eef5;
+      display: flex; align-items: center; gap: 8px;
+    }
+
+    .suggestion-group-dot {
+      width: 8px; height: 8px; border-radius: 999px;
+      background: var(--orange); display: inline-block; flex-shrink: 0;
+    }
+
+    .suggestion-item {
+      padding: 14px 16px;
+      border-bottom: 1px solid #f1f5f9;
+      cursor: pointer;
+      display: flex; justify-content: space-between; gap: 16px;
+      background: #fff; transition: background 0.12s;
+    }
+
+    .suggestion-item:last-child { border-bottom: none; }
+    .suggestion-item:hover { background: #f8fafc; }
+
+    .suggestion-main { min-width: 0; flex: 1; }
+    .suggestion-price { flex-shrink: 0; min-width: 96px; }
+    .suggestion-name { font-weight: 700; color: var(--text); margin-bottom: 6px; }
+    .suggestion-meta { font-size: 13px; color: var(--muted); line-height: 1.5; word-break: break-word; }
+
+    .suggestion-lab-badge, .lab-pill {
+      display: inline-block; margin-top: 8px;
+      padding: 4px 10px; border-radius: 999px;
+      font-size: 12px; font-weight: 700; border: 1px solid transparent;
+    }
+
+    .suggestion-lab-badge.hermes, .lab-pill.hermes {
+      background: rgba(203,16,64,0.10); color: var(--hermes);
+      border-color: rgba(203,16,64,0.22);
+    }
+
+    .suggestion-lab-badge.aplus, .lab-pill.aplus {
+      background: rgba(0,176,240,0.12); color: #0096cf;
+      border-color: rgba(0,176,240,0.24);
+    }
+
+    .price-old { font-size: 13px; color: #94a3b8; text-decoration: line-through; text-align: right; }
+    .price-new { font-weight: 700; color: var(--text); text-align: right; margin-top: 4px; font-size: 15px; }
+
+    .loading-box, .error-box { margin-top: 10px; font-size: 14px; color: var(--muted); }
+    .error-box { color: var(--danger); }
+
+    /* ─── TABLE ──────────────────────────────────────── */
+    .table-wrap {
+      margin-top: 20px; border: 1px solid var(--line);
+      border-radius: 18px; overflow: hidden; background: #fff;
+    }
+
+    table { width: 100%; border-collapse: collapse; }
+    thead { background: var(--soft-blue); }
+
+    th, td {
+      padding: 14px 12px; text-align: left; vertical-align: top;
+      border-bottom: 1px solid #eef2f7; font-size: 14px;
+    }
+
+    th { color: var(--muted); font-size: 13px; font-weight: 600; }
+
+    .empty { padding: 32px; text-align: center; color: var(--muted); font-size: 15px; }
+
+    .exam-name { font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .exam-code { color: var(--muted); font-size: 13px; line-height: 1.5; }
+    .exam-info { color: #4c6277; line-height: 1.6; font-size: 13px; }
+
+    .discount-badge {
+      display: inline-block;
+      background: #dcfce7; color: var(--success);
+      padding: 5px 10px; border-radius: 999px;
+      font-weight: 700; font-size: 13px;
+    }
+
+    .remove-btn {
+      border: none; background: #fee2e2; color: #b91c1c;
+      border-radius: 10px; padding: 8px 12px; cursor: pointer;
+      font-weight: 700; font-size: 13px; font-family: inherit;
+      transition: background 0.15s;
+    }
+
+    .remove-btn:hover { background: #fecaca; }
+
+    /* ─── MOBILE CARDS ───────────────────────────────── */
+    .mobile-selected-list {
+      display: none; margin-top: 18px; gap: 14px; flex-direction: column;
+    }
+
+    .selected-card { border: 1px solid var(--line); border-radius: 16px; background: #fff; padding: 14px; }
+
+    .selected-card-header {
+      display: flex; justify-content: space-between; gap: 12px;
+      align-items: flex-start; margin-bottom: 10px;
+    }
+
+    .selected-card-prices {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0;
+    }
+
+    .selected-price-box { background: var(--soft-blue); border-radius: 12px; padding: 10px; }
+    .selected-price-label { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+
+    .selected-price-value { font-size: 15px; font-weight: 800; color: var(--text); }
+    .selected-price-value.old { text-decoration: line-through; color: #94a3b8; font-weight: 600; }
+
+    .selected-card-info { font-size: 13px; line-height: 1.6; color: #4c6277; margin-top: 8px; }
+
+    /* ─── SUMMARY ────────────────────────────────────── */
+    .summary-box {
+      background: linear-gradient(135deg, #f0f9ff 0%, #e6f3fb 100%);
+      border-radius: 18px; padding: 20px; margin-bottom: 16px;
+      border: 1px solid #cde8f4;
+    }
+
+    .summary-row {
+      display: flex; justify-content: space-between; gap: 16px;
+      margin-bottom: 10px; font-size: 15px; color: #466276;
+    }
+
+    .summary-row.total  { font-size: 20px; font-weight: 800; color: var(--text); margin-top: 12px; border-top: 1px solid #cde8f4; padding-top: 12px; }
+    .summary-row.saving { color: var(--orange); font-weight: 800; margin-top: 8px; font-size: 16px; }
+
+    .info-box {
+      background: var(--soft-orange); border-radius: 14px; padding: 14px;
+      color: #6d5638; font-size: 14px; line-height: 1.6;
+      margin-bottom: 18px; border: 1px solid #ffe2c2;
+    }
+
+    /* ─── BUTTONS ────────────────────────────────────── */
+    .primary-btn, .secondary-btn, .inline-btn {
+      border: none; border-radius: 14px; font-size: 16px;
+      font-weight: 700; cursor: pointer; font-family: inherit;
+      transition: background 0.18s, transform 0.15s, box-shadow 0.18s;
+    }
+
+    .primary-btn {
+      width: 100%; height: 54px;
+      background: var(--orange); color: #fff;
+      box-shadow: 0 6px 20px rgba(245,131,25,0.35);
+    }
+
+    .primary-btn:not(:disabled):hover {
+      background: var(--orange-dark);
+      transform: translateY(-1px);
+      box-shadow: 0 10px 26px rgba(245,131,25,0.45);
+    }
+
+    .primary-btn:disabled { background: #b8c3cf; cursor: not-allowed; box-shadow: none; }
+
+    .secondary-btn { width: 100%; height: 50px; background: #dcebf6; color: var(--text); margin-top: 10px; }
+    .secondary-btn:hover { background: #c9def2; }
+
+    .inline-btn { height: 48px; padding: 0 18px; background: var(--orange); color: #fff; white-space: nowrap; box-shadow: 0 4px 12px rgba(245,131,25,0.3); }
+    .inline-btn:not(:disabled):hover { background: var(--orange-dark); transform: translateY(-1px); }
+    .inline-btn:disabled { background: #b8c3cf; cursor: not-allowed; box-shadow: none; }
+
+    /* ─── CHECKOUT ───────────────────────────────────── */
+    .checkout-card { display: none; border: 2px solid rgba(81,201,210,0.4); background: #f5fcfd; }
+    .checkout-card.active { display: block; }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+    .field { display: flex; flex-direction: column; gap: 8px; }
+    .field label { font-size: 14px; font-weight: 700; color: var(--text); }
+
+    .field input {
+      height: 50px; border-radius: 12px;
+      border: 1.5px solid #d1d5db; padding: 0 14px;
+      font-size: 16px; outline: none;
+      background: #fff; color: var(--text); font-family: inherit;
+      transition: border-color 0.18s, box-shadow 0.18s;
+    }
+
+    .field input:focus { border-color: var(--cyan); box-shadow: 0 0 0 4px rgba(81,201,210,0.18); }
+
+    .field-error { font-size: 13px; color: var(--danger); display: none; }
+
+    .checkout-actions { display: flex; gap: 12px; margin-top: 20px; }
+    .checkout-note { margin-top: 14px; font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+    .cpf-row { display: grid; grid-template-columns: 1fr 180px; gap: 12px; align-items: end; }
+
+    .cpf-result {
+      margin-top: 18px; padding: 16px; border-radius: 16px;
+      border: 1px solid #caedf0; background: #effbfd; display: none;
+    }
+
+    .cpf-result.active { display: block; }
+    .cpf-result-title { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 12px; }
+
+    .cpf-result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+
+    .cpf-result-item {
+      background: #fff; border: 1px solid #d5edf1;
+      border-radius: 14px; padding: 12px;
+    }
+
+    .cpf-result-label { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+    .cpf-result-value { font-size: 15px; font-weight: 700; color: var(--text); line-height: 1.4; }
+
+    .cpf-confirm-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
+    .cpf-confirm-btn {
+      border: none; border-radius: 12px;
+      padding: 12px 16px; font-size: 14px;
+      font-weight: 700; cursor: pointer; font-family: inherit;
+    }
+
+    .cpf-ok    { background: #dcfce7; color: #166534; }
+    .cpf-wrong { background: #fee2e2; color: #b91c1c; }
+
+    .cpf-status { margin-top: 10px; font-size: 14px; color: var(--muted); display: none; }
+    .cpf-status.active  { display: block; }
+    .cpf-status.success { color: var(--success); }
+    .cpf-status.error   { color: var(--danger); }
+
+    /* ─── UPLOAD ─────────────────────────────────────── */
+    .upload-opcao { margin-top: 20px; }
+
+    .upload-acoes { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+    .upload-botao {
+      display: inline-block; background: var(--blue); color: #fff;
+      font-weight: 700; padding: 13px 20px; border-radius: 12px;
+      cursor: pointer; font-size: 14px; transition: 0.2s; font-family: inherit;
+    }
+
+    .upload-botao:hover { background: var(--blue-dark); transform: translateY(-1px); }
+
+    .upload-add-botao {
+      width: 46px; height: 46px; border-radius: 12px;
+      background: #fff; border: 2px dashed var(--orange);
+      color: var(--orange); font-size: 26px; font-weight: 700;
+      line-height: 42px; text-align: center; cursor: pointer;
+      display: inline-block; transition: 0.2s;
+    }
+
+    .upload-add-botao:hover { transform: translateY(-1px); background: #fff7ee; }
+
+    .upload-preview { margin-top: 14px; display: flex; gap: 10px; flex-wrap: wrap; }
+
+    .upload-item { position: relative; width: 90px; height: 90px; }
+
+    .upload-item img {
+      width: 100%; height: 100%; object-fit: cover;
+      border-radius: 10px; border: 1px solid #ddd;
+    }
+
+    .upload-remove {
+      position: absolute; top: -8px; right: -8px;
+      width: 24px; height: 24px; border: none; border-radius: 999px;
+      background: #fee2e2; color: #b91c1c; font-size: 13px;
+      font-weight: 700; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    }
+
+    /* ─── TESTIMONIALS ───────────────────────────────── */
+    .testimonials-section {
+      background: #f7fbff;
+      padding: 60px 24px;
+    }
+
+    .testimonials-grid {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .testimonial-card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 24px;
+      position: relative;
+    }
+
+    .testimonial-card::before {
+      content: '"';
+      position: absolute;
+      top: 16px; right: 22px;
+      font-size: 64px;
+      color: var(--cyan);
+      opacity: 0.25;
+      font-family: Georgia, serif;
+      line-height: 1;
+    }
+
+    .testimonial-stars {
+      color: #f59e0b;
+      font-size: 16px;
+      margin-bottom: 12px;
+    }
+
+    .testimonial-text {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 18px;
+    }
+
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .testimonial-avatar {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--blue) 0%, var(--cyan) 100%);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; font-weight: 800; color: #fff; flex-shrink: 0;
+    }
+
+    .testimonial-name { font-size: 14px; font-weight: 700; color: var(--text); }
+    .testimonial-detail { font-size: 12px; color: var(--muted); }
+
+    /* ─── FOOTER ─────────────────────────────────────── */
+    .footer {
+      background: var(--blue-deep);
+      color: rgba(255,255,255,0.65);
+      padding: 40px 24px;
+      text-align: center;
+    }
+
+    .footer-logo-box {
+      display: inline-block;
+      background: rgba(255,255,255,0.12);
+      border-radius: 10px;
+      padding: 5px 14px;
+      font-size: 22px; font-weight: 900;
+      color: #fff; letter-spacing: -0.5px;
+      margin-bottom: 14px;
+    }
+
+    .footer-logo-box span { color: var(--orange); }
+
+    .footer-text {
+      font-size: 14px; line-height: 1.7; max-width: 480px; margin: 0 auto 20px;
+    }
+
+    .footer-labs {
+      display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .footer-lab-pill {
+      font-size: 12px; font-weight: 700;
+      padding: 5px 12px; border-radius: 999px;
+      background: rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.7);
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+
+    .footer-copy { font-size: 13px; color: rgba(255,255,255,0.35); }
+
+    /* ─── RESPONSIVE ─────────────────────────────────── */
+    @media (max-width: 980px) {
+      .benefits-grid { grid-template-columns: 1fr; max-width: 520px; }
+      .testimonials-grid { grid-template-columns: 1fr; max-width: 480px; }
+      .main-grid { grid-template-columns: 1fr; }
+      .stats-strip { grid-template-columns: repeat(3, 1fr); }
+      .grid-2, .cpf-result-grid, .cpf-row, .lab-selector, .selected-card-prices { grid-template-columns: 1fr; }
+      .checkout-actions, .cpf-confirm-actions { flex-direction: column; }
+    }
+
+    @media (max-width: 768px) {
+      .navbar-tagline { display: none; }
+      .hero { padding: 44px 16px 0; }
+      .hero-actions { flex-direction: column; }
+      .btn-hero-primary, .btn-hero-secondary { width: 100%; justify-content: center; }
+      .stats-strip { grid-template-columns: 1fr 1fr; }
+      .stats-strip .stat-item:last-child { grid-column: span 2; }
+      .table-wrap { display: none; }
+      .mobile-selected-list { display: flex; }
+      .card { padding: 18px; }
+      .trust-inner { gap: 12px; }
+      .trust-divider { display: none; }
+    }
+
+    @media (max-width: 480px) {
+      .benefits-grid { grid-template-columns: 1fr; }
+      .stats-strip { grid-template-columns: 1fr; }
+      .stats-strip .stat-item:last-child { grid-column: span 1; }
+      .navbar-cta { font-size: 13px; padding: 8px 14px; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ═══ NAVBAR ══════════════════════════════════════════ -->
+  <nav class="navbar">
+    <a href="#" class="navbar-brand">
+      <div class="navbar-logo-box">Dr<span>App</span></div>
+      <span class="navbar-tagline">Sua Saúde é Nossa Vida</span>
+    </a>
+    <a href="#orcamento" class="navbar-cta">Fazer Orçamento Grátis →</a>
+  </nav>
+
+  <!-- ═══ HERO ═════════════════════════════════════════════ -->
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-eyebrow">
+        <span class="hero-eyebrow-dot"></span>
+        +1.326.000 exames realizados no Brasil
+      </div>
+
+      <h1>Exames nos <em>melhores labs</em><br>do Brasil,<br>a preços especiais.</h1>
+
+      <p class="hero-sub">Hermes Pardini · A+ Medicina Diagnóstica · Grupo Fleury</p>
+
+      <p class="hero-desc">
+        No DrApp você acessa os laboratórios de maior confiança do país com descontos de até 30% — sem assinatura, sem mensalidade, sem taxas escondidas. Você paga apenas o que usar.
+      </p>
+
+      <div class="hero-actions">
+        <a href="#orcamento" class="btn-hero-primary">
+          🔬 Fazer meu orçamento grátis
+        </a>
+        <a href="#beneficios" class="btn-hero-secondary">
+          Ver como funciona ↓
+        </a>
+      </div>
+
+      <div class="stats-strip">
+        <div class="stat-item">
+          <div class="stat-number">+1,3<em>M</em></div>
+          <div class="stat-label">Exames realizados</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">até <em>30%</em></div>
+          <div class="stat-label">de desconto no particular</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number"><em>R$0</em></div>
+          <div class="stat-label">Sem assinaturas ou taxas ocultas</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ TRUST BAR ═════════════════════════════════════════ -->
+  <div class="trust-bar">
+    <div class="trust-inner">
+      <span class="trust-label">Laboratórios parceiros</span>
+      <div class="trust-divider"></div>
+      <div class="trust-logos">
+        <div class="trust-logo-wrap" title="Grupo Fleury">
+          <img src="logo-fleury.png" alt="Grupo Fleury"
+            onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+          <span class="lab-badge-trust fleury" style="display:none;">Grupo Fleury</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <div class="trust-logo-wrap" title="Hermes Pardini — Grupo Fleury">
+            <img src="logo-hermes.png" alt="Hermes Pardini"
+              onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+            <span class="lab-badge-trust hermes" style="display:none;">Hermes Pardini</span>
+          </div>
+          <span style="font-size:11px;color:var(--muted);white-space:nowrap;">Grupo Fleury</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <div class="trust-logo-wrap" title="A+ Medicina Diagnóstica — Grupo Fleury">
+            <img src="logo-aplus.png" alt="A+ Medicina Diagnóstica"
+              onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+            <span class="lab-badge-trust aplus" style="display:none;">A+ Medicina Diagnóstica</span>
+          </div>
+          <span style="font-size:11px;color:var(--muted);white-space:nowrap;">Grupo Fleury</span>
+        </div>
+        <div class="trust-logo-wrap" title="APM">
+          <img src="logo-apm.png" alt="APM"
+            onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+          <span class="lab-badge-trust apm" style="display:none;">APM</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ BENEFITS ══════════════════════════════════════════ -->
+  <section class="benefits-section" id="beneficios">
+    <div class="section-label">Por que escolher o DrApp?</div>
+    <h2 class="section-heading">Economia real.<br><em>Laboratórios de verdade.</em></h2>
+    <p class="section-sub">Sem convênio, sem plano. Exames com resultado garantido nos melhores laboratórios do país.</p>
+
+    <div class="benefits-grid">
+      <div class="benefit-card">
+        <div class="benefit-icon orange">💰</div>
+        <div class="benefit-title">Descontos que fazem diferença</div>
+        <div class="benefit-text">
+          Nossos clientes economizam até 30% em relação ao preço particular. Você vê o preço antes de confirmar — sem surpresas.
+        </div>
+        <div class="benefit-highlight">até 30% off</div>
+      </div>
+
+      <div class="benefit-card">
+        <div class="benefit-icon blue">🏥</div>
+        <div class="benefit-title">Os melhores laboratórios do Brasil</div>
+        <div class="benefit-text">
+          Hermes Pardini, A+ Medicina Diagnóstica e Grupo Fleury — referências nacionais em qualidade diagnóstica, disponíveis para você a preço acessível.
+        </div>
+      </div>
+
+      <div class="benefit-card">
+        <div class="benefit-icon cyan">✅</div>
+        <div class="benefit-title">Pague só o que usar</div>
+        <div class="benefit-text">
+          Sem assinatura, sem mensalidade, sem taxa de adesão. Você monta seu orçamento, confere os valores e só paga pelos exames que escolheu.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ TOOL — ORÇAMENTO ══════════════════════════════════ -->
+  <section class="tool-section" id="orcamento">
+    <div class="tool-section-header">
+      <div class="section-label">Rápido e gratuito</div>
+      <h2 class="section-heading">Monte seu orçamento agora</h2>
+      <p class="section-sub" style="color:rgba(255,255,255,0.7);">Selecione o laboratório, busque seus exames e veja quanto você vai economizar — em segundos.</p>
+    </div>
+
+    <div class="page">
+      <div class="main-grid">
+
+        <!-- ─── LEFT: SEARCH ─────────────────────────── -->
+        <div class="left-column">
+          <div class="card">
+            <h2 class="section-title">Faça seu orçamento</h2>
+            <p class="section-subtitle subtitle-destaque">
+              Selecione o laboratório desejado para começar.
+            </p>
+            <p class="section-subtitle">
+              Escolha um ou ambos os laboratórios para comparar preços e montar seu orçamento.
+            </p>
+
+            <div class="lab-selector-title">Laboratórios disponíveis</div>
+            <div class="lab-selector">
+              <label class="lab-option" data-lab="Hermes Pardini">
+                <input type="checkbox" class="lab-checkbox" value="Hermes Pardini" />
+                <img src="logo-hermes.png" alt="Hermes Pardini" class="lab-logo"
+                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                <div class="lab-fallback" style="display:none;">Hermes</div>
+                <div class="lab-info">
+                  <strong>Hermes Pardini</strong>
+                  <span>Grupo Fleury · Preços especiais DrApp</span>
+                </div>
+              </label>
+
+              <label class="lab-option" data-lab="A+ Medicina Diagnóstica">
+                <input type="checkbox" class="lab-checkbox" value="A+ Medicina Diagnóstica" />
+                <img src="logo-aplus.png" alt="A+ Medicina Diagnóstica" class="lab-logo"
+                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                <div class="lab-fallback" style="display:none;">A+</div>
+                <div class="lab-info">
+                  <strong>A+ Medicina Diagnóstica</strong>
+                  <span>Grupo Fleury · Preços especiais DrApp</span>
+                </div>
+              </label>
+            </div>
+
+            <div class="upload-acoes">
+              <label class="upload-botao">
+                📎 Enviar pedido médico
+                <input type="file" id="uploadPedido" accept="image/*" multiple hidden>
+              </label>
+              <label class="upload-botao" style="background:var(--blue);">
+                📷 Fotografar pedido médico
+                <input type="file" id="uploadFoto" accept="image/*" capture="environment" hidden>
+              </label>
+              <label class="upload-add-botao" title="Adicionar mais arquivos">
+                +
+                <input type="file" id="uploadPedidoMais" accept="image/*" multiple hidden>
+              </label>
+            </div>
+
+            <div id="uploadPreview" class="upload-preview"></div>
+
+            <div class="autocomplete-wrap" style="margin-top:20px;">
+              <input type="text" id="buscaExame" class="autocomplete-input"
+                placeholder="Ou digitar o nome do exame: ex. hemograma, TSH, glicose..." autocomplete="off" />
+              <div id="suggestions" class="suggestions"></div>
+            </div>
+
+            <div id="loadingBox" class="loading-box" style="display:none;">Buscando exames...</div>
+            <div id="errorBox" class="error-box" style="display:none;">Não foi possível consultar os exames agora.</div>
+
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Exame</th>
+                    <th>Particular</th>
+                    <th>DrApp</th>
+                    <th>Desconto</th>
+                    <th>Observações / Preparo</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="selectedTableBody">
+                  <tr>
+                    <td colspan="6" class="empty">
+                      Escolha um laboratório acima e digite o nome do exame para começar seu orçamento.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div id="mobileSelectedList" class="mobile-selected-list"></div>
+          </div>
+
+          <!-- ─── CHECKOUT ───────────────────────────── -->
+          <div id="checkoutCard" class="card checkout-card">
+            <h2 class="section-title">Fechar orçamento</h2>
+            <p class="section-subtitle">Preencha seus dados para concluir a solicitação dos exames escolhidos.</p>
+
+            <div class="grid-2">
+              <div class="field">
+                <label for="cpf">CPF</label>
+                <div class="cpf-row">
+                  <input type="text" id="cpf" placeholder="000.000.000-00" maxlength="14" />
+                  <button id="btnValidarCpf" class="inline-btn" type="button">Validar CPF</button>
+                </div>
+                <div id="cpfError" class="field-error">Informe um CPF válido.</div>
+              </div>
+            </div>
+
+            <div id="cpfStatus" class="cpf-status"></div>
+
+            <div id="cpfResult" class="cpf-result">
+              <div class="cpf-result-title">Confira os dados encontrados</div>
+              <div class="cpf-result-grid">
+                <div class="cpf-result-item">
+                  <div class="cpf-result-label">Nome completo</div>
+                  <div id="cpfNome" class="cpf-result-value">-</div>
+                </div>
+                <div class="cpf-result-item">
+                  <div class="cpf-result-label">Data de nascimento</div>
+                  <div id="cpfNascimento" class="cpf-result-value">-</div>
+                </div>
+              </div>
+              <div class="cpf-confirm-actions">
+                <button id="btnCpfOk" class="cpf-confirm-btn cpf-ok" type="button">✔ Está correto</button>
+                <button id="btnCpfWrong" class="cpf-confirm-btn cpf-wrong" type="button">✗ Não, está errado</button>
+              </div>
+            </div>
+
+            <div class="grid-2" style="margin-top:16px;">
+              <div class="field">
+                <label for="telefone">Telefone / WhatsApp</label>
+                <input type="text" id="telefone" placeholder="(11) 99999-9999" maxlength="15" />
+                <div id="telefoneError" class="field-error">Informe um telefone válido.</div>
+              </div>
+              <div class="field">
+                <label for="email">E-mail</label>
+                <input type="email" id="email" placeholder="voce@exemplo.com.br" />
+                <div id="emailError" class="field-error">Informe um e-mail válido.</div>
+              </div>
+            </div>
+
+            <div class="checkout-actions">
+              <button id="btnVoltarOrçamento" class="secondary-btn" type="button">← Voltar ao Orçamento</button>
+              <button id="btnFinalizar" class="primary-btn" type="button" disabled>Finalizar solicitação →</button>
+            </div>
+
+            <div class="checkout-note">O botão só será liberado após validação e confirmação do CPF.</div>
+          </div>
+        </div>
+
+        <!-- ─── RIGHT: SUMMARY ───────────────────────── -->
+        <div class="right-column">
+          <div class="card">
+            <h2 class="section-title">Resumo da solicitação</h2>
+
+            <div class="summary-box">
+              <div class="summary-row">
+                <span>Total particular</span>
+                <span id="totalParticular">R$ 0,00</span>
+              </div>
+              <div class="summary-row total">
+                <span>Total DrApp</span>
+                <span id="totalDrapp">R$ 0,00</span>
+              </div>
+              <div class="summary-row saving">
+                <span>💰 Você economiza</span>
+                <span id="totalEconomia">R$ 0,00</span>
+              </div>
+            </div>
+
+            <div class="info-box">
+              Revise os exames selecionados antes de seguir para o fechamento.
+            </div>
+
+            <button id="btnContinuar" class="primary-btn" disabled>
+              Continuar para fechar orçamento →
+            </button>
+          </div>
+
+          <!-- TRUST MINI CARD -->
+          <div class="card" style="background: linear-gradient(135deg,#f0f9ff,#e6f3fb); border-color:#cde8f4;">
+            <div style="font-size:13px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:14px;">Por que confiar no DrApp?</div>
+            <ul style="list-style:none;display:flex;flex-direction:column;gap:12px;">
+              <li style="display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--text);line-height:1.5;">
+                <span style="font-size:18px;">🏆</span>
+                <span><strong>+1,3 milhão</strong> de exames já realizados no Brasil</span>
+              </li>
+              <li style="display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--text);line-height:1.5;">
+                <span style="font-size:18px;">🔒</span>
+                <span><strong>Dados protegidos.</strong> Orçamento sigiloso e sem compromisso</span>
+              </li>
+              <li style="display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--text);line-height:1.5;">
+                <span style="font-size:18px;">📲</span>
+                <span>Atendimento e suporte <strong>via WhatsApp</strong> — ágil e humano</span>
+              </li>
+              <li style="display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--text);line-height:1.5;">
+                <span style="font-size:18px;">🚗</span>
+                <span><strong>Coleta em domicílio</strong> disponível — sem taxa de visita</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ TESTIMONIALS ═══════════════════════════════════════ -->
+  <section class="testimonials-section">
+    <div class="section-label">O que nossos pacientes dizem</div>
+    <h2 class="section-heading" style="margin-bottom:8px;">Mais de <em>1 milhão</em> de histórias</h2>
+    <p class="section-sub">Quem usou o DrApp não volta a pagar preço cheio.</p>
+
+    <div class="testimonials-grid">
+      <div class="testimonial-card">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">
+          "Encontrei o DrApp e descobri que posso pagar valores acessíveis em um dos melhores laboratórios do país! Economizei 74% em relação ao que pagava antes."
+        </p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">M</div>
+          <div>
+            <div class="testimonial-name">Mariana S.</div>
+            <div class="testimonial-detail">São Paulo, SP</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial-card">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">
+          "Valor acessível, atendimento excelente. O modo de trabalho via WhatsApp é ótimo — em dois dias do primeiro contato já tinha meu resultado em mãos."
+        </p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">R</div>
+          <div>
+            <div class="testimonial-name">Roberto A.</div>
+            <div class="testimonial-detail">Guarulhos, SP</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial-card">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">
+          "Indicado por minha médica. Fiz todos os exames de rotina com 68% de desconto na Hermes Pardini. Qualidade top e ainda economizei muito. Recomendo demais!"
+        </p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">A</div>
+          <div>
+            <div class="testimonial-name">Ana C.</div>
+            <div class="testimonial-detail">Santo André, SP</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ FOOTER ═════════════════════════════════════════════ -->
+  <footer class="footer">
+    <div class="footer-logo-box">Dr<span>App</span></div>
+    <p class="footer-text">
+      Exames nos melhores laboratórios do Brasil com preços especiais para você e sua família. Sem assinatura, sem mensalidade — só saúde acessível.
+    </p>
+    <div class="footer-labs">
+      <span class="footer-lab-pill">Hermes Pardini</span>
+      <span class="footer-lab-pill">A+ Medicina Diagnóstica</span>
+      <span class="footer-lab-pill">Grupo Fleury</span>
+      <span class="footer-lab-pill">APM</span>
+    </div>
+    <div class="footer-copy">© 2024 DrApp · Todos os direitos reservados · drapp.com.br</div>
+    <div style="margin-top:14px;">
+      <a href="admin.html" style="font-size:12px;color:rgba(255,255,255,0.25);text-decoration:none;" title="Área restrita">· Operação DrApp ·</a>
+    </div>
+  </footer>
+
+
+  <!-- ═══ SCRIPTS (lógica original preservada) ══════════════ -->
+  <script>
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxyeHFlUzJ6sQCEjFdgviwtdpTJ9zwxVipswMIWj1IPzWm00zRBgVFAHy-B0ajaIyNGQg/exec";
+
+    const buscaExame        = document.getElementById("buscaExame");
+    const suggestions       = document.getElementById("suggestions");
+    const selectedTableBody = document.getElementById("selectedTableBody");
+    const mobileSelectedList= document.getElementById("mobileSelectedList");
+    const totalParticular   = document.getElementById("totalParticular");
+    const totalDrapp        = document.getElementById("totalDrapp");
+    const totalEconomia     = document.getElementById("totalEconomia");
+    const btnContinuar      = document.getElementById("btnContinuar");
+    const btnVoltarOrçamento= document.getElementById("btnVoltarOrçamento");
+    const btnFinalizar      = document.getElementById("btnFinalizar");
+    const btnValidarCpf     = document.getElementById("btnValidarCpf");
+    const btnCpfOk          = document.getElementById("btnCpfOk");
+    const btnCpfWrong       = document.getElementById("btnCpfWrong");
+    const loadingBox        = document.getElementById("loadingBox");
+    const errorBox          = document.getElementById("errorBox");
+    const checkoutCard      = document.getElementById("checkoutCard");
+    const labCheckboxes     = Array.from(document.querySelectorAll(".lab-checkbox"));
+    const labOptions        = Array.from(document.querySelectorAll(".lab-option"));
+
+    let imagensPedido = [];
+
+    const cpfInput      = document.getElementById("cpf");
+    const telefoneInput = document.getElementById("telefone");
+    const emailInput    = document.getElementById("email");
+    const cpfError      = document.getElementById("cpfError");
+    const telefoneError = document.getElementById("telefoneError");
+    const emailError    = document.getElementById("emailError");
+    const cpfStatus     = document.getElementById("cpfStatus");
+    const cpfResult     = document.getElementById("cpfResult");
+    const cpfNome       = document.getElementById("cpfNome");
+    const cpfNascimento = document.getElementById("cpfNascimento");
+
+    let selecionados = [];
+    let debounceTimer;
+    let cpfValidado = false;
+    let cpfConfirmado = false;
+    let dadosCpfValidados = null;
+
+    function moeda(valor) {
+      return Number(valor || 0).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+    }
+
+    function percentualDesconto(particular, drapp) {
+      const p = Number(particular || 0), d = Number(drapp || 0);
+      if (!p || p <= d) return 0;
+      return Math.round(((p - d) / p) * 100);
+    }
+
+    function textoSeguro(valor) { return String(valor || "").trim(); }
+
+    function classeLaboratorio(nome) {
+      const texto = String(nome || "").toLowerCase();
+      if (texto.includes("hermes")) return "hermes";
+      if (texto.includes("a+") || texto.includes("medicina diagnóstica")) return "aplus";
+      return "";
+    }
+
+    function formatarNascimento(valor) {
+      if (!valor) return "";
+      const texto = String(valor).trim();
+      if (texto.includes("T")) {
+        const parteData = texto.split("T")[0];
+        if (/^\d{4}-\d{2}-\d{2}$/.test(parteData)) {
+          const [ano, mes, dia] = parteData.split("-");
+          return `${dia}/${mes}/${ano}`;
+        }
+      }
+      if (/^\d{4}-\d{2}-\d{2}$/.test(texto)) {
+        const [ano, mes, dia] = texto.split("-");
+        return `${dia}/${mes}/${ano}`;
+      }
+      if (/^\d{2}\/\d{2}\/\d{4}$/.test(texto)) return texto;
+      return texto;
+    }
+
+    function mostrarLoading(mostrar) { loadingBox.style.display = mostrar ? "block" : "none"; }
+    function mostrarErro(mostrar, mensagem) {
+      errorBox.style.display = mostrar ? "block" : "none";
+      if (mensagem) errorBox.textContent = mensagem;
+    }
+
+    function obterLabsSelecionados() {
+      return labCheckboxes.filter(cb => cb.checked).map(cb => cb.value);
+    }
+
+    function atualizarVisualLabs() {
+      labOptions.forEach(option => {
+        option.classList.toggle("selected", option.querySelector(".lab-checkbox").checked);
+      });
+    }
+
+    function temExamesOuFotos() { return selecionados.length > 0 || imagensPedido.length > 0; }
+
+    function atualizarBotaoContinuar() { btnContinuar.disabled = !temExamesOuFotos(); }
+
+    function atualizarBotoes() {
+      atualizarBotaoContinuar();
+      btnFinalizar.disabled = !(
+        temExamesOuFotos() &&
+        validarTelefone(telefoneInput.value) &&
+        validarEmail(emailInput.value) &&
+        cpfValidado && cpfConfirmado
+      );
+    }
+
+    function mascaraCPF(valor) {
+      return valor.replace(/\D/g,"")
+        .replace(/(\d{3})(\d)/,"$1.$2")
+        .replace(/(\d{3})(\d)/,"$1.$2")
+        .replace(/(\d{3})(\d{1,2})$/,"$1-$2")
+        .slice(0,14);
+    }
+
+    function mascaraTelefone(valor) {
+      valor = valor.replace(/\D/g,"");
+      if (valor.length <= 10) return valor.replace(/(\d{2})(\d)/,"($1) $2").replace(/(\d{4})(\d)/,"$1-$2").slice(0,14);
+      return valor.replace(/(\d{2})(\d)/,"($1) $2").replace(/(\d{5})(\d)/,"$1-$2").slice(0,15);
+    }
+
+    function validarCPF(cpf) {
+      cpf = cpf.replace(/\D/g,"");
+      if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return false;
+      let soma = 0, resto;
+      for (let i = 1; i <= 9; i++) soma += parseInt(cpf[i-1],10) * (11 - i);
+      resto = (soma * 10) % 11;
+      if (resto === 10 || resto === 11) resto = 0;
+      if (resto !== parseInt(cpf[9],10)) return false;
+      soma = 0;
+      for (let i = 1; i <= 10; i++) soma += parseInt(cpf[i-1],10) * (12 - i);
+      resto = (soma * 10) % 11;
+      if (resto === 10 || resto === 11) resto = 0;
+      if (resto !== parseInt(cpf[10],10)) return false;
+      return true;
+    }
+
+    function validarEmail(email) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()); }
+    function validarTelefone(telefone) { const n = telefone.replace(/\D/g,""); return n.length >= 10 && n.length <= 11; }
+
+    function limparValidacaoCpf() {
+      cpfValidado = cpfConfirmado = false;
+      dadosCpfValidados = null;
+      cpfResult.classList.remove("active");
+      cpfNome.textContent = cpfNascimento.textContent = "-";
+      cpfStatus.className = "cpf-status";
+      cpfStatus.textContent = "";
+      atualizarBotoes();
+    }
+
+    function mostrarStatusCpf(texto, tipo) {
+      cpfStatus.textContent = texto;
+      cpfStatus.className = "cpf-status active " + tipo;
+    }
+
+    function agruparPorLaboratorio(lista) {
+      const grupos = {};
+      lista.forEach(item => {
+        const chave = item.laboratorio || "Outros";
+        if (!grupos[chave]) grupos[chave] = [];
+        grupos[chave].push(item);
+      });
+      return grupos;
+    }
+
+    function criarItemSugestao(item) {
+      const div = document.createElement("div");
+      div.className = "suggestion-item";
+      const meta = [];
+      if (item.id) meta.push("SIGLA: " + item.id);
+      if (item.codigo) meta.push("TUSS: " + item.codigo);
+      if (item.categoria) meta.push(item.categoria);
+      div.innerHTML = `
+        <div class="suggestion-main">
+          <div class="suggestion-name">${textoSeguro(item.nome)}</div>
+          <div class="suggestion-meta">${meta.join(" · ")}</div>
+          ${item.laboratorio ? `<div class="suggestion-lab-badge ${classeLaboratorio(item.laboratorio)}">${textoSeguro(item.laboratorio)}</div>` : ""}
+        </div>
+        <div class="suggestion-price">
+          <div class="price-old">${moeda(item.precoParticular)}</div>
+          <div class="price-new">${moeda(item.precoDrapp)}</div>
+        </div>`;
+      div.addEventListener("click", () => adicionarExame(item));
+      return div;
+    }
+
+    function renderSugestoes(lista) {
+      suggestions.innerHTML = "";
+      if (!lista.length) { suggestions.style.display = "none"; return; }
+      const labsSelecionados = obterLabsSelecionados();
+      if (labsSelecionados.length <= 1) {
+        lista.forEach(item => suggestions.appendChild(criarItemSugestao(item)));
+        suggestions.style.display = "block";
+        return;
+      }
+      const grupos = agruparPorLaboratorio(lista);
+      labsSelecionados.forEach(nomeLab => {
+        const itens = grupos[nomeLab] || [];
+        if (!itens.length) return;
+        const grupo = document.createElement("div");
+        grupo.className = "suggestion-group";
+        const header = document.createElement("div");
+        header.className = "suggestion-group-header";
+        header.innerHTML = `<span class="suggestion-group-dot"></span>${textoSeguro(nomeLab)}`;
+        grupo.appendChild(header);
+        itens.forEach(item => grupo.appendChild(criarItemSugestao(item)));
+        suggestions.appendChild(grupo);
+      });
+      suggestions.style.display = "block";
+    }
+
+    async function buscarExamesRemotos(termo) {
+      const labsSelecionados = obterLabsSelecionados();
+      const url = APPS_SCRIPT_URL + "?q=" + encodeURIComponent(termo) + "&labs=" + encodeURIComponent(labsSelecionados.join(","));
+      const response = await fetch(url);
+      if (!response.ok) throw new Error("Falha na resposta da consulta");
+      const produtos = await response.json();
+      if (produtos && produtos.erro) throw new Error(produtos.mensagem || produtos.erro || "Erro retornado pelo Apps Script");
+      return (Array.isArray(produtos) ? produtos : [])
+        .map(item => ({
+          laboratorio: textoSeguro(item.laboratorio),
+          id: textoSeguro(item.id),
+          nome: textoSeguro(item.nome),
+          codigo: textoSeguro(item.codigo),
+          precoParticular: Number(item.precoParticular || 0),
+          precoDrapp: Number(item.precoDrapp || 0),
+          obs: textoSeguro(item.obs),
+          preparo: textoSeguro(item.preparo),
+          categoria: textoSeguro(item.categoria)
+        }))
+        .filter(item => item.nome)
+        .filter(item => !selecionados.some(sel => sel.id === item.id && sel.laboratorio === item.laboratorio));
+    }
+
+    async function consultarCpf(cpfLimpo) {
+      const response = await fetch(APPS_SCRIPT_URL + "?action=cpf&cpf=" + encodeURIComponent(cpfLimpo));
+      if (!response.ok) throw new Error("Erro ao consultar CPF");
+      const data = await response.json();
+      if (!data.sucesso) throw new Error(data.mensagem || "CPF não encontrado");
+      return {
+        nome: data.nome,
+        nascimento: formatarNascimento(data.nascimento),
+        origem: data.origem || "",
+        negocioId: data.negocioId || "",
+        contactId: data.contactId || ""
+      };
+    }
+
+    function adicionarExame(exame) {
+      if (selecionados.some(i => i.id === exame.id && i.laboratorio === exame.laboratorio)) return;
+      selecionados.push(exame);
+      buscaExame.value = "";
+      suggestions.style.display = "none";
+      suggestions.innerHTML = "";
+      renderTabela();
+      atualizarResumo();
+      atualizarBotaoContinuar();
+      atualizarBotoes();
+    }
+
+    function removerExame(id, laboratorio) {
+      selecionados = selecionados.filter(i => !(i.id === id && i.laboratorio === laboratorio));
+      renderTabela();
+      atualizarResumo();
+      atualizarBotaoContinuar();
+      atualizarBotoes();
+      if (!selecionados.length) checkoutCard.classList.remove("active");
+    }
+
+    function montarBlocoInfo(item) {
+      const partes = [];
+      if (item.obs) partes.push("<strong>Obs:</strong> " + item.obs);
+      if (item.preparo) partes.push("<strong>Preparo:</strong> " + item.preparo);
+      if (!partes.length) partes.push("Orientação de preparo a confirmar.");
+      return partes.join("<br>");
+    }
+
+    function renderTabela() {
+      if (!selecionados.length) {
+        selectedTableBody.innerHTML = `<tr><td colspan="6" class="empty">Escolha um laboratório e adicione exames para montar seu orçamento.</td></tr>`;
+        mobileSelectedList.innerHTML = "";
+        atualizarBotaoContinuar();
+        return;
+      }
+      selectedTableBody.innerHTML = "";
+      mobileSelectedList.innerHTML = "";
+      selecionados.forEach(item => {
+        const rid = encodeURIComponent(item.id);
+        const rlab = encodeURIComponent(item.laboratorio || "");
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>
+            <div class="exam-name">${textoSeguro(item.nome)}</div>
+            <div class="exam-code">${item.id ? "SIGLA: " + item.id : ""}${item.codigo ? " · TUSS: " + item.codigo : ""}${item.categoria ? " · " + item.categoria : ""}</div>
+            ${item.laboratorio ? `<div class="lab-pill ${classeLaboratorio(item.laboratorio)}">${textoSeguro(item.laboratorio)}</div>` : ""}
+          </td>
+          <td style="color:#94a3b8;text-decoration:line-through;">${moeda(item.precoParticular)}</td>
+          <td style="font-weight:800;color:var(--text);">${moeda(item.precoDrapp)}</td>
+          <td><span class="discount-badge">${percentualDesconto(item.precoParticular, item.precoDrapp)}%</span></td>
+          <td class="exam-info">${montarBlocoInfo(item)}</td>
+          <td><button type="button" class="remove-btn" onclick="removerExameDecode('${rid}','${rlab}')">Remover</button></td>`;
+        selectedTableBody.appendChild(tr);
+
+        const card = document.createElement("div");
+        card.className = "selected-card";
+        card.innerHTML = `
+          <div class="selected-card-header">
+            <div>
+              <div class="exam-name">${textoSeguro(item.nome)}</div>
+              <div class="exam-code">${item.id ? "SIGLA: " + item.id : ""}${item.codigo ? " · TUSS: " + item.codigo : ""}${item.categoria ? " · " + item.categoria : ""}</div>
+              ${item.laboratorio ? `<div class="lab-pill ${classeLaboratorio(item.laboratorio)}">${textoSeguro(item.laboratorio)}</div>` : ""}
+            </div>
+            <button type="button" class="remove-btn" onclick="removerExameDecode('${rid}','${rlab}')">Remover</button>
+          </div>
+          <div class="selected-card-prices">
+            <div class="selected-price-box">
+              <div class="selected-price-label">Preço particular</div>
+              <div class="selected-price-value old">${moeda(item.precoParticular)}</div>
+            </div>
+            <div class="selected-price-box">
+              <div class="selected-price-label">Preço DrApp</div>
+              <div class="selected-price-value">${moeda(item.precoDrapp)}</div>
+            </div>
+          </div>
+          <div style="margin-top:8px;"><span class="discount-badge">${percentualDesconto(item.precoParticular, item.precoDrapp)}%</span></div>
+          <div class="selected-card-info">${montarBlocoInfo(item)}</div>`;
+        mobileSelectedList.appendChild(card);
+      });
+      atualizarBotaoContinuar();
+    }
+
+    function atualizarResumo() {
+      const sp = selecionados.reduce((a,i) => a + Number(i.precoParticular||0), 0);
+      const sd = selecionados.reduce((a,i) => a + Number(i.precoDrapp||0), 0);
+      totalParticular.textContent = moeda(sp);
+      totalDrapp.textContent      = moeda(sd);
+      totalEconomia.textContent   = moeda(sp - sd);
+    }
+
+    function limparErrosFormulario() {
+      cpfError.style.display = telefoneError.style.display = emailError.style.display = "none";
+    }
+
+    function validarFormularioBase() {
+      limparErrosFormulario();
+      let valido = true;
+      if (!validarCPF(cpfInput.value))         { cpfError.style.display = "block"; valido = false; }
+      if (!validarTelefone(telefoneInput.value)) { telefoneError.style.display = "block"; valido = false; }
+      if (!validarEmail(emailInput.value))       { emailError.style.display = "block"; valido = false; }
+      return valido;
+    }
+
+    function validarSomenteCpf() {
+      cpfError.style.display = "none";
+      if (!validarCPF(cpfInput.value)) { cpfError.style.display = "block"; return false; }
+      return true;
+    }
+
+    // ─── EVENTS ──────────────────────────────────────────────
+    buscaExame.addEventListener("input", function () {
+      const termo = this.value.trim();
+      clearTimeout(debounceTimer);
+      mostrarErro(false);
+      if (termo.length < 2) { suggestions.style.display = "none"; suggestions.innerHTML = ""; mostrarLoading(false); return; }
+      if (obterLabsSelecionados().length === 0) {
+        suggestions.style.display = "none"; suggestions.innerHTML = "";
+        mostrarLoading(false);
+        mostrarErro(true, "Selecione pelo menos um laboratório para pesquisar.");
+        return;
+      }
+      debounceTimer = setTimeout(async () => {
+        try {
+          mostrarLoading(true);
+          const resultados = await buscarExamesRemotos(termo);
+          mostrarLoading(false);
+          renderSugestoes(resultados);
+          if (!resultados.length) suggestions.style.display = "none";
+        } catch (erro) {
+          suggestions.style.display = "none"; suggestions.innerHTML = "";
+          mostrarLoading(false);
+          mostrarErro(true, erro.message || "Não foi possível consultar os exames agora.");
+        }
+      }, 300);
+    });
+
+    document.addEventListener("click", e => {
+      if (!e.target.closest(".autocomplete-wrap")) suggestions.style.display = "none";
+    });
+
+    labCheckboxes.forEach(cb => {
+      cb.addEventListener("change", () => {
+        atualizarVisualLabs();
+        mostrarErro(false);
+        if (obterLabsSelecionados().length === 0) {
+          suggestions.style.display = "none"; suggestions.innerHTML = "";
+          mostrarErro(true, "Selecione pelo menos um laboratório para pesquisar.");
+        }
+      });
+    });
+
+    cpfInput.addEventListener("input", function () {
+      this.value = mascaraCPF(this.value);
+      cpfError.style.display = "none";
+      limparValidacaoCpf();
+    });
+
+    telefoneInput.addEventListener("input", function () {
+      this.value = mascaraTelefone(this.value);
+      telefoneError.style.display = "none";
+      atualizarBotoes();
+    });
+
+    emailInput.addEventListener("input", function () {
+      emailError.style.display = "none";
+      atualizarBotoes();
+    });
+
+    btnContinuar.addEventListener("click", function () {
+      if (!temExamesOuFotos()) return;
+      checkoutCard.classList.add("active");
+      checkoutCard.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+
+    btnVoltarOrçamento.addEventListener("click", function () {
+      checkoutCard.classList.remove("active");
+      buscaExame.focus();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    btnValidarCpf.addEventListener("click", async function () {
+      if (!validarSomenteCpf()) return;
+      const cpfLimpo = cpfInput.value.replace(/\D/g,"");
+      try {
+        btnValidarCpf.disabled = true;
+        btnValidarCpf.textContent = "Validando...";
+        limparValidacaoCpf();
+        mostrarStatusCpf("Consultando dados do CPF...", "success");
+        const dados = await consultarCpf(cpfLimpo);
+        if (!dados || !dados.nome) throw new Error("Não foi possível localizar dados para este CPF.");
+        dadosCpfValidados = dados;
+        cpfValidado = true; cpfConfirmado = false;
+        cpfNome.textContent = dados.nome || "-";
+        cpfNascimento.textContent = dados.nascimento || "-";
+        cpfResult.classList.add("active");
+        if (dados.origem === "bitrix") mostrarStatusCpf("✔ Dados encontrados em nosso sistema", "success");
+        else if (dados.origem === "hub") mostrarStatusCpf("✔ Dados encontrados em base externa", "success");
+        else mostrarStatusCpf("Confira os dados encontrados e confirme se estão corretos.", "success");
+        atualizarBotoes();
+      } catch (erro) {
+        cpfValidado = cpfConfirmado = false;
+        dadosCpfValidados = null;
+        cpfResult.classList.remove("active");
+        mostrarStatusCpf(erro.message || "Não foi possível validar o CPF.", "error");
+        atualizarBotoes();
+      } finally {
+        btnValidarCpf.disabled = false;
+        btnValidarCpf.textContent = "Validar CPF";
+      }
+    });
+
+    btnCpfOk.addEventListener("click", function () {
+      cpfConfirmado = true;
+      mostrarStatusCpf("Dados confirmados com sucesso.", "success");
+      atualizarBotoes();
+    });
+
+    btnCpfWrong.addEventListener("click", function () {
+      cpfConfirmado = false;
+      mostrarStatusCpf("Os dados foram marcados como incorretos. Revise o CPF ou siga com atendimento manual.", "error");
+      atualizarBotoes();
+    });
+
+    btnFinalizar.addEventListener("click", async function () {
+      if (!validarFormularioBase()) return;
+      if (!cpfValidado || !cpfConfirmado) return;
+
+      btnFinalizar.disabled = true;
+      btnFinalizar.textContent = "Enviando...";
+
+      const payload = {
+        action: "criarPedido",
+        contactId: dadosCpfValidados ? dadosCpfValidados.contactId : "",
+        paciente: {
+          cpf: cpfInput.value.trim(),
+          telefone: telefoneInput.value.trim(),
+          email: emailInput.value.trim(),
+          nome_completo_validado: dadosCpfValidados ? dadosCpfValidados.nome : "",
+          data_nascimento_validada: dadosCpfValidados ? dadosCpfValidados.nascimento : "",
+          origem_validacao: dadosCpfValidados ? dadosCpfValidados.origem : "",
+          negocio_id_bitrix: dadosCpfValidados ? dadosCpfValidados.negocioId : ""
+        },
+        exames: selecionados.map(item => ({
+          laboratorio: item.laboratorio || "",
+          sigla: item.id, descricao: item.nome, tuss: item.codigo,
+          particular: item.precoParticular, drapp: item.precoDrapp,
+          obs: item.obs, preparo: item.preparo, categoria: item.categoria
+        })),
+        fotos: imagensPedido.map(img => ({
+          nome: img.file.name,
+          base64: img.preview.split(",")[1]
+        }))
+      };
+
+      try {
+        const resp = await fetch(APPS_SCRIPT_URL, {
+          method: "POST",
+          body: JSON.stringify(payload)
+        });
+        const data = await resp.json();
+
+        if (data.sucesso || data.ok) {
+          checkoutCard.innerHTML = `
+            <div style="text-align:center;padding:40px 20px;">
+              <div style="font-size:48px;margin-bottom:16px;">✅</div>
+              <h3 style="color:var(--primary);margin-bottom:8px;">Pedido enviado com sucesso!</h3>
+              <p style="color:var(--muted);">Nossa equipe entrará em contato em breve pelo WhatsApp ou e-mail informado.</p>
+            </div>`;
+        } else {
+          throw new Error(data.mensagem || data.erro || "Erro desconhecido");
+        }
+      } catch (err) {
+        mostrarStatusCpf("Erro ao enviar pedido: " + err.message, "error");
+        btnFinalizar.disabled = false;
+        btnFinalizar.textContent = "Finalizar solicitação";
+      }
+    });
+
+    function removerExameDecode(id, laboratorio) {
+      removerExame(decodeURIComponent(id), decodeURIComponent(laboratorio));
+    }
+
+    atualizarVisualLabs();
+    atualizarBotaoContinuar();
+    atualizarBotoes();
+    window.removerExameDecode = removerExameDecode;
+
+    // ─── UPLOAD ───────────────────────────────────────────────
+    const uploadInput     = document.getElementById("uploadPedido");
+    const uploadInputMais = document.getElementById("uploadPedidoMais");
+    const uploadPreview   = document.getElementById("uploadPreview");
+
+    function renderUploadPreview() {
+      uploadPreview.innerHTML = "";
+      imagensPedido.forEach((fileObj, index) => {
+        const item = document.createElement("div");
+        item.className = "upload-item";
+        const img = document.createElement("img");
+        img.src = fileObj.preview;
+        const removeBtn = document.createElement("button");
+        removeBtn.type = "button";
+        removeBtn.className = "upload-remove";
+        removeBtn.innerHTML = "✕";
+        removeBtn.title = "Excluir arquivo";
+        removeBtn.addEventListener("click", () => { imagensPedido.splice(index, 1); renderUploadPreview(); atualizarBotaoContinuar(); atualizarBotoes(); });
+        item.appendChild(img);
+        item.appendChild(removeBtn);
+        uploadPreview.appendChild(item);
+      });
+    }
+
+    function processarArquivos(files) {
+      files.forEach(file => {
+        if (!file.type.startsWith("image/")) return;
+        const reader = new FileReader();
+        reader.onload = e => {
+          imagensPedido.push({ file, preview: e.target.result });
+          renderUploadPreview();
+          atualizarBotaoContinuar();
+          atualizarBotoes();
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    const uploadFoto = document.getElementById("uploadFoto");
+
+    uploadInput.addEventListener("change", function () { processarArquivos(Array.from(this.files)); this.value = ""; });
+    uploadInputMais.addEventListener("change", function () { processarArquivos(Array.from(this.files)); this.value = ""; });
+    uploadFoto.addEventListener("change", function () { processarArquivos(Array.from(this.files)); this.value = ""; });
+  </script>
+</body>
+</html>

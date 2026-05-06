@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DrApp · Operação</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue:      #006dc7;
+      --blue-dark: #004e93;
+      --blue-deep: #003570;
+      --cyan:      #51c9d2;
+      --orange:    #f58319;
+      --white:     #ffffff;
+      --text:      #16324a;
+      --muted:     #5f7487;
+      --line:      #d9e5ee;
+      --bg:        #f0f6fb;
+      --danger:    #b91c1c;
+      --success:   #166534;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', Arial, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    /* ════════════════════════════════════════════════════
+       LOGIN
+    ════════════════════════════════════════════════════ */
+    #viewLogin {
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(145deg, var(--blue-deep), var(--blue));
+      padding: 24px;
+    }
+
+    .login-card {
+      background: #fff; border-radius: 24px;
+      padding: 44px 40px; width: 100%; max-width: 400px;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.28);
+    }
+
+    .login-logo {
+      display: inline-block; background: var(--blue-deep);
+      border-radius: 12px; padding: 8px 16px;
+      font-size: 26px; font-weight: 900; color: #fff;
+      letter-spacing: -0.5px; margin-bottom: 6px;
+    }
+    .login-logo span { color: var(--orange); }
+
+    .login-area { font-size: 13px; color: var(--muted); font-weight: 600; margin-bottom: 32px; }
+
+    .login-field { display: flex; flex-direction: column; gap: 7px; margin-bottom: 18px; }
+    .login-field label { font-size: 13px; font-weight: 700; color: var(--text); }
+    .login-field input {
+      height: 50px; border-radius: 12px;
+      border: 1.5px solid var(--line); padding: 0 16px;
+      font-size: 15px; outline: none; font-family: inherit;
+      color: var(--text);
+      transition: border-color 0.18s, box-shadow 0.18s;
+    }
+    .login-field input:focus { border-color: var(--cyan); box-shadow: 0 0 0 4px rgba(81,201,210,0.18); }
+
+    .login-btn {
+      width: 100%; height: 52px; background: var(--blue); color: #fff;
+      border: none; border-radius: 12px; font-size: 16px; font-weight: 700;
+      cursor: pointer; font-family: inherit; margin-top: 4px;
+      transition: background 0.18s, transform 0.15s;
+    }
+    .login-btn:hover { background: var(--blue-dark); transform: translateY(-1px); }
+
+    .login-error {
+      margin-top: 14px; padding: 12px 14px;
+      background: #fee2e2; border: 1px solid #fecaca;
+      border-radius: 10px; font-size: 14px; color: var(--danger);
+      font-weight: 600; display: none;
+    }
+
+    /* ════════════════════════════════════════════════════
+       DASHBOARD
+    ════════════════════════════════════════════════════ */
+    #viewDashboard { display: none; }
+
+    /* ── Navbar ────────────────────────────────────────── */
+    .navbar {
+      background: var(--blue-deep); height: 64px; padding: 0 28px;
+      display: flex; align-items: center; justify-content: space-between;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.2); position: sticky; top: 0; z-index: 50;
+    }
+    .navbar-brand { display: flex; align-items: center; gap: 10px; }
+    .nb-logo {
+      background: #fff; border-radius: 10px; padding: 5px 11px;
+      font-size: 19px; font-weight: 900; color: var(--blue); letter-spacing: -0.5px;
+    }
+    .nb-logo span { color: var(--orange); }
+    .nb-section { font-size: 13px; color: rgba(255,255,255,0.55); font-weight: 600; }
+    .nb-right { display: flex; align-items: center; gap: 16px; }
+    .nb-user { font-size: 13px; color: rgba(255,255,255,0.55); font-weight: 500; }
+    .nb-site { font-size: 13px; color: rgba(255,255,255,0.5); text-decoration: none; transition: color 0.18s; }
+    .nb-site:hover { color: #fff; }
+    .nb-logout {
+      background: rgba(255,255,255,0.12); color: #fff;
+      border: 1px solid rgba(255,255,255,0.2); border-radius: 8px;
+      padding: 8px 16px; font-size: 13px; font-weight: 600;
+      cursor: pointer; font-family: inherit; transition: background 0.18s;
+    }
+    .nb-logout:hover { background: rgba(255,255,255,0.22); }
+
+    /* ── Layout ─────────────────────────────────────────── */
+    .dash-layout {
+      display: grid; grid-template-columns: 240px 1fr;
+      min-height: calc(100vh - 64px);
+    }
+
+    /* ── Sidebar ─────────────────────────────────────────── */
+    .sidebar {
+      background: #fff; border-right: 1px solid var(--line);
+      padding: 24px 0; position: sticky; top: 64px;
+      height: calc(100vh - 64px); overflow-y: auto;
+    }
+
+    .sidebar-title {
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 1px; color: var(--muted); padding: 0 20px 10px;
+    }
+
+    .sidebar-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 11px 20px; font-size: 14px; font-weight: 600;
+      color: var(--text); cursor: pointer; border-left: 3px solid transparent;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+      text-decoration: none;
+    }
+    .sidebar-item:hover { background: #f0f6fb; color: var(--blue); }
+    .sidebar-item.active { background: #edf5fd; color: var(--blue); border-left-color: var(--blue); }
+    .sidebar-item .icon { font-size: 17px; width: 22px; text-align: center; }
+
+    .sidebar-sep { height: 1px; background: var(--line); margin: 14px 20px; }
+
+    /* ── Content area ───────────────────────────────────── */
+    .dash-content { padding: 32px 36px 60px; }
+
+    .page-header { margin-bottom: 28px; }
+    .page-header h1 { font-size: 24px; font-weight: 900; color: var(--text); margin-bottom: 4px; }
+    .page-header p  { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+    /* ── Views dentro do dashboard ──────────────────────── */
+    .dash-view { display: none; }
+    .dash-view.active { display: block; }
+
+    /* ════════════════════════════════════════════════════
+       CARDS / COMPONENTES
+    ════════════════════════════════════════════════════ */
+    .card {
+      background: #fff; border-radius: 18px;
+      border: 1px solid var(--line); padding: 26px 28px;
+      margin-bottom: 20px;
+    }
+
+    .card-title {
+      font-size: 16px; font-weight: 800; color: var(--text);
+      margin-bottom: 4px; display: flex; align-items: center; gap: 8px;
+    }
+
+    .card-sub { font-size: 13px; color: var(--muted); margin-bottom: 20px; line-height: 1.5; }
+
+    /* ── Form ─────────────────────────────────────────── */
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+    .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+
+    .field { display: flex; flex-direction: column; gap: 7px; }
+    .field label { font-size: 13px; font-weight: 700; color: var(--text); }
+    .field input, .field select, .field textarea {
+      border-radius: 11px; border: 1.5px solid var(--line);
+      padding: 0 14px; font-size: 14px; outline: none;
+      font-family: inherit; color: var(--text); background: #fff;
+      transition: border-color 0.18s, box-shadow 0.18s;
+    }
+    .field input, .field select { height: 46px; }
+    .field textarea { padding: 12px 14px; resize: vertical; height: 80px; }
+    .field input:focus, .field select:focus, .field textarea:focus {
+      border-color: var(--cyan); box-shadow: 0 0 0 4px rgba(81,201,210,0.18);
+    }
+
+    /* ── Buttons ─────────────────────────────────────── */
+    .btn {
+      border: none; border-radius: 11px; font-family: inherit;
+      font-weight: 700; cursor: pointer; transition: 0.18s;
+      display: inline-flex; align-items: center; gap: 7px;
+    }
+    .btn-primary   { background: var(--orange); color: #fff; font-size: 14px; padding: 12px 22px; box-shadow: 0 4px 14px rgba(245,131,25,0.3); }
+    .btn-primary:hover:not(:disabled)   { background: #d96a08; transform: translateY(-1px); }
+    .btn-secondary { background: #dcebf6; color: var(--text); font-size: 14px; padding: 12px 20px; }
+    .btn-secondary:hover { background: #c9def2; }
+    .btn-danger    { background: #fee2e2; color: var(--danger); font-size: 13px; padding: 8px 14px; }
+    .btn-danger:hover { background: #fecaca; }
+    .btn-sm        { font-size: 13px; padding: 8px 16px; border-radius: 9px; }
+    .btn-full      { width: 100%; justify-content: center; }
+    .btn:disabled  { background: #b8c3cf; cursor: not-allowed; box-shadow: none; transform: none; color: #fff; }
+
+    /* ── Lab cards (lista) ──────────────────────────── */
+    .labs-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px; margin-bottom: 24px;
+    }
+
+    .lab-card {
+      border: 1.5px solid var(--line); border-radius: 16px;
+      background: #fff; padding: 20px;
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+    .lab-card:hover { box-shadow: 0 8px 24px rgba(0,109,199,0.1); transform: translateY(-2px); }
+
+    .lab-card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+
+    .lab-card-name { font-size: 15px; font-weight: 800; color: var(--text); }
+    .lab-card-group { font-size: 12px; color: var(--muted); margin-top: 3px; }
+
+    .lab-card-badge {
+      padding: 4px 10px; border-radius: 999px;
+      font-size: 11px; font-weight: 700;
+    }
+    .badge-ativo   { background: #dcfce7; color: var(--success); }
+    .badge-inativo { background: #f1f5f9; color: var(--muted); }
+
+    .lab-card-meta { font-size: 13px; color: var(--muted); margin-bottom: 14px; line-height: 1.6; }
+
+    .lab-card-actions { display: flex; gap: 8px; }
+
+    /* ── Upload dropzone ─────────────────────────────── */
+    .dropzone {
+      border: 2px dashed var(--line); border-radius: 14px;
+      padding: 32px 20px; text-align: center; cursor: pointer;
+      background: #fafcfe; position: relative;
+      transition: border-color 0.18s, background 0.18s;
+    }
+    .dropzone:hover, .dropzone.dragover { border-color: var(--cyan); background: #f0fbfc; }
+    .dropzone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+    .dropzone-icon { font-size: 36px; margin-bottom: 10px; }
+    .dropzone-title { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .dropzone-sub { font-size: 13px; color: var(--muted); }
+
+    .file-selected {
+      display: none; margin-top: 12px;
+      background: #f0fbfc; border: 1px solid #caedf0;
+      border-radius: 12px; padding: 12px 16px;
+      align-items: center; gap: 12px;
+    }
+    .file-selected.show { display: flex; }
+    .file-name-text { font-size: 14px; font-weight: 700; color: var(--text); }
+    .file-size-text { font-size: 12px; color: var(--muted); }
+    .file-remove { margin-left: auto; background: #fee2e2; color: var(--danger); border: none; border-radius: 8px; padding: 6px 10px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; }
+
+    /* ── Mapping ─────────────────────────────────────── */
+    .mapping-box {
+      display: none; margin-top: 20px;
+      background: #f8fafc; border: 1px solid var(--line);
+      border-radius: 14px; padding: 20px;
+    }
+    .mapping-box.show { display: block; }
+    .mapping-box-title { font-size: 14px; font-weight: 800; color: var(--text); margin-bottom: 14px; }
+    .mapping-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+
+    /* ── Preview ─────────────────────────────────────── */
+    .preview-box { display: none; margin-top: 16px; }
+    .preview-box.show { display: block; }
+    .preview-title { font-size: 14px; font-weight: 800; color: var(--text); margin-bottom: 10px; }
+    .preview-wrap { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; overflow-x: auto; }
+    .preview-tbl { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 500px; }
+    .preview-tbl thead { background: #eff7fb; }
+    .preview-tbl th, .preview-tbl td { padding: 9px 12px; text-align: left; border-bottom: 1px solid #eef2f7; }
+    .preview-tbl th { font-weight: 700; color: var(--muted); font-size: 12px; }
+    .preview-tbl tbody tr:last-child td { border-bottom: none; }
+    .preview-count { margin-top: 8px; font-size: 13px; color: var(--muted); }
+
+    /* ── Alerts ─────────────────────────────────────── */
+    .alert {
+      padding: 14px 16px; border-radius: 12px;
+      font-size: 14px; font-weight: 600; line-height: 1.5;
+      display: none; align-items: flex-start; gap: 10px; margin-top: 16px;
+    }
+    .alert.show { display: flex; }
+    .alert.success { background: #dcfce7; color: var(--success); border: 1px solid #bbf7d0; }
+    .alert.error   { background: #fee2e2; color: var(--danger);  border: 1px solid #fecaca; }
+    .alert.info    { background: #eff7fb; color: #2d5c78;        border: 1px solid #cde8f4; }
+
+    /* ── Table ───────────────────────────────────────── */
+    .data-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .data-table th {
+      color: var(--muted); font-size: 12px; font-weight: 700;
+      padding: 0 14px 12px; text-align: left;
+      text-transform: uppercase; letter-spacing: 0.5px;
+      border-bottom: 1px solid var(--line);
+    }
+    .data-table td { padding: 13px 14px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+    .data-table tbody tr:last-child td { border-bottom: none; }
+    .data-table tbody tr:hover td { background: #f8fafc; }
+
+    /* ── Senha section ───────────────────────────────── */
+    .senha-result {
+      display: none; margin-top: 14px;
+      padding: 12px 16px; border-radius: 12px;
+      font-size: 14px; font-weight: 600;
+    }
+    .senha-result.ok   { display: block; background: #dcfce7; color: var(--success); border: 1px solid #bbf7d0; }
+    .senha-result.erro { display: block; background: #fee2e2; color: var(--danger);  border: 1px solid #fecaca; }
+
+    /* ── Empty state ─────────────────────────────────── */
+    .empty-state { text-align: center; padding: 40px 20px; color: var(--muted); }
+    .empty-state .empty-icon { font-size: 44px; margin-bottom: 12px; }
+    .empty-state p { font-size: 15px; }
+
+    /* ── Responsive ─────────────────────────────────── */
+    @media (max-width: 900px) {
+      .dash-layout { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .dash-content { padding: 20px 16px 40px; }
+      .form-row, .form-row-3 { grid-template-columns: 1fr; }
+      .mapping-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ════════════ VIEW: LOGIN ════════════ -->
+  <div id="viewLogin">
+    <div class="login-card">
+      <div class="login-logo">Dr<span>App</span></div>
+      <p class="login-area">Área Operacional · Gestão de Laboratórios</p>
+
+      <div class="login-field">
+        <label for="loginEmail">E-mail</label>
+        <input type="text" id="loginEmail" placeholder="paula@drapp.com.br"
+               autocomplete="off" spellcheck="false" autocapitalize="none" />
+      </div>
+      <div class="login-field">
+        <label for="loginSenha">Senha</label>
+        <input type="password" id="loginSenha" placeholder="••••••••" />
+      </div>
+
+      <button class="login-btn" id="btnEntrar">Entrar</button>
+      <div class="login-error" id="loginErro">E-mail ou senha incorretos. Tente novamente.</div>
+    </div>
+  </div>
+
+  <!-- ════════════ VIEW: DASHBOARD ════════════ -->
+  <div id="viewDashboard">
+
+    <!-- Navbar -->
+    <nav class="navbar">
+      <div class="navbar-brand">
+        <div class="nb-logo">Dr<span>App</span></div>
+        <span class="nb-section">· Operação</span>
+      </div>
+      <div class="nb-right">
+        <span class="nb-user" id="nbUser"></span>
+        <a href="index.html" class="nb-site">← Ver site</a>
+        <button class="nb-logout" id="btnSair">Sair</button>
+      </div>
+    </nav>
+
+    <div class="dash-layout">
+
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="sidebar-title">Menu</div>
+        <a class="sidebar-item active" data-view="viewLabs" onclick="trocarView('viewLabs', this)">
+          <span class="icon">🏥</span> Laboratórios
+        </a>
+        <a class="sidebar-item" data-view="viewUpload" onclick="trocarView('viewUpload', this)">
+          <span class="icon">📤</span> Subir Tabela
+        </a>
+        <a class="sidebar-item" data-view="viewHistorico" onclick="trocarView('viewHistorico', this)">
+          <span class="icon">📋</span> Histórico
+        </a>
+        <div class="sidebar-sep"></div>
+        <a class="sidebar-item" data-view="viewSenha" onclick="trocarView('viewSenha', this)">
+          <span class="icon">🔑</span> Alterar Senha
+        </a>
+      </aside>
+
+      <!-- Content -->
+      <main class="dash-content">
+
+        <!-- ─── VIEW: LABORATÓRIOS ─────────────────── -->
+        <div id="viewLabs" class="dash-view active">
+          <div class="page-header">
+            <h1>🏥 Laboratórios</h1>
+            <p>Gerencie os laboratórios parceiros. Cada laboratório pode ter sua própria tabela de preços.</p>
+          </div>
+
+          <!-- Form criar lab -->
+          <div class="card">
+            <div class="card-title">➕ Criar novo laboratório</div>
+            <p class="card-sub">Adicione um novo laboratório parceiro ao sistema.</p>
+
+            <div class="form-row">
+              <div class="field">
+                <label>Nome do laboratório *</label>
+                <input type="text" id="novoLabNome" placeholder="Ex: Hermes Pardini" />
+              </div>
+              <div class="field">
+                <label>Grupo / Rede</label>
+                <input type="text" id="novoLabGrupo" placeholder="Ex: Grupo Fleury" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="field">
+                <label>Cidade / Estado</label>
+                <input type="text" id="novoLabCidade" placeholder="Ex: São Paulo, SP" />
+              </div>
+              <div class="field">
+                <label>Status</label>
+                <select id="novoLabStatus">
+                  <option value="ativo">Ativo</option>
+                  <option value="inativo">Inativo</option>
+                </select>
+              </div>
+            </div>
+            <div class="field" style="margin-bottom:20px;">
+              <label>Observações</label>
+              <textarea id="novoLabObs" placeholder="Informações adicionais sobre o laboratório..."></textarea>
+            </div>
+
+            <button class="btn btn-primary" id="btnCriarLab">➕ Criar laboratório</button>
+            <div class="alert" id="alertCriarLab"></div>
+          </div>
+
+          <!-- Lista de labs -->
+          <div class="card">
+            <div class="card-title">📋 Laboratórios cadastrados</div>
+            <p class="card-sub">Clique em "Subir Tabela" para enviar os preços de cada laboratório.</p>
+            <div class="labs-grid" id="labsGrid">
+              <div class="empty-state">
+                <div class="empty-icon">🏥</div>
+                <p>Nenhum laboratório cadastrado ainda.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ─── VIEW: SUBIR TABELA ─────────────────── -->
+        <div id="viewUpload" class="dash-view">
+          <div class="page-header">
+            <h1>📤 Subir Tabela de Preços</h1>
+            <p>Selecione o laboratório, envie o arquivo e mapeie as colunas antes de confirmar.</p>
+          </div>
+
+          <div class="card">
+            <div class="card-title">1 · Selecione o laboratório</div>
+            <div class="field" style="max-width:400px;margin-bottom:0;">
+              <label>Laboratório *</label>
+              <select id="uploadLabSelect">
+                <option value="">— Selecione —</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">2 · Versão / Competência</div>
+            <div class="field" style="max-width:320px;margin-bottom:0;">
+              <label>Versão</label>
+              <input type="text" id="uploadVersao" placeholder="Ex: Maio/2025, v3.1..." />
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">3 · Arquivo da tabela</div>
+            <p class="card-sub">Formatos aceitos: <strong>.CSV</strong> (separado por vírgula ou ponto-e-vírgula) ou <strong>.XLSX</strong>.</p>
+
+            <div class="dropzone" id="dropzone">
+              <input type="file" id="fileInput" accept=".csv,.xlsx,.xls" />
+              <div class="dropzone-icon">📂</div>
+              <div class="dropzone-title">Clique para selecionar ou arraste o arquivo aqui</div>
+              <div class="dropzone-sub">.CSV · .XLSX · .XLS</div>
+            </div>
+
+            <div class="file-selected" id="fileSelected">
+              <span style="font-size:26px;">📄</span>
+              <div>
+                <div class="file-name-text" id="fileNome">—</div>
+                <div class="file-size-text" id="fileTamanho">—</div>
+              </div>
+              <button class="file-remove" id="btnRemoverArquivo">Remover</button>
+            </div>
+
+            <!-- Mapeamento -->
+            <div class="mapping-box" id="mappingBox">
+              <div class="mapping-box-title">4 · Mapeie as colunas do arquivo</div>
+              <div class="mapping-grid">
+                <div class="field"><label>Sigla / ID</label><select id="mapId"></select></div>
+                <div class="field"><label>Nome / Descrição *</label><select id="mapNome"></select></div>
+                <div class="field"><label>TUSS</label><select id="mapTuss"></select></div>
+                <div class="field"><label>Categoria</label><select id="mapCat"></select></div>
+                <div class="field"><label>Preço Particular R$</label><select id="mapPart"></select></div>
+                <div class="field"><label>Preço DrApp R$</label><select id="mapDrapp"></select></div>
+                <div class="field"><label>Observações</label><select id="mapObs"></select></div>
+                <div class="field"><label>Preparo</label><select id="mapPrep"></select></div>
+              </div>
+            </div>
+
+            <!-- Preview -->
+            <div class="preview-box" id="previewBox">
+              <div class="preview-title">Pré-visualização (primeiras 5 linhas)</div>
+              <div class="preview-wrap">
+                <table class="preview-tbl">
+                  <thead><tr id="previewHead"></tr></thead>
+                  <tbody id="previewBody"></tbody>
+                </table>
+              </div>
+              <p class="preview-count" id="previewCount"></p>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+            <button class="btn btn-primary" id="btnEnviar" disabled>✅ Confirmar e enviar tabela</button>
+            <button class="btn btn-secondary" id="btnLimpar">Limpar</button>
+            <span id="msgEnviando" style="font-size:13px;color:var(--muted);display:none;">Enviando dados...</span>
+          </div>
+          <div class="alert" id="alertEnvio"></div>
+        </div>
+
+        <!-- ─── VIEW: HISTÓRICO ────────────────────── -->
+        <div id="viewHistorico" class="dash-view">
+          <div class="page-header">
+            <h1>📋 Histórico de Uploads</h1>
+            <p>Registro de todas as tabelas enviadas neste navegador.</p>
+          </div>
+          <div class="card" style="padding:0;overflow:hidden;">
+            <table class="data-table" id="tblHistorico">
+              <thead>
+                <tr>
+                  <th>Data/Hora</th>
+                  <th>Laboratório</th>
+                  <th>Arquivo</th>
+                  <th>Versão</th>
+                  <th>Registros</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="tbodyHistorico">
+                <tr><td colspan="6" style="text-align:center;padding:32px;color:var(--muted);">Nenhum upload registrado ainda.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ─── VIEW: ALTERAR SENHA ───────────────── -->
+        <div id="viewSenha" class="dash-view">
+          <div class="page-header">
+            <h1>🔑 Alterar Senha</h1>
+            <p>A nova senha fica salva neste navegador. Anote-a em local seguro.</p>
+          </div>
+          <div class="card" style="max-width:480px;">
+            <div class="field" style="margin-bottom:16px;">
+              <label>Senha atual</label>
+              <input type="password" id="senhaAtual" placeholder="••••••••" />
+            </div>
+            <div class="field" style="margin-bottom:16px;">
+              <label>Nova senha (mín. 8 caracteres)</label>
+              <input type="password" id="senhaNova" placeholder="••••••••" />
+            </div>
+            <div class="field" style="margin-bottom:20px;">
+              <label>Confirmar nova senha</label>
+              <input type="password" id="senhaConfirma" placeholder="••••••••" />
+            </div>
+            <button class="btn btn-primary" id="btnAlterarSenha">Salvar nova senha</button>
+            <div class="senha-result" id="senhaResult"></div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script>
+    // ════════════════════════════════════════════════════
+    // CONFIGURAÇÃO
+    // ════════════════════════════════════════════════════
+    const APPS_URL     = "https://script.google.com/macros/s/AKfycbxyeHFlUzJ6sQCEjFdgviwtdpTJ9zwxVipswMIWj1IPzWm00zRBgVFAHy-B0ajaIyNGQg/exec";
+    const EMAIL        = "paula@drapp.com.br";
+    const SENHA_PADRAO = "DrApp@2026$";
+
+    function getSenha() { return localStorage.getItem("drapp_senha") || SENHA_PADRAO; }
+
+    // ════════════════════════════════════════════════════
+    // DADOS LOCAIS
+    // ════════════════════════════════════════════════════
+    function getLabs()     { return JSON.parse(localStorage.getItem("drapp_labs")    || "[]"); }
+    function getHistorico(){ return JSON.parse(localStorage.getItem("drapp_historico")|| "[]"); }
+    function saveLabs(d)   { localStorage.setItem("drapp_labs",     JSON.stringify(d)); }
+    function saveHist(d)   { localStorage.setItem("drapp_historico",JSON.stringify(d)); }
+
+    // ════════════════════════════════════════════════════
+    // LOGIN
+    // ════════════════════════════════════════════════════
+    function tentar_login() {
+      const emailDigitado = document.getElementById("loginEmail").value.trim().toLowerCase();
+      const senhaDigitada = document.getElementById("loginSenha").value;
+      const erro          = document.getElementById("loginErro");
+
+      const emailOk = emailDigitado === EMAIL;
+      const senhaOk = senhaDigitada === getSenha();
+
+      if (emailOk && senhaOk) {
+        erro.style.display = "none";
+        document.getElementById("viewLogin").style.display = "none";
+        document.getElementById("viewDashboard").style.display = "block";
+        document.getElementById("nbUser").textContent = emailDigitado;
+        renderLabs();
+        renderHistorico();
+        atualizarSelectLabs();
+      } else {
+        erro.style.display = "block";
+        document.getElementById("loginSenha").value = "";
+        document.getElementById("loginSenha").focus();
+      }
+    }
+
+    document.getElementById("btnEntrar").addEventListener("click", tentar_login);
+    document.getElementById("loginEmail").addEventListener("keydown", function(e) { if (e.key === "Enter") document.getElementById("loginSenha").focus(); });
+    document.getElementById("loginSenha").addEventListener("keydown", function(e) { if (e.key === "Enter") tentar_login(); });
+
+    document.getElementById("btnSair").addEventListener("click", function() {
+      document.getElementById("viewDashboard").style.display = "none";
+      document.getElementById("viewLogin").style.display = "flex";
+      document.getElementById("loginEmail").value = "";
+      document.getElementById("loginSenha").value = "";
+    });
+
+    // ════════════════════════════════════════════════════
+    // NAVEGAÇÃO SIDEBAR
+    // ════════════════════════════════════════════════════
+    function trocarView(viewId, el) {
+      document.querySelectorAll(".dash-view").forEach(v => v.classList.remove("active"));
+      document.querySelectorAll(".sidebar-item").forEach(s => s.classList.remove("active"));
+      document.getElementById(viewId).classList.add("active");
+      if (el) el.classList.add("active");
+    }
+
+    // ════════════════════════════════════════════════════
+    // LABORATÓRIOS
+    // ════════════════════════════════════════════════════
+    document.getElementById("btnCriarLab").addEventListener("click", () => {
+      const nome   = document.getElementById("novoLabNome").value.trim();
+      const grupo  = document.getElementById("novoLabGrupo").value.trim();
+      const cidade = document.getElementById("novoLabCidade").value.trim();
+      const status = document.getElementById("novoLabStatus").value;
+      const obs    = document.getElementById("novoLabObs").value.trim();
+      const alerta = document.getElementById("alertCriarLab");
+
+      alerta.className = "alert";
+
+      if (!nome) {
+        alerta.textContent = "⚠ Informe o nome do laboratório.";
+        alerta.className = "alert error show";
+        return;
+      }
+
+      const labs = getLabs();
+      if (labs.some(l => l.nome.toLowerCase() === nome.toLowerCase())) {
+        alerta.textContent = "⚠ Já existe um laboratório com esse nome.";
+        alerta.className = "alert error show";
+        return;
+      }
+
+      labs.push({ id: Date.now(), nome, grupo, cidade, status, obs, criadoEm: new Date().toLocaleString("pt-BR"), uploads: 0 });
+      saveLabs(labs);
+      renderLabs();
+      atualizarSelectLabs();
+
+      // Limpar form
+      ["novoLabNome","novoLabGrupo","novoLabCidade","novoLabObs"].forEach(id => document.getElementById(id).value = "");
+      document.getElementById("novoLabStatus").value = "ativo";
+
+      alerta.textContent = `✔ Laboratório "${nome}" criado com sucesso!`;
+      alerta.className = "alert success show";
+      setTimeout(() => alerta.className = "alert", 3000);
+    });
+
+    function renderLabs() {
+      const labs = getLabs();
+      const grid = document.getElementById("labsGrid");
+
+      if (!labs.length) {
+        grid.innerHTML = `<div class="empty-state"><div class="empty-icon">🏥</div><p>Nenhum laboratório cadastrado ainda.<br>Use o formulário acima para criar.</p></div>`;
+        return;
+      }
+
+      grid.innerHTML = "";
+      labs.forEach(lab => {
+        const card = document.createElement("div");
+        card.className = "lab-card";
+        card.innerHTML = `
+          <div class="lab-card-top">
+            <div>
+              <div class="lab-card-name">${lab.nome}</div>
+              ${lab.grupo ? `<div class="lab-card-group">${lab.grupo}</div>` : ""}
+            </div>
+            <span class="lab-card-badge ${lab.status === "ativo" ? "badge-ativo" : "badge-inativo"}">${lab.status}</span>
+          </div>
+          <div class="lab-card-meta">
+            ${lab.cidade ? `📍 ${lab.cidade}<br>` : ""}
+            📊 ${lab.uploads || 0} upload(s) realizado(s)
+            ${lab.obs ? `<br>📝 ${lab.obs}` : ""}
+          </div>
+          <div class="lab-card-actions">
+            <button class="btn btn-primary btn-sm" onclick="irParaUpload('${lab.nome}')">📤 Subir Tabela</button>
+            <button class="btn btn-danger btn-sm" onclick="removerLab(${lab.id})">🗑 Remover</button>
+          </div>`;
+        grid.appendChild(card);
+      });
+    }
+
+    function removerLab(id) {
+      if (!confirm("Remover este laboratório? Os dados de histórico serão mantidos.")) return;
+      const labs = getLabs().filter(l => l.id !== id);
+      saveLabs(labs);
+      renderLabs();
+      atualizarSelectLabs();
+    }
+
+    function irParaUpload(nomeLab) {
+      trocarView("viewUpload", document.querySelector('[data-view="viewUpload"]'));
+      const sel = document.getElementById("uploadLabSelect");
+      // Tenta selecionar o lab no select
+      for (let i = 0; i < sel.options.length; i++) {
+        if (sel.options[i].value === nomeLab) { sel.selectedIndex = i; break; }
+      }
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function atualizarSelectLabs() {
+      const sel = document.getElementById("uploadLabSelect");
+      const current = sel.value;
+      sel.innerHTML = '<option value="">— Selecione o laboratório —</option>';
+      getLabs().filter(l => l.status === "ativo").forEach(l => {
+        const opt = document.createElement("option");
+        opt.value = l.nome;
+        opt.textContent = l.nome + (l.grupo ? ` (${l.grupo})` : "");
+        sel.appendChild(opt);
+      });
+      if (current) sel.value = current;
+    }
+
+    // ════════════════════════════════════════════════════
+    // UPLOAD DE TABELA
+    // ════════════════════════════════════════════════════
+    let parsedData = [], parsedHeaders = [], arquivoAtual = null;
+
+    const dropzone  = document.getElementById("dropzone");
+    const fileInput = document.getElementById("fileInput");
+
+    dropzone.addEventListener("dragover", e => { e.preventDefault(); dropzone.classList.add("dragover"); });
+    dropzone.addEventListener("dragleave", () => dropzone.classList.remove("dragover"));
+    dropzone.addEventListener("drop", e => {
+      e.preventDefault(); dropzone.classList.remove("dragover");
+      if (e.dataTransfer.files[0]) carregarArquivo(e.dataTransfer.files[0]);
+    });
+    fileInput.addEventListener("change", function() { if (this.files[0]) carregarArquivo(this.files[0]); });
+    document.getElementById("btnRemoverArquivo").addEventListener("click", limparArquivo);
+    document.getElementById("btnLimpar").addEventListener("click", () => {
+      limparArquivo();
+      document.getElementById("uploadLabSelect").value = "";
+      document.getElementById("uploadVersao").value = "";
+    });
+
+    function fmt(b) {
+      if (b < 1024) return b + " B";
+      if (b < 1048576) return (b/1024).toFixed(1) + " KB";
+      return (b/1048576).toFixed(2) + " MB";
+    }
+
+    function carregarArquivo(file) {
+      arquivoAtual = file;
+      document.getElementById("fileNome").textContent = file.name;
+      document.getElementById("fileTamanho").textContent = fmt(file.size);
+      document.getElementById("fileSelected").classList.add("show");
+      document.getElementById("alertEnvio").className = "alert";
+
+      const ext = file.name.split(".").pop().toLowerCase();
+      if (ext === "csv") {
+        const r = new FileReader();
+        r.onload = e => parseCSV(e.target.result);
+        r.readAsText(file, "UTF-8");
+      } else if (ext === "xlsx" || ext === "xls") {
+        const r = new FileReader();
+        r.onload = e => parseXLSX(e.target.result);
+        r.readAsArrayBuffer(file);
+      } else {
+        mostrarAlert("alertEnvio", "error", "⚠ Formato não suportado. Use .CSV, .XLSX ou .XLS.");
+        limparArquivo();
+      }
+    }
+
+    function parseXLSX(buffer) {
+      try {
+        const wb    = XLSX.read(buffer, { type: "array" });
+        const ws    = wb.Sheets[wb.SheetNames[0]];
+        const dados = XLSX.utils.sheet_to_json(ws, { header: 1, defval: "" });
+
+        if (!dados || dados.length < 2) {
+          mostrarAlert("alertEnvio", "error", "⚠ Planilha vazia ou sem dados.");
+          limparArquivo();
+          return;
+        }
+
+        parsedHeaders = dados[0].map(h => String(h).trim());
+        parsedData    = dados.slice(1)
+          .map(row => parsedHeaders.map((_, i) => String(row[i] ?? "").trim()))
+          .filter(row => row.some(c => c));
+
+        aoCarregar();
+      } catch (err) {
+        mostrarAlert("alertEnvio", "error", "⚠ Erro ao ler o arquivo: " + err.message);
+        limparArquivo();
+      }
+    }
+
+    function parseCSV(txt) {
+      const linhas = txt.split(/\r?\n/).filter(l => l.trim());
+      if (!linhas.length) return;
+      const sep = linhas[0].includes(";") ? ";" : ",";
+      parsedHeaders = linhas[0].split(sep).map(h => h.replace(/^"|"$/g,"").trim());
+      parsedData = linhas.slice(1)
+        .map(l => l.split(sep).map(c => c.replace(/^"|"$/g,"").trim()))
+        .filter(r => r.some(c => c));
+      aoCarregar();
+    }
+
+    function aoCarregar() {
+      preencherSelects(parsedHeaders);
+      autoMapear(parsedHeaders);
+      renderPreview();
+      document.getElementById("mappingBox").classList.add("show");
+      document.getElementById("previewBox").classList.add("show");
+      document.getElementById("btnEnviar").disabled = false;
+    }
+
+    function preencherSelects(headers) {
+      const ids = ["mapId","mapNome","mapTuss","mapCat","mapPart","mapDrapp","mapObs","mapPrep"];
+      ids.forEach(id => {
+        const s = document.getElementById(id);
+        s.innerHTML = '<option value="">— não mapear —</option>';
+        headers.forEach((h,i) => { const o = document.createElement("option"); o.value = i; o.textContent = h; s.appendChild(o); });
+      });
+    }
+
+    function autoMapear(headers) {
+      const regras = {
+        mapId:    ["sigla","id","código","id_exame"],
+        mapNome:  ["nome","descricao","descrição","description","exame","name"],
+        mapTuss:  ["tuss","codigo_tuss","tuss_code"],
+        mapCat:   ["categoria","category","tipo","grupo"],
+        mapPart:  ["particular","preco_particular","preço particular","valor_particular"],
+        mapDrapp: ["drapp","preco_drapp","preço drapp","valor_drapp"],
+        mapObs:   ["obs","observacao","observação","notes"],
+        mapPrep:  ["preparo","preparation","instrucoes"]
+      };
+      headers.forEach((h,i) => {
+        const n = h.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
+        Object.entries(regras).forEach(([id, palavras]) => {
+          const s = document.getElementById(id);
+          if (s.value === "" && palavras.some(p => n.includes(p))) s.value = i;
+        });
+      });
+    }
+
+    function renderPreview() {
+      document.getElementById("previewHead").innerHTML = parsedHeaders.map(h => `<th>${h}</th>`).join("");
+      const tbody = document.getElementById("previewBody");
+      tbody.innerHTML = "";
+      parsedData.slice(0,5).forEach(row => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = row.map(c => `<td>${c||"—"}</td>`).join("");
+        tbody.appendChild(tr);
+      });
+      document.getElementById("previewCount").textContent = `Total: ${parsedData.length} linha(s) no arquivo.`;
+    }
+
+    function limparArquivo() {
+      arquivoAtual = null; parsedData = []; parsedHeaders = [];
+      fileInput.value = "";
+      document.getElementById("fileSelected").classList.remove("show");
+      document.getElementById("mappingBox").classList.remove("show");
+      document.getElementById("previewBox").classList.remove("show");
+      document.getElementById("btnEnviar").disabled = true;
+      document.getElementById("alertEnvio").className = "alert";
+    }
+
+    document.getElementById("btnEnviar").addEventListener("click", async () => {
+      const lab    = document.getElementById("uploadLabSelect").value;
+      const versao = document.getElementById("uploadVersao").value.trim();
+      const user   = document.getElementById("nbUser").textContent || "operacao";
+
+      if (!lab)   { mostrarAlert("alertEnvio","error","⚠ Selecione o laboratório."); return; }
+      if (!parsedData.length) { mostrarAlert("alertEnvio","error","⚠ Nenhum dado para enviar."); return; }
+
+      const gi = v => v === "" ? -1 : parseInt(v);
+      const idx = {
+        id:   gi(document.getElementById("mapId").value),
+        nome: gi(document.getElementById("mapNome").value),
+        tuss: gi(document.getElementById("mapTuss").value),
+        cat:  gi(document.getElementById("mapCat").value),
+        part: gi(document.getElementById("mapPart").value),
+        dr:   gi(document.getElementById("mapDrapp").value),
+        obs:  gi(document.getElementById("mapObs").value),
+        prep: gi(document.getElementById("mapPrep").value)
+      };
+
+      if (idx.nome === -1) { mostrarAlert("alertEnvio","error","⚠ Mapeie ao menos a coluna Nome/Descrição."); return; }
+
+      const g = (row, i) => i >= 0 ? row[i] || "" : "";
+      const gn = (row, i) => i >= 0 ? parseFloat(String(row[i]||"0").replace(",",".")) || 0 : 0;
+
+      const linhas = parsedData
+        .map(r => ({ laboratorio:lab, id:g(r,idx.id), nome:g(r,idx.nome), codigo:g(r,idx.tuss), categoria:g(r,idx.cat), precoParticular:gn(r,idx.part), precoDrapp:gn(r,idx.dr), obs:g(r,idx.obs), preparo:g(r,idx.prep) }))
+        .filter(l => l.nome);
+
+      document.getElementById("btnEnviar").disabled = true;
+      document.getElementById("msgEnviando").style.display = "inline";
+      document.getElementById("alertEnvio").className = "alert";
+
+      let ok = false;
+      try {
+        const res = await fetch(APPS_URL, {
+          method: "POST",
+          body: JSON.stringify({ action:"uploadTabela", laboratorio:lab, versao, usuario:user, registros:linhas })
+        });
+        const data = await res.json();
+        ok = !!(data.sucesso || data.ok);
+        if (ok) {
+          mostrarAlert("alertEnvio","success",`✔ ${linhas.length} exames enviados para <strong>${lab}</strong>!`);
+          // Atualizar contador do lab
+          const labs = getLabs();
+          const l = labs.find(x => x.nome === lab);
+          if (l) { l.uploads = (l.uploads || 0) + 1; saveLabs(labs); renderLabs(); }
+        } else {
+          throw new Error(data.mensagem || "Resposta inesperada.");
+        }
+      } catch(e) {
+        mostrarAlert("alertEnvio","error","❌ Erro ao enviar: " + e.message);
+      }
+
+      // Salvar histórico
+      const hist = getHistorico();
+      hist.push({ dataHora: new Date().toLocaleString("pt-BR"), laboratorio:lab, arquivo: arquivoAtual?.name||"—", versao:versao||"—", registros:linhas.length, ok, usuario:user });
+      saveHist(hist);
+      renderHistorico();
+
+      document.getElementById("btnEnviar").disabled = false;
+      document.getElementById("msgEnviando").style.display = "none";
+    });
+
+    // ════════════════════════════════════════════════════
+    // HISTÓRICO
+    // ════════════════════════════════════════════════════
+    function renderHistorico() {
+      const hist  = getHistorico();
+      const tbody = document.getElementById("tbodyHistorico");
+      if (!hist.length) return;
+      tbody.innerHTML = "";
+      [...hist].reverse().forEach(h => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${h.dataHora}</td>
+          <td>${h.laboratorio}</td>
+          <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${h.arquivo}</td>
+          <td>${h.versao}</td>
+          <td>${h.registros}</td>
+          <td><span style="padding:4px 10px;border-radius:999px;font-size:12px;font-weight:700;background:${h.ok?"#dcfce7":"#fee2e2"};color:${h.ok?"#166534":"#b91c1c"}">${h.ok?"✔ Enviado":"✗ Erro"}</span></td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // ════════════════════════════════════════════════════
+    // ALTERAR SENHA
+    // ════════════════════════════════════════════════════
+    document.getElementById("btnAlterarSenha").addEventListener("click", () => {
+      const atual     = document.getElementById("senhaAtual").value;
+      const nova      = document.getElementById("senhaNova").value;
+      const confirma  = document.getElementById("senhaConfirma").value;
+      const res       = document.getElementById("senhaResult");
+      res.className   = "senha-result";
+
+      if (atual !== getSenha())  { res.textContent = "Senha atual incorreta."; res.className = "senha-result erro"; return; }
+      if (nova.length < 8)       { res.textContent = "A nova senha precisa ter pelo menos 8 caracteres."; res.className = "senha-result erro"; return; }
+      if (nova !== confirma)     { res.textContent = "A confirmação não coincide com a nova senha."; res.className = "senha-result erro"; return; }
+
+      localStorage.setItem("drapp_senha", nova);
+      res.textContent = "✔ Senha alterada com sucesso! Use-a no próximo acesso.";
+      res.className = "senha-result ok";
+      ["senhaAtual","senhaNova","senhaConfirma"].forEach(id => document.getElementById(id).value = "");
+    });
+
+    // ════════════════════════════════════════════════════
+    // UTILITÁRIOS
+    // ════════════════════════════════════════════════════
+    function mostrarAlert(id, tipo, html) {
+      const el = document.getElementById(id);
+      el.className = "alert " + tipo + " show";
+      el.innerHTML = html;
+    }
+  </script>
+</body>
+</html>
