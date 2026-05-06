@@ -1353,11 +1353,12 @@
             </div>
 
             <div class="checkout-actions">
-              <button id="btnVoltarOrçamento" class="secondary-btn" type="button">← Voltar ao Orçamento</button>
-              <div style="flex:1;display:flex;flex-direction:column;">
-                <button id="btnFinalizar" class="primary-btn" type="button" disabled>Finalizar solicitação →</button>
-                <div id="checkoutNote" class="checkout-note piscando">O botão só será liberado após validação e confirmação do CPF.</div>
-              </div>
+              <button id="btnVoltarOrçamento" class="secondary-btn" type="button" style="margin-top:0;">← Voltar ao Orçamento</button>
+              <button id="btnFinalizar" class="primary-btn" type="button" disabled>Finalizar solicitação →</button>
+            </div>
+            <div style="display:flex;">
+              <div style="flex:1;"></div>
+              <div id="checkoutNote" class="checkout-note piscando" style="flex:1;">O botão só será liberado após validação e confirmação do CPF.</div>
             </div>
           </div>
         </div><!-- /right-column -->
@@ -1710,13 +1711,24 @@
       const data = await response.json();
 
       if (data.sucesso) {
-        return {
+        const resultado = {
           nome:       data.nome,
           nascimento: formatarNascimento(data.nascimento),
           origem:     data.origem || "",
           negocioId:  data.negocioId || "",
           contactId:  data.contactId || ""
         };
+        // Bitrix pode retornar sem data de nascimento — suplementa pelo Hub
+        if (!resultado.nascimento) {
+          try {
+            const hubResp = await fetch(HUB_URL + "?cpf=" + cpfLimpo + "&token=" + HUB_TOKEN);
+            const hub = await hubResp.json();
+            if (hub.status && hub.result && hub.result.data_de_nascimento) {
+              resultado.nascimento = formatarNascimento(hub.result.data_de_nascimento);
+            }
+          } catch (_) {}
+        }
+        return resultado;
       }
 
       // 2. Fallback: Hub do Desenvolvedor direto do browser
