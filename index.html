@@ -1498,7 +1498,8 @@
     let cpfValidado = false;
     let cpfConfirmado = false;
     let dadosCpfValidados = null;
-    let mapeamentoLabs = {}; // { siglaHermes → siglaAplus }
+    let mapeamentoLabs   = {}; // { siglaHermes → siglaAplus }
+    let ultimaListaBusca = []; // últimos resultados retornados pelo Apps Script
 
     // Carrega mapeamento de correspondências entre labs
     (async function carregarMapeamento() {
@@ -1667,7 +1668,6 @@
         <div class="suggestion-main">
           <div class="suggestion-name">${textoSeguro(item.nome)}</div>
           <div class="suggestion-meta">${meta.join(" · ")}</div>
-          ${item.laboratorio ? `<div class="suggestion-lab-badge ${classeLaboratorio(item.laboratorio)}">${textoSeguro(item.laboratorio)}</div>` : ""}
         </div>
         <div class="suggestion-price">
           <div class="price-old">${moeda(item.precoParticular)}</div>
@@ -1680,25 +1680,26 @@
     function renderSugestoes(lista) {
       suggestions.innerHTML = "";
       if (!lista.length) { suggestions.style.display = "none"; return; }
+      // Quando "Ambos" está selecionado, mesclamos exames iguais em um único item
       const labsSelecionados = obterLabsSelecionados();
-      if (labsSelecionados.length <= 1) {
+      if (labsSelecionados.length > 1) {
+        // Agrupa por chave canônica: A+ sigla (ou mapeamento), senão nome normalizado
+        const vistos = new Set();
+        const listaMesclada = [];
+        lista.forEach(item => {
+          const isHermes = (item.laboratorio || "").toLowerCase().includes("hermes");
+          const chave = isHermes
+            ? (mapeamentoLabs[item.id] || item.id || item.nome)
+            : (item.id || item.nome);
+          if (!vistos.has(chave)) {
+            vistos.add(chave);
+            listaMesclada.push(item);
+          }
+        });
+        listaMesclada.forEach(item => suggestions.appendChild(criarItemSugestao(item)));
+      } else {
         lista.forEach(item => suggestions.appendChild(criarItemSugestao(item)));
-        suggestions.style.display = "block";
-        return;
       }
-      const grupos = agruparPorLaboratorio(lista);
-      labsSelecionados.forEach(nomeLab => {
-        const itens = grupos[nomeLab] || [];
-        if (!itens.length) return;
-        const grupo = document.createElement("div");
-        grupo.className = "suggestion-group";
-        const header = document.createElement("div");
-        header.className = "suggestion-group-header";
-        header.innerHTML = `<span class="suggestion-group-dot"></span>${textoSeguro(nomeLab)}`;
-        grupo.appendChild(header);
-        itens.forEach(item => grupo.appendChild(criarItemSugestao(item)));
-        suggestions.appendChild(grupo);
-      });
       suggestions.style.display = "block";
     }
 
@@ -1787,9 +1788,30 @@
       throw new Error(data.mensagem || "CPF não encontrado na base de dados.");
     }
 
+    function chaveCanonica(item) {
+      const isHermes = (item.laboratorio || "").toLowerCase().includes("hermes") ||
+                       (item.laboratorio || "").toLowerCase().includes("pardini");
+      return isHermes
+        ? (mapeamentoLabs[item.id] || item.id || item.nome)
+        : (item.id || item.nome);
+    }
+
     function adicionarExame(exame) {
-      if (selecionados.some(i => i.id === exame.id && i.laboratorio === exame.laboratorio)) return;
-      selecionados.push(exame);
+      const labsSelecionados = obterLabsSelecionados();
+      // No modo "Ambos", adiciona também o par do outro lab se estiver na lista de busca
+      if (labsSelecionados.length > 1 && ultimaListaBusca.length) {
+        const chave = chaveCanonica(exame);
+        const pares = ultimaListaBusca.filter(i => chaveCanonica(i) === chave);
+        pares.forEach(item => {
+          if (!selecionados.some(s => s.id === item.id && s.laboratorio === item.laboratorio)) {
+            selecionados.push(item);
+          }
+        });
+      } else {
+        if (!selecionados.some(s => s.id === exame.id && s.laboratorio === exame.laboratorio)) {
+          selecionados.push(exame);
+        }
+      }
       buscaExame.value = "";
       suggestions.style.display = "none";
       suggestions.innerHTML = "";
@@ -1941,6 +1963,7 @@
         try {
           mostrarLoading(true);
           const resultados = await buscarExamesRemotos(termo);
+          ultimaListaBusca = resultados;
           mostrarLoading(false);
           renderSugestoes(resultados);
           if (!resultados.length) suggestions.style.display = "none";
