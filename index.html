@@ -317,7 +317,7 @@
     }
 
     .trust-logo-wrap img {
-      height: 34px;
+      height: 54px;
       width: auto;
       object-fit: contain;
       filter: grayscale(30%);
@@ -1031,7 +1031,9 @@
   <!-- ═══ NAVBAR ══════════════════════════════════════════ -->
   <nav class="navbar">
     <a href="#" class="navbar-brand">
-      <div class="navbar-logo-box">Dr<span>App</span></div>
+      <img src="logo-drapp.png" alt="DrApp" style="height:36px;object-fit:contain;"
+        onerror="this.style.display='none';this.nextElementSibling.style.display='inline';">
+      <div class="navbar-logo-box" style="display:none;">Dr<span>App</span></div>
       <span class="navbar-tagline">Sua Saúde é Nossa Vida</span>
     </a>
     <a href="#orcamento" class="navbar-cta">Fazer Orçamento Grátis →</a>
@@ -1096,21 +1098,15 @@
             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
           <span class="lab-badge-trust fleury" style="display:none;">Grupo Fleury</span>
         </div>
-        <div style="display:flex;align-items:center;gap:6px;">
-          <div class="trust-logo-wrap" title="Hermes Pardini — Grupo Fleury">
-            <img src="logo-hermes.png" alt="Hermes Pardini"
-              onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-            <span class="lab-badge-trust hermes" style="display:none;">Hermes Pardini</span>
-          </div>
-          <span style="font-size:11px;color:var(--muted);white-space:nowrap;">Grupo Fleury</span>
+        <div class="trust-logo-wrap" title="Hermes Pardini">
+          <img src="logo-hermes.png" alt="Hermes Pardini"
+            onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+          <span class="lab-badge-trust hermes" style="display:none;">Hermes Pardini</span>
         </div>
-        <div style="display:flex;align-items:center;gap:6px;">
-          <div class="trust-logo-wrap" title="A+ Medicina Diagnóstica — Grupo Fleury">
-            <img src="logo-aplus.png" alt="A+ Medicina Diagnóstica"
-              onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-            <span class="lab-badge-trust aplus" style="display:none;">A+ Medicina Diagnóstica</span>
-          </div>
-          <span style="font-size:11px;color:var(--muted);white-space:nowrap;">Grupo Fleury</span>
+        <div class="trust-logo-wrap" title="A+ Medicina Diagnóstica">
+          <img src="logo-aplus.png" alt="A+ Medicina Diagnóstica"
+            onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+          <span class="lab-badge-trust aplus" style="display:none;">A+ Medicina Diagnóstica</span>
         </div>
         <div class="trust-logo-wrap" title="APM">
           <img src="logo-apm.png" alt="APM"
@@ -1212,16 +1208,12 @@
             <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px;">
               <button type="button" class="lab-tab" id="tabAplus" data-lab="A+ Medicina Diagnóstica"
                 style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 8px;border-radius:12px;border:2px solid #e2e8f0;background:#f8fafc;cursor:pointer;transition:all .2s;font-size:12px;font-weight:600;color:var(--text);">
-                <img src="logo-aplus.png" alt="A+" style="height:32px;object-fit:contain;"
-                  onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
-                <span style="display:none;font-size:13px;font-weight:800;color:#0088bb;">A+</span>
+                <img src="logo-aplus.png" alt="A+" style="height:32px;object-fit:contain;display:block;">
                 <span>A+ Medicina</span>
               </button>
               <button type="button" class="lab-tab" id="tabHermes" data-lab="Hermes Pardini"
                 style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 8px;border-radius:12px;border:2px solid #e2e8f0;background:#f8fafc;cursor:pointer;transition:all .2s;font-size:12px;font-weight:600;color:var(--text);">
-                <img src="logo-hermes.png" alt="Hermes" style="height:32px;object-fit:contain;"
-                  onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
-                <span style="display:none;font-size:13px;font-weight:800;color:#cb1040;">H</span>
+                <img src="logo-hermes.png" alt="Hermes" style="height:32px;object-fit:contain;display:block;">
                 <span>Hermes Pardini</span>
               </button>
               <button type="button" id="tabAmbos"
