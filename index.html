@@ -1255,7 +1255,6 @@
               <table>
                 <thead>
                   <tr>
-                    <th>Sigla</th>
                     <th>Descrição</th>
                     <th>TUSS</th>
                     <th style="color:var(--aplus);">Particular A+</th>
@@ -1661,17 +1660,12 @@
       const div = document.createElement("div");
       div.className = "suggestion-item";
       const meta = [];
-      if (item.id) meta.push("SIGLA: " + item.id);
       if (item.codigo) meta.push("TUSS: " + item.codigo);
       if (item.categoria) meta.push(item.categoria);
       div.innerHTML = `
         <div class="suggestion-main">
           <div class="suggestion-name">${textoSeguro(item.nome)}</div>
-          <div class="suggestion-meta">${meta.join(" · ")}</div>
-        </div>
-        <div class="suggestion-price">
-          <div class="price-old">${moeda(item.precoParticular)}</div>
-          <div class="price-new">${moeda(item.precoDrapp)}</div>
+          ${meta.length ? `<div class="suggestion-meta">${meta.join(" · ")}</div>` : ""}
         </div>`;
       div.addEventListener("click", () => adicionarExame(item));
       return div;
@@ -1840,7 +1834,7 @@
 
     function renderTabela() {
       if (!selecionados.length) {
-        selectedTableBody.innerHTML = `<tr><td colspan="10" class="empty">Escolha um laboratório abaixo e adicione exames para montar seu orçamento.</td></tr>`;
+        selectedTableBody.innerHTML = `<tr><td colspan="9" class="empty">Escolha um laboratório abaixo e adicione exames para montar seu orçamento.</td></tr>`;
         mobileSelectedList.innerHTML = "";
         atualizarBotaoContinuar();
         return;
@@ -1874,7 +1868,6 @@
 
         const tr = document.createElement("tr");
         tr.innerHTML = `
-          <td style="font-weight:700;color:var(--blue);font-size:14px;white-space:nowrap;">${textoSeguro(ex.id)}</td>
           <td><div class="exam-name">${textoSeguro(ex.nome)}</div>${ex.categoria ? `<div class="exam-code">${textoSeguro(ex.categoria)}</div>` : ""}</td>
           <td style="font-size:13px;color:var(--muted);">${textoSeguro(ex.codigo)}</td>
           ${tdPreco(ex.aplus)}${tdDrapp(ex.aplus)}${tdDesc(ex.aplus)}
@@ -1912,7 +1905,7 @@
 
     function removerExameGrupo(chaveEncoded) {
       const chave = decodeURIComponent(chaveEncoded);
-      selecionados = selecionados.filter(i => (i.id || i.nome) !== chave);
+      selecionados = selecionados.filter(i => chaveCanonica(i) !== chave);
       renderTabela();
       atualizarResumo();
       atualizarBotaoContinuar();
