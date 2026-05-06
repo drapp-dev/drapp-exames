@@ -1434,6 +1434,8 @@
   <!-- ═══ SCRIPTS (lógica original preservada) ══════════════ -->
   <script>
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxyeHFlUzJ6sQCEjFdgviwtdpTJ9zwxVipswMIWj1IPzWm00zRBgVFAHy-B0ajaIyNGQg/exec";
+    const HUB_TOKEN       = "184460735tqMfkWQhmV333038264";
+    const HUB_URL         = "https://ws.hubdodesenvolvedor.com.br/v2/nome_cpf/";
 
     const buscaExame        = document.getElementById("buscaExame");
     const suggestions       = document.getElementById("suggestions");
@@ -1668,17 +1670,49 @@
     }
 
     async function consultarCpf(cpfLimpo) {
+      // 1. Planilha + Bitrix via Apps Script
       const response = await fetch(APPS_SCRIPT_URL + "?action=cpf&cpf=" + encodeURIComponent(cpfLimpo));
       if (!response.ok) throw new Error("Erro ao consultar CPF");
       const data = await response.json();
-      if (!data.sucesso) throw new Error(data.mensagem || "CPF não encontrado");
-      return {
-        nome: data.nome,
-        nascimento: formatarNascimento(data.nascimento),
-        origem: data.origem || "",
-        negocioId: data.negocioId || "",
-        contactId: data.contactId || ""
-      };
+
+      if (data.sucesso) {
+        return {
+          nome:       data.nome,
+          nascimento: formatarNascimento(data.nascimento),
+          origem:     data.origem || "",
+          negocioId:  data.negocioId || "",
+          contactId:  data.contactId || ""
+        };
+      }
+
+      // 2. Fallback: Hub do Desenvolvedor direto do browser
+      if (data.needsHub) {
+        const hubResp = await fetch(HUB_URL + "?cpf=" + cpfLimpo + "&token=" + HUB_TOKEN);
+        if (!hubResp.ok) throw new Error("CPF não encontrado na base de dados.");
+        const hub = await hubResp.json();
+
+        if (!hub.status || !hub.result || !hub.result.nome) {
+          throw new Error("CPF não encontrado na base de dados.");
+        }
+
+        const resultado = {
+          nome:       hub.result.nome,
+          nascimento: formatarNascimento(hub.result.data_de_nascimento || ""),
+          origem:     "hub",
+          negocioId:  "",
+          contactId:  ""
+        };
+
+        // Salva na planilha para consultas futuras
+        fetch(APPS_SCRIPT_URL, {
+          method: "POST",
+          body: JSON.stringify({ action: "salvarCpf", cpf: cpfLimpo, ...resultado })
+        }).catch(() => {});
+
+        return resultado;
+      }
+
+      throw new Error(data.mensagem || "CPF não encontrado na base de dados.");
     }
 
     function adicionarExame(exame) {
