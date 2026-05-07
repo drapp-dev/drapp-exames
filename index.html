@@ -468,8 +468,11 @@
     .tool-section-header .section-sub { color: rgba(255,255,255,0.7); }
 
     .page {
-      max-width: 1220px;
+      max-width: 1200px;
       margin: 0 auto;
+      padding: 0 24px;
+      box-sizing: border-box;
+      width: 100%;
     }
 
     .main-grid {
@@ -1290,7 +1293,8 @@
             <textarea id="obsTexto" rows="3" maxlength="600"
               placeholder="Exames não encontrados no menu, informações importantes..."
               style="width:100%;box-sizing:border-box;resize:vertical;border:1.5px solid #e2e8f0;border-radius:10px;padding:10px 14px;font-size:14px;font-family:inherit;color:var(--dark);outline:none;transition:border .2s;"
-              onfocus="this.style.borderColor='var(--cyan)'" onblur="this.style.borderColor='#e2e8f0'"></textarea>
+              onfocus="this.style.borderColor='var(--cyan)'" onblur="this.style.borderColor='#e2e8f0'"
+              oninput="atualizarBotaoContinuar()"></textarea>
           </div>
 
           <!-- Resumo -->
@@ -1593,7 +1597,10 @@
       mostrarErro(false);
     }
 
-    function temExamesOuFotos() { return selecionados.length > 0 || imagensPedido.length > 0; }
+    function temExamesOuFotos() {
+      const obsPreenchida = (document.getElementById("obsTexto").value || "").trim().length > 0;
+      return selecionados.length > 0 || imagensPedido.length > 0 || obsPreenchida;
+    }
 
     function atualizarBotaoContinuar() { btnContinuar.disabled = !temExamesOuFotos(); }
 
