@@ -1229,11 +1229,11 @@
               <div class="upload-acoes">
                 <label class="upload-botao">
                   📎 Anexar ou fotografar
-                  <input type="file" id="uploadPedido" accept="image/*" multiple hidden>
+                  <input type="file" id="uploadPedido" accept="image/*,application/pdf" multiple hidden>
                 </label>
                 <label class="upload-add-botao" title="Adicionar mais fotos">
                   +
-                  <input type="file" id="uploadPedidoMais" accept="image/*" multiple hidden>
+                  <input type="file" id="uploadPedidoMais" accept="image/*,application/pdf" multiple hidden>
                 </label>
               </div>
               <div id="uploadPreview" class="upload-preview"></div>
@@ -2194,15 +2194,24 @@
       imagensPedido.forEach((fileObj, index) => {
         const item = document.createElement("div");
         item.className = "upload-item";
-        const img = document.createElement("img");
-        img.src = fileObj.preview;
+        const ehPdf = fileObj.file.type === "application/pdf";
+        if (ehPdf) {
+          // Preview especial para PDF
+          const pdfIcon = document.createElement("div");
+          pdfIcon.style.cssText = "width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#f1f5f9;border-radius:10px;font-size:11px;color:#64748b;gap:4px;";
+          pdfIcon.innerHTML = `<div style="font-size:28px;">📄</div><div style="font-weight:700;color:#e74c3c;">PDF</div><div style="font-size:10px;text-align:center;padding:0 4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:80px;">${textoSeguro(fileObj.file.name)}</div>`;
+          item.appendChild(pdfIcon);
+        } else {
+          const img = document.createElement("img");
+          img.src = fileObj.preview;
+          item.appendChild(img);
+        }
         const removeBtn = document.createElement("button");
         removeBtn.type = "button";
         removeBtn.className = "upload-remove";
         removeBtn.innerHTML = "✕";
         removeBtn.title = "Excluir arquivo";
         removeBtn.addEventListener("click", () => { imagensPedido.splice(index, 1); renderUploadPreview(); atualizarBotaoContinuar(); atualizarBotoes(); });
-        item.appendChild(img);
         item.appendChild(removeBtn);
         uploadPreview.appendChild(item);
       });
@@ -2210,10 +2219,12 @@
 
     function processarArquivos(files) {
       files.forEach(file => {
-        if (!file.type.startsWith("image/")) return;
+        const ehImagem = file.type.startsWith("image/");
+        const ehPdf    = file.type === "application/pdf";
+        if (!ehImagem && !ehPdf) return;
         const reader = new FileReader();
         reader.onload = e => {
-          imagensPedido.push({ file, preview: e.target.result });
+          imagensPedido.push({ file, preview: e.target.result, nome: file.name });
           renderUploadPreview();
           atualizarBotaoContinuar();
           atualizarBotoes();
