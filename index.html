@@ -655,6 +655,19 @@
     .suggestion-item:last-child { border-bottom: none; }
     .suggestion-item:hover { background: #f8fafc; }
 
+    .suggestion-grupo { padding: 0; }
+    .grupo-container { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+    .grupo-col { padding: 12px 16px; }
+    .grupo-col:first-child { border-right: 1px solid var(--line); }
+    .grupo-lab-titulo { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); margin-bottom: 8px; }
+    .grupo-linha { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; padding: 3px 0; }
+    .grupo-linha-nome { font-size: 13px; color: var(--text); flex: 1; }
+    .grupo-linha-preco { font-size: 13px; font-weight: 700; color: var(--blue); white-space: nowrap; }
+    .grupo-total { font-size: 12px; color: var(--muted); margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--line); }
+    .btn-add-grupo { margin-top: 8px; padding: 5px 12px; background: var(--blue); color: #fff; border: none; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; width: 100%; }
+    .btn-add-grupo:hover { opacity: 0.85; }
+    @media (max-width: 600px) { .grupo-container { grid-template-columns: 1fr; } .grupo-col:first-child { border-right: none; border-bottom: 1px solid var(--line); } }
+
     .suggestion-main { min-width: 0; flex: 1; }
     .suggestion-price { flex-shrink: 0; min-width: 96px; }
     .suggestion-name { font-weight: 700; color: var(--text); margin-bottom: 6px; }
@@ -1688,30 +1701,107 @@
       return div;
     }
 
+    function criarItemGrupo(grupo) {
+      const div = document.createElement("div");
+      div.className = "suggestion-item suggestion-grupo";
+
+      const totalA      = (grupo.itensA || []).reduce((s, i) => s + Number(i.precoDrapp      || 0), 0);
+      const totalApart  = (grupo.itensA || []).reduce((s, i) => s + Number(i.precoParticular  || 0), 0);
+
+      const itensAHtml = (grupo.itensA || []).map(i => `
+        <div class="grupo-linha">
+          <span class="grupo-linha-nome">${textoSeguro(i.nome)}</span>
+          <span class="grupo-linha-preco">${moeda(i.precoDrapp)}</span>
+        </div>`).join("");
+
+      const hermesHtml = grupo.hermes ? `
+        <div class="grupo-col">
+          <div class="grupo-lab-titulo">${textoSeguro(grupo.hermes.laboratorio)}</div>
+          <div class="grupo-linha">
+            <span class="grupo-linha-nome">${textoSeguro(grupo.hermes.nome)}</span>
+            <span class="grupo-linha-preco">${moeda(grupo.hermes.precoDrapp)}</span>
+          </div>
+          <div class="grupo-total">Preço particular: ${moeda(grupo.hermes.precoParticular)}</div>
+          <button class="btn-add-grupo" data-grupo="${textoSeguro(grupo.grupo)}" data-lab="hermes">+ Adicionar Hermes</button>
+        </div>` : "";
+
+      div.innerHTML = `
+        <div class="grupo-container">
+          <div class="grupo-col">
+            <div class="grupo-lab-titulo">A+ Medicina Diagnóstica</div>
+            ${itensAHtml}
+            <div class="grupo-total">Total: ${moeda(totalA)} &nbsp;|&nbsp; Particular: ${moeda(totalApart)}</div>
+            <button class="btn-add-grupo" data-grupo="${textoSeguro(grupo.grupo)}" data-lab="aplus">+ Adicionar A+</button>
+          </div>
+          ${hermesHtml}
+        </div>`;
+
+      div.querySelectorAll(".btn-add-grupo").forEach(btn => {
+        btn.addEventListener("click", e => {
+          e.stopPropagation();
+          adicionarGrupoLab(btn.dataset.grupo, btn.dataset.lab);
+        });
+      });
+
+      return div;
+    }
+
+    function adicionarGrupoLab(nomeGrupo, qual) {
+      const grupoItem = ultimaListaBusca.find(i => i.tipo === "grupo" && i.grupo === nomeGrupo);
+      if (!grupoItem) return;
+      const itens = qual === "aplus"
+        ? (grupoItem.itensA || [])
+        : (grupoItem.hermes ? [grupoItem.hermes] : []);
+      itens.forEach(item => {
+        if (!selecionados.some(s => s.id === item.id && s.laboratorio === item.laboratorio)) {
+          selecionados.push(item);
+        }
+      });
+      buscaExame.value = "";
+      suggestions.style.display = "none";
+      renderizarSelecionados();
+      atualizarBotaoContinuar();
+    }
+
     function renderSugestoes(lista) {
       suggestions.innerHTML = "";
       if (!lista.length) { suggestions.style.display = "none"; return; }
-      // Quando "Ambos" está selecionado, mesclamos exames iguais em um único item
       const labsSelecionados = obterLabsSelecionados();
+
       if (labsSelecionados.length > 1) {
-        // Agrupa por chave canônica: A+ sigla (ou mapeamento), senão nome normalizado
         const vistos = new Set();
         const listaMesclada = [];
         lista.forEach(item => {
+          if (item.tipo === "grupo") { listaMesclada.push(item); return; }
           const isHermes = (item.laboratorio || "").toLowerCase().includes("hermes");
           const chave = isHermes
             ? (mapeamentoLabs[item.id] || item.id || item.nome)
             : (item.id || item.nome);
-          if (!vistos.has(chave)) {
-            vistos.add(chave);
-            listaMesclada.push(item);
-          }
+          if (!vistos.has(chave)) { vistos.add(chave); listaMesclada.push(item); }
         });
-        listaMesclada.forEach(item => suggestions.appendChild(criarItemSugestao(item)));
+        listaMesclada.forEach(item => suggestions.appendChild(
+          item.tipo === "grupo" ? criarItemGrupo(item) : criarItemSugestao(item)
+        ));
       } else {
-        lista.forEach(item => suggestions.appendChild(criarItemSugestao(item)));
+        lista.forEach(item => suggestions.appendChild(
+          item.tipo === "grupo" ? criarItemGrupo(item) : criarItemSugestao(item)
+        ));
       }
       suggestions.style.display = "block";
+    }
+
+    function sanitizarItem_(item) {
+      return {
+        laboratorio:     textoSeguro(item.laboratorio),
+        id:              textoSeguro(item.id),
+        nome:            textoSeguro(item.nome),
+        codigo:          textoSeguro(item.codigo),
+        precoParticular: Number(item.precoParticular || 0),
+        precoDrapp:      Number(item.precoDrapp || 0),
+        obs:             textoSeguro(item.obs),
+        preparo:         textoSeguro(item.preparo),
+        categoria:       textoSeguro(item.categoria)
+      };
     }
 
     async function buscarExamesRemotos(termo) {
@@ -1721,20 +1811,24 @@
       if (!response.ok) throw new Error("Falha na resposta da consulta");
       const produtos = await response.json();
       if (produtos && produtos.erro) throw new Error(produtos.mensagem || produtos.erro || "Erro retornado pelo Apps Script");
+
       return (Array.isArray(produtos) ? produtos : [])
-        .map(item => ({
-          laboratorio: textoSeguro(item.laboratorio),
-          id: textoSeguro(item.id),
-          nome: textoSeguro(item.nome),
-          codigo: textoSeguro(item.codigo),
-          precoParticular: Number(item.precoParticular || 0),
-          precoDrapp: Number(item.precoDrapp || 0),
-          obs: textoSeguro(item.obs),
-          preparo: textoSeguro(item.preparo),
-          categoria: textoSeguro(item.categoria)
-        }))
-        .filter(item => item.nome)
-        .filter(item => !selecionados.some(sel => sel.id === item.id && sel.laboratorio === item.laboratorio));
+        .map(item => {
+          if (item.tipo === "grupo") {
+            return {
+              tipo:   "grupo",
+              grupo:  textoSeguro(item.grupo),
+              itensA: (item.itensA || []).map(sanitizarItem_),
+              hermes: item.hermes ? sanitizarItem_(item.hermes) : null
+            };
+          }
+          return sanitizarItem_(item);
+        })
+        .filter(item => item.tipo === "grupo" ? (item.itensA && item.itensA.length > 0) : item.nome)
+        .filter(item => {
+          if (item.tipo === "grupo") return true;
+          return !selecionados.some(sel => sel.id === item.id && sel.laboratorio === item.laboratorio);
+        });
     }
 
     async function consultarCpf(cpfLimpo) {
