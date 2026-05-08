@@ -1542,7 +1542,9 @@
       return tokens.map(tt => {
         const g = [tt];
         (termos || []).forEach(row => {
-          if (row.some(r => r === tt || r.startsWith(tt) || tt.startsWith(r)))
+          // r === tt  → exato  |  r.startsWith(tt) → o termo é prefixo de um alias (ex: "tomo" expande para "tomografia")
+          // NÃO usamos tt.startsWith(r): evita que "tomo" (alias curto) expanda "tomografia" e cause falsos positivos
+          if (row.some(r => r === tt || r.startsWith(tt)))
             row.forEach(r => { if (!g.includes(r)) g.push(r); });
         });
         return g;
@@ -1550,9 +1552,12 @@
     }
     function scoreCli(grupos, nn, nt) {
       if (!grupos.length) return 0;
-      if (grupos.every(g => g.some(tt => nn.includes(tt)))) return 3;
-      if (grupos.every(g => nt.some(n => g.some(tt => n.startsWith(tt) || (tt.length >= 3 && tt.startsWith(n)))))) return 2;
-      const k = grupos.filter(g => nt.some(n => g.some(tt => n.startsWith(tt) || (tt.length >= 3 && tt.startsWith(n))))).length;
+      // Score 3: cada grupo tem um alias que é token EXATO do exame (sem substring para evitar "tomo" em "anatomopatologico")
+      if (grupos.every(g => nt.some(n => g.some(tt => n === tt)))) return 3;
+      // Score 2: cada grupo tem alias que é prefixo de algum token do exame (ou vice-versa, mín 4 chars)
+      if (grupos.every(g => nt.some(n => g.some(tt => n.startsWith(tt) || (tt.length >= 4 && tt.startsWith(n)))))) return 2;
+      // Score 1: maioria dos grupos bate
+      const k = grupos.filter(g => nt.some(n => g.some(tt => n.startsWith(tt) || (tt.length >= 4 && tt.startsWith(n))))).length;
       if (k >= Math.ceil(grupos.length / 2) && k >= 1) return 1;
       return 0;
     }
