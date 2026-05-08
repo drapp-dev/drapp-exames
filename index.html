@@ -1589,8 +1589,15 @@
       });
       hits.sort((a,b) => b.sc - a.sc);
 
-      // Monta itens — agrupa GRUPOs
-      const resultado = [], gruposFeitos = new Set();
+      // Monta itens — agrupa GRUPOs, deduplica por nome+lab
+      const resultado = [], gruposFeitos = new Set(), nomesVistos = new Set();
+      const dedup = (item) => {
+        if (!item || !item.nome) return null;
+        const chave = normCli(item.nome) + "|" + item.laboratorio;
+        if (nomesVistos.has(chave)) return null;
+        nomesVistos.add(chave);
+        return item;
+      };
       hits.slice(0, 120).forEach(h => {
         if (h.gr) {
           if (gruposFeitos.has(h.gr)) return;
@@ -1601,8 +1608,8 @@
           const hermes  = hermesM ? sanitizarItem_(mkItem(hermesM.sH, hermesM.dH, h.labH, h.pH[hermesM.sH])) : null;
           if (itensA.length || hermes) resultado.push({ tipo:"grupo", grupo:h.gr, itensA, hermes });
         } else {
-          const itemA = h.sA && h.labA ? sanitizarItem_(mkItem(h.sA, h.dA, h.labA, h.pA[h.sA])) : null;
-          const itemH = h.sH && h.labH ? sanitizarItem_(mkItem(h.sH, h.dH, h.labH, h.pH[h.sH])) : null;
+          const itemA = dedup(h.sA && h.labA ? sanitizarItem_(mkItem(h.sA, h.dA, h.labA, h.pA[h.sA])) : null);
+          const itemH = dedup(h.sH && h.labH ? sanitizarItem_(mkItem(h.sH, h.dH, h.labH, h.pH[h.sH])) : null);
           if (itemA && !selecionados.some(s => s.id===itemA.id && s.laboratorio===itemA.laboratorio)) resultado.push(itemA);
           if (itemH && !selecionados.some(s => s.id===itemH.id && s.laboratorio===itemH.laboratorio)) resultado.push(itemH);
         }
