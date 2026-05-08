@@ -1526,13 +1526,93 @@
     let dadosCpfValidados = null;
     let mapeamentoLabs   = {}; // { siglaHermes → siglaAplus }
     let ultimaListaBusca = []; // últimos resultados retornados pelo Apps Script
+    let catalogo         = null; // { mapeamento, precos, termos } — carregado uma vez
 
-    // Carrega mapeamento de correspondências entre labs
-    (async function carregarMapeamento() {
+    // ── Busca client-side ──────────────────────────────────────
+    const STOP_CLI = new Set(["de","da","do","das","dos","em","no","na","nos","nas","por","para","e","ou","a","o","as","os","com","sem","ao","aos","que","um","uma","uns","umas","se","apos","via","ate","sob","sobre"]);
+
+    function normCli(t) {
+      return String(t||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").trim();
+    }
+    function toksCli(t) {
+      return normCli(t).replace(/[^a-z0-9\s]/g," ").split(/\s+/).filter(w => w.length > 1 && !STOP_CLI.has(w));
+    }
+    function expandirGruposCli(tokens, termos) {
+      if (!termos || !termos.length) return tokens.map(t => [t]);
+      return tokens.map(tt => {
+        const g = [tt];
+        (termos || []).forEach(row => {
+          if (row.some(r => r === tt || r.startsWith(tt) || tt.startsWith(r)))
+            row.forEach(r => { if (!g.includes(r)) g.push(r); });
+        });
+        return g;
+      });
+    }
+    function scoreCli(grupos, nn, nt) {
+      if (!grupos.length) return 0;
+      if (grupos.every(g => g.some(tt => nn.includes(tt)))) return 3;
+      if (grupos.every(g => nt.some(n => g.some(tt => n.startsWith(tt) || (tt.length >= 3 && tt.startsWith(n)))))) return 2;
+      const k = grupos.filter(g => nt.some(n => g.some(tt => n.startsWith(tt) || (tt.length >= 3 && tt.startsWith(n))))).length;
+      if (k >= Math.ceil(grupos.length / 2) && k >= 1) return 1;
+      return 0;
+    }
+    function mkItem(sigla, desc, lab, preco) {
+      const p = preco || [0,0];
+      return { laboratorio: lab, id: sigla, nome: desc, precoParticular: p[0], precoDrapp: p[1], codigo: "", categoria: "", obs: "", preparo: "" };
+    }
+    function buscarExamesLocal(termo) {
+      if (!catalogo) return null;
+      const labs  = obterLabsSelecionados();
+      const labA  = labs.find(l => l.includes("A+") || l.includes("Medicina"));
+      const labH  = labs.find(l => l.includes("Hermes") || l.includes("Pardini"));
+      const pA    = labA ? (catalogo.precos[labA] || {}) : {};
+      const pH    = labH ? (catalogo.precos[labH] || {}) : {};
+
+      const nn    = normCli(termo);
+      const grupos = expandirGruposCli(toksCli(termo), catalogo.termos);
+
+      // Coleta resultados com score
+      const hits = [], seen = new Set();
+      catalogo.mapeamento.forEach(mp => {
+        const sA = mp.sA, dA = mp.dA, sH = mp.sH, dH = mp.dH, gr = mp.g || "";
+        const scA = sA && dA ? scoreCli(grupos, normCli(dA), toksCli(dA)) : 0;
+        const scH = sH && dH ? scoreCli(grupos, normCli(dH), toksCli(dH)) : 0;
+        const sc  = Math.max(scA, scH);
+        if (sc === 0) return;
+        if (sA && labA && !seen.has(sA+"|"+labA)) { seen.add(sA+"|"+labA); hits.push({ sc, sA, dA, sH, dH, gr, labA, labH, pA, pH }); }
+        else if (sH && labH && !seen.has(sH+"|"+labH)) { seen.add(sH+"|"+labH); hits.push({ sc, sA, dA, sH, dH, gr, labA, labH, pA, pH }); }
+      });
+      hits.sort((a,b) => b.sc - a.sc);
+
+      // Monta itens — agrupa GRUPOs
+      const resultado = [], gruposFeitos = new Set();
+      hits.slice(0, 120).forEach(h => {
+        if (h.gr) {
+          if (gruposFeitos.has(h.gr)) return;
+          gruposFeitos.add(h.gr);
+          const membros = catalogo.mapeamento.filter(m => m.g === h.gr);
+          const itensA  = membros.filter(m => m.sA && h.labA).map(m => sanitizarItem_(mkItem(m.sA, m.dA, h.labA, h.pA[m.sA])));
+          const hermesM = membros.find(m => m.sH && h.labH);
+          const hermes  = hermesM ? sanitizarItem_(mkItem(hermesM.sH, hermesM.dH, h.labH, h.pH[hermesM.sH])) : null;
+          if (itensA.length || hermes) resultado.push({ tipo:"grupo", grupo:h.gr, itensA, hermes });
+        } else {
+          const itemA = h.sA && h.labA ? sanitizarItem_(mkItem(h.sA, h.dA, h.labA, h.pA[h.sA])) : null;
+          const itemH = h.sH && h.labH ? sanitizarItem_(mkItem(h.sH, h.dH, h.labH, h.pH[h.sH])) : null;
+          if (itemA && !selecionados.some(s => s.id===itemA.id && s.laboratorio===itemA.laboratorio)) resultado.push(itemA);
+          if (itemH && !selecionados.some(s => s.id===itemH.id && s.laboratorio===itemH.laboratorio)) resultado.push(itemH);
+        }
+      });
+      return resultado.slice(0, 60);
+    }
+
+    // Carrega catálogo uma vez ao abrir a página
+    (async function carregarCatalogo() {
       try {
-        const r = await fetch(APPS_SCRIPT_URL + "?action=mapeamento");
-        const d = await r.json();
-        if (d.mapeamento) mapeamentoLabs = d.mapeamento;
+        const r = await fetch(APPS_SCRIPT_URL + "?action=catalogo");
+        catalogo = await r.json();
+        // Mantém mapeamentoLabs atualizado
+        mapeamentoLabs = {};
+        (catalogo.mapeamento || []).forEach(m => { if (m.sA && m.sH) mapeamentoLabs[m.sH] = m.sA; });
       } catch (_) {}
     })();
 
@@ -1805,6 +1885,12 @@
     }
 
     async function buscarExamesRemotos(termo) {
+      // Busca local (catálogo já carregado)
+      if (catalogo) {
+        return buscarExamesLocal(termo) || [];
+      }
+
+      // Fallback remoto (catálogo ainda não carregou)
       const labsSelecionados = obterLabsSelecionados();
       const url = APPS_SCRIPT_URL + "?q=" + encodeURIComponent(termo) + "&labs=" + encodeURIComponent(labsSelecionados.join(","));
       const response = await fetch(url);
