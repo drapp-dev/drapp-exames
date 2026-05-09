@@ -1587,7 +1587,10 @@
         if (sA && labA && !seen.has(sA+"|"+labA)) { seen.add(sA+"|"+labA); hits.push({ sc, sA, dA, sH, dH, gr, labA, labH, pA, pH }); }
         else if (sH && labH && !seen.has(sH+"|"+labH)) { seen.add(sH+"|"+labH); hits.push({ sc, sA, dA, sH, dH, gr, labA, labH, pA, pH }); }
       });
-      hits.sort((a,b) => b.sc - a.sc);
+      const pop = catalogo.popularidade || {};
+      hits.sort((a,b) => b.sc - a.sc ||
+        Math.max(pop[(b.sA||"")+"|"+(b.labA||"")]||0, pop[(b.sH||"")+"|"+(b.labH||"")]||0) -
+        Math.max(pop[(a.sA||"")+"|"+(a.labA||"")]||0, pop[(a.sH||"")+"|"+(a.labH||"")]||0));
 
       // Monta itens — agrupa GRUPOs
       // Mantém A+ E Hermes na lista para que adicionarExame encontre o par;
@@ -1994,8 +1997,17 @@
         : (item.id || item.nome);
     }
 
+    function registrarEscolha_(item) {
+      fetch(APPS_SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "registrarEscolha", sigla: item.id, lab: item.laboratorio, descricao: item.nome })
+      }).catch(() => {});
+    }
+
     function adicionarExame(exame) {
       const labsSelecionados = obterLabsSelecionados();
+      const adicionados = [];
       // No modo "Ambos", adiciona também o par do outro lab se estiver na lista de busca
       if (labsSelecionados.length > 1 && ultimaListaBusca.length) {
         const chave = chaveCanonica(exame);
@@ -2003,13 +2015,16 @@
         pares.forEach(item => {
           if (!selecionados.some(s => s.id === item.id && s.laboratorio === item.laboratorio)) {
             selecionados.push(item);
+            adicionados.push(item);
           }
         });
       } else {
         if (!selecionados.some(s => s.id === exame.id && s.laboratorio === exame.laboratorio)) {
           selecionados.push(exame);
+          adicionados.push(exame);
         }
       }
+      adicionados.forEach(registrarEscolha_);
       buscaExame.value = "";
       suggestions.style.display = "none";
       suggestions.innerHTML = "";
