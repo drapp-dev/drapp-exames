@@ -1379,7 +1379,41 @@
             <div class="grid-2" style="margin-top:16px;">
               <div class="field">
                 <label for="telefone">Telefone / WhatsApp</label>
-                <input type="text" id="telefone" placeholder="(11) 99999-9999" maxlength="15" />
+                <div style="display:flex;gap:6px;align-items:flex-start;">
+                  <div style="position:relative;">
+                    <select id="paisTelefone" style="height:44px;border:1px solid #ccc;border-radius:8px;padding:0 28px 0 8px;font-size:14px;background:#fff;cursor:pointer;appearance:none;-webkit-appearance:none;min-width:90px;">
+                      <option value="55"  data-mask="(dd) ddddd-dddd" data-min="10" data-max="11">🇧🇷 +55 Brasil</option>
+                      <option value="1"   data-mask="(ddd) ddd-dddd"  data-min="10" data-max="10">🇺🇸 +1 EUA / Canadá</option>
+                      <option value="351" data-mask="ddd ddd ddd"     data-min="9"  data-max="9" >🇵🇹 +351 Portugal</option>
+                      <option value="81"  data-mask="dd dddd dddd"    data-min="10" data-max="10">🇯🇵 +81 Japão</option>
+                      <option value="44"  data-mask="dddd dddddd"     data-min="10" data-max="10">🇬🇧 +44 Reino Unido</option>
+                      <option value="39"  data-mask="ddd ddd dddd"    data-min="9"  data-max="10">🇮🇹 +39 Itália</option>
+                      <option value="49"  data-mask="dddd dddddddd"   data-min="10" data-max="12">🇩🇪 +49 Alemanha</option>
+                      <option value="61"  data-mask="ddd ddd ddd"     data-min="9"  data-max="9" >🇦🇺 +61 Austrália</option>
+                      <option value="33"  data-mask="d dd dd dd dd"   data-min="9"  data-max="9" >🇫🇷 +33 França</option>
+                      <option value="34"  data-mask="ddd ddd ddd"     data-min="9"  data-max="9" >🇪🇸 +34 Espanha</option>
+                      <option value="41"  data-mask="dd ddd dd dd"    data-min="9"  data-max="9" >🇨🇭 +41 Suíça</option>
+                      <option value="353" data-mask="ddd ddd dddd"    data-min="9"  data-max="9" >🇮🇪 +353 Irlanda</option>
+                      <option value="31"  data-mask="dd ddd ddddd"    data-min="9"  data-max="9" >🇳🇱 +31 Holanda</option>
+                      <option value="32"  data-mask="ddd dd dd dd"    data-min="9"  data-max="9" >🇧🇪 +32 Bélgica</option>
+                      <option value="43"  data-mask="ddd ddddddd"     data-min="10" data-max="13">🇦🇹 +43 Áustria</option>
+                      <option value="46"  data-mask="dd ddd ddddd"    data-min="9"  data-max="9" >🇸🇪 +46 Suécia</option>
+                      <option value="47"  data-mask="dddd dddd"       data-min="8"  data-max="8" >🇳🇴 +47 Noruega</option>
+                      <option value="54"  data-mask="(dd) dddd-dddd"  data-min="10" data-max="10">🇦🇷 +54 Argentina</option>
+                      <option value="595" data-mask="ddd ddd ddd"     data-min="9"  data-max="9" >🇵🇾 +595 Paraguai</option>
+                      <option value="598" data-mask="d ddd dd dd"     data-min="8"  data-max="8" >🇺🇾 +598 Uruguai</option>
+                      <option value="56"  data-mask="d dddd dddd"     data-min="9"  data-max="9" >🇨🇱 +56 Chile</option>
+                      <option value="52"  data-mask="dd dddd dddd"    data-min="10" data-max="10">🇲🇽 +52 México</option>
+                      <option value="244" data-mask="ddd ddd ddd"     data-min="9"  data-max="9" >🇦🇴 +244 Angola</option>
+                      <option value="258" data-mask="dd ddd dddd"     data-min="9"  data-max="9" >🇲🇿 +258 Moçambique</option>
+                      <option value="971" data-mask="dd ddd dddd"     data-min="9"  data-max="9" >🇦🇪 +971 Emirados Árabes</option>
+                    </select>
+                    <span style="position:absolute;right:8px;top:50%;transform:translateY(-50%);pointer-events:none;font-size:11px;color:#666;">▼</span>
+                  </div>
+                  <div style="flex:1;">
+                    <input type="text" id="telefone" placeholder="(11) 99999-9999" maxlength="20" style="width:100%;box-sizing:border-box;" />
+                  </div>
+                </div>
                 <div id="telefoneError" class="field-error">Informe um telefone válido.</div>
               </div>
               <div class="field">
@@ -1726,10 +1760,26 @@
         .slice(0,14);
     }
 
+    function paisTelSelecionado() {
+      const sel = document.getElementById("paisTelefone");
+      return sel ? sel.options[sel.selectedIndex] : null;
+    }
+
     function mascaraTelefone(valor) {
-      valor = valor.replace(/\D/g,"");
-      if (valor.length <= 10) return valor.replace(/(\d{2})(\d)/,"($1) $2").replace(/(\d{4})(\d)/,"$1-$2").slice(0,14);
-      return valor.replace(/(\d{2})(\d)/,"($1) $2").replace(/(\d{5})(\d)/,"$1-$2").slice(0,15);
+      const opt = paisTelSelecionado();
+      const mask = opt ? opt.dataset.mask : "(dd) ddddd-dddd";
+      const digitos = valor.replace(/\D/g, "");
+      let i = 0, result = "";
+      for (let c of mask) {
+        if (i >= digitos.length) break;
+        result += c === "d" ? digitos[i++] : c;
+      }
+      return result;
+    }
+
+    function placeholderTelefone() {
+      const opt = paisTelSelecionado();
+      return opt ? opt.dataset.mask.replace(/d/g, "9") : "(11) 99999-9999";
     }
 
     function validarCPF(cpf) {
@@ -1749,7 +1799,13 @@
     }
 
     function validarEmail(email) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()); }
-    function validarTelefone(telefone) { const n = telefone.replace(/\D/g,""); return n.length >= 10 && n.length <= 11; }
+    function validarTelefone(telefone) {
+      const opt = paisTelSelecionado();
+      const min = opt ? parseInt(opt.dataset.min) : 10;
+      const max = opt ? parseInt(opt.dataset.max) : 11;
+      const n = telefone.replace(/\D/g,"");
+      return n.length >= min && n.length <= max;
+    }
 
     function limparValidacaoCpf() {
       cpfValidado = cpfConfirmado = false;
@@ -2246,6 +2302,14 @@
       atualizarBotoes();
     });
 
+    document.getElementById("paisTelefone").addEventListener("change", function () {
+      telefoneInput.value = "";
+      telefoneInput.placeholder = placeholderTelefone();
+      telefoneInput.focus();
+      telefoneError.style.display = "none";
+      atualizarBotoes();
+    });
+
     emailInput.addEventListener("input", function () {
       emailError.style.display = "none";
       atualizarBotoes();
@@ -2339,7 +2403,7 @@
         contactId: dadosCpfValidados ? dadosCpfValidados.contactId : "",
         paciente: {
           cpf: cpfInput.value.trim(),
-          telefone: telefoneInput.value.trim(),
+          telefone: "+" + document.getElementById("paisTelefone").value + " " + telefoneInput.value.trim(),
           email: emailInput.value.trim(),
           nome_completo_validado: dadosCpfValidados ? dadosCpfValidados.nome : "",
           data_nascimento_validada: dadosCpfValidados ? dadosCpfValidados.nascimento : "",
