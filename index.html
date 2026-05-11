@@ -479,7 +479,7 @@
 
     .main-grid {
       display: grid;
-      grid-template-columns: 1.45fr 0.85fr;
+      grid-template-columns: 1.3fr 1fr;
       gap: 24px;
       align-items: flex-start;
     }
@@ -1274,7 +1274,6 @@
                 <thead>
                   <tr>
                     <th>Descrição</th>
-                    <th>TUSS</th>
                     <th style="color:var(--aplus);">Particular A+</th>
                     <th style="color:var(--aplus);">DrApp A+</th>
                     <th style="color:var(--aplus);">Desc. A+</th>
@@ -1334,34 +1333,34 @@
                 <div class="summary-row saving"><span>💰 Você economiza</span><span id="totalEconomiaS">R$ 0,00</span></div>
               </div>
               <!-- Modo: comparar ambos -->
-              <div id="resumoAplus" style="display:none;padding-bottom:12px;">
-                <div style="font-size:11px;font-weight:700;color:#0077cc;text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;">A+ Medicina</div>
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;">
-                  <span style="font-size:13px;color:#666;">Particular</span>
-                  <span id="totalParticularA" style="font-size:13px;color:#666;">R$ 0,00</span>
+              <div id="resumoAplus" style="display:none;padding-bottom:14px;">
+                <div style="font-size:11px;font-weight:700;color:#0077cc;text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;">A+ Medicina</div>
+                <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px;">
+                  <span style="font-size:14px;color:#888;">Particular</span>
+                  <span id="totalParticularA" style="font-size:14px;color:#888;">R$ 0,00</span>
                 </div>
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;">
-                  <span style="font-size:16px;font-weight:700;">DrApp</span>
-                  <span id="totalDrappA" style="font-size:20px;font-weight:800;">R$ 0,00</span>
+                <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;">
+                  <span style="font-size:17px;font-weight:700;color:#1a2e4a;">DrApp</span>
+                  <span id="totalDrappA" style="font-size:22px;font-weight:800;color:#1a2e4a;">R$ 0,00</span>
                 </div>
-                <div style="display:flex;justify-content:space-between;align-items:center;">
-                  <span style="font-size:13px;color:var(--orange);font-weight:600;">💰 Economia</span>
-                  <span id="totalEconomiaA" style="font-size:13px;color:var(--orange);font-weight:700;">R$ 0,00</span>
+                <div style="display:flex;justify-content:space-between;align-items:baseline;">
+                  <span style="font-size:14px;color:var(--orange);font-weight:600;">💰 Economia</span>
+                  <span id="totalEconomiaA" style="font-size:14px;color:var(--orange);font-weight:700;">R$ 0,00</span>
                 </div>
               </div>
-              <div id="resumoHermes" style="display:none;padding-top:12px;border-top:2px solid #e74c3c;">
-                <div style="font-size:11px;font-weight:700;color:#c0392b;text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;">Hermes Pardini</div>
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;">
-                  <span style="font-size:13px;color:#666;">Particular</span>
-                  <span id="totalParticularH" style="font-size:13px;color:#666;">R$ 0,00</span>
+              <div id="resumoHermes" style="display:none;padding-top:14px;border-top:2px solid #e74c3c;">
+                <div style="font-size:11px;font-weight:700;color:#c0392b;text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;">Hermes Pardini</div>
+                <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px;">
+                  <span style="font-size:14px;color:#888;">Particular</span>
+                  <span id="totalParticularH" style="font-size:14px;color:#888;">R$ 0,00</span>
                 </div>
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;">
-                  <span style="font-size:16px;font-weight:700;">DrApp</span>
-                  <span id="totalDrappH" style="font-size:20px;font-weight:800;">R$ 0,00</span>
+                <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;">
+                  <span style="font-size:17px;font-weight:700;color:#1a2e4a;">DrApp</span>
+                  <span id="totalDrappH" style="font-size:22px;font-weight:800;color:#1a2e4a;">R$ 0,00</span>
                 </div>
-                <div style="display:flex;justify-content:space-between;align-items:center;">
-                  <span style="font-size:13px;color:var(--orange);font-weight:600;">💰 Economia</span>
-                  <span id="totalEconomiaH" style="font-size:13px;color:var(--orange);font-weight:700;">R$ 0,00</span>
+                <div style="display:flex;justify-content:space-between;align-items:baseline;">
+                  <span style="font-size:14px;color:var(--orange);font-weight:600;">💰 Economia</span>
+                  <span id="totalEconomiaH" style="font-size:14px;color:var(--orange);font-weight:700;">R$ 0,00</span>
                 </div>
               </div>
               <!-- ids legados usados em outros trechos do código -->
@@ -2182,7 +2181,6 @@
         const tr = document.createElement("tr");
         tr.innerHTML = `
           <td><div class="exam-name">${textoSeguro(ex.nome)}</div>${ex.categoria ? `<div class="exam-code">${textoSeguro(ex.categoria)}</div>` : ""}</td>
-          <td style="font-size:13px;color:var(--muted);">${textoSeguro(ex.codigo)}</td>
           ${tdPreco(ex.aplus)}${tdDrapp(ex.aplus)}${tdDesc(ex.aplus)}
           ${tdPreco(ex.hermes)}${tdDrapp(ex.hermes)}${tdDesc(ex.hermes)}
           <td><button type="button" class="remove-btn" onclick="removerExameGrupo('${rid}')">Remover</button></td>`;
