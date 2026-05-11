@@ -479,7 +479,7 @@
 
     .main-grid {
       display: grid;
-      grid-template-columns: 1.3fr 1fr;
+      grid-template-columns: 1.55fr 0.8fr;
       gap: 24px;
       align-items: flex-start;
       min-width: 0;
@@ -711,11 +711,11 @@
     thead { background: var(--soft-blue); }
 
     th, td {
-      padding: 14px 12px; text-align: left; vertical-align: top;
-      border-bottom: 1px solid #eef2f7; font-size: 17px;
+      padding: 10px 8px; text-align: left; vertical-align: top;
+      border-bottom: 1px solid #eef2f7; font-size: 14px;
     }
 
-    th { color: var(--muted); font-size: 16px; font-weight: 600; }
+    th { color: var(--muted); font-size: 13px; font-weight: 600; white-space: nowrap; }
 
     .empty { padding: 32px; text-align: center; color: var(--muted); font-size: 15px; }
 
@@ -726,8 +726,8 @@
     .discount-badge {
       display: inline-block;
       background: #dcfce7; color: var(--success);
-      padding: 5px 10px; border-radius: 999px;
-      font-weight: 700; font-size: 16px;
+      padding: 3px 8px; border-radius: 999px;
+      font-weight: 700; font-size: 13px;
     }
 
     .remove-btn {
@@ -2234,7 +2234,13 @@
 
         function tdPreco(item) { return item ? `<td style="color:#94a3b8;text-decoration:line-through;font-size:15px;">${moeda(item.precoParticular)}</td>` : vazio; }
         function tdDrapp(item) { return item ? `<td style="font-weight:800;color:var(--text);">${moeda(item.precoDrapp)}</td>` : vazio; }
-        function tdDesc(item)  { return item ? `<td><span class="discount-badge">${percentualDesconto(item.precoParticular, item.precoDrapp)}%</span></td>` : vazio; }
+        function tdDesc(item)  {
+          if (!item) return vazio;
+          const pct = percentualDesconto(item.precoParticular, item.precoDrapp);
+          return pct > 0
+            ? `<td><span class="discount-badge">${pct}%</span></td>`
+            : `<td style="color:#cbd5e1;text-align:center;">—</td>`;
+        }
 
         const tr = document.createElement("tr");
         tr.innerHTML = `
@@ -2254,7 +2260,7 @@
               <div class="selected-price-box"><div class="selected-price-label">Particular</div><div class="selected-price-value old">${moeda(item.precoParticular)}</div></div>
               <div class="selected-price-box"><div class="selected-price-label">DrApp</div><div class="selected-price-value">${moeda(item.precoDrapp)}</div></div>
             </div>
-            <span class="discount-badge" style="margin-top:6px;display:inline-block;">${percentualDesconto(item.precoParticular, item.precoDrapp)}%</span>
+            ${percentualDesconto(item.precoParticular, item.precoDrapp) > 0 ? `<span class="discount-badge" style="margin-top:6px;display:inline-block;">${percentualDesconto(item.precoParticular, item.precoDrapp)}%</span>` : ""}
           </div>` : "";
         card.innerHTML = `
           <div class="selected-card-header">
