@@ -38,6 +38,7 @@
       font-family: 'Inter', Arial, sans-serif;
       background: #f0f6fb;
       color: var(--text);
+      overflow-x: hidden;
     }
 
     /* ─── NAVBAR ─────────────────────────────────────── */
@@ -1325,9 +1326,28 @@
               </div>
             </div>
             <div class="summary-box" id="resumoPrecos">
-              <div class="summary-row"><span>Total particular</span><span id="totalParticular">R$ 0,00</span></div>
-              <div class="summary-row total"><span>Total DrApp</span><span id="totalDrapp">R$ 0,00</span></div>
-              <div class="summary-row saving"><span>💰 Você economiza</span><span id="totalEconomia">R$ 0,00</span></div>
+              <div id="resumoAplus" style="display:none;margin-bottom:10px;">
+                <div style="font-size:12px;font-weight:700;color:#0077cc;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">A+ Medicina</div>
+                <div class="summary-row"><span>Particular</span><span id="totalParticularA">R$ 0,00</span></div>
+                <div class="summary-row total"><span>DrApp</span><span id="totalDrappA">R$ 0,00</span></div>
+                <div class="summary-row saving"><span>💰 Economia</span><span id="totalEconomiaA">R$ 0,00</span></div>
+              </div>
+              <div id="resumoHermes" style="display:none;margin-bottom:10px;">
+                <div style="font-size:12px;font-weight:700;color:#c0392b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Hermes Pardini</div>
+                <div class="summary-row"><span>Particular</span><span id="totalParticularH">R$ 0,00</span></div>
+                <div class="summary-row total"><span>DrApp</span><span id="totalDrappH">R$ 0,00</span></div>
+                <div class="summary-row saving"><span>💰 Economia</span><span id="totalEconomiaH">R$ 0,00</span></div>
+              </div>
+              <div id="resumoTotal" style="display:none;border-top:1px solid #dde6f0;padding-top:10px;margin-top:4px;">
+                <div class="summary-row"><span>Total particular</span><span id="totalParticular">R$ 0,00</span></div>
+                <div class="summary-row total"><span>Total DrApp</span><span id="totalDrapp">R$ 0,00</span></div>
+                <div class="summary-row saving"><span>💰 Você economiza</span><span id="totalEconomia">R$ 0,00</span></div>
+              </div>
+              <div id="resumoSimples" style="display:none;">
+                <div class="summary-row"><span>Total particular</span><span id="totalParticularS">R$ 0,00</span></div>
+                <div class="summary-row total"><span>Total DrApp</span><span id="totalDrappS">R$ 0,00</span></div>
+                <div class="summary-row saving"><span>💰 Você economiza</span><span id="totalEconomiaS">R$ 0,00</span></div>
+              </div>
             </div>
             <div class="info-box" id="resumoInfoBox">Revise os exames selecionados antes de seguir para o fechamento.</div>
             <button id="btnContinuar" class="primary-btn" disabled>Continuar para fechar orçamento →</button>
@@ -2187,11 +2207,59 @@
     }
 
     function atualizarResumo() {
-      const sp = selecionados.reduce((a,i) => a + Number(i.precoParticular||0), 0);
-      const sd = selecionados.reduce((a,i) => a + Number(i.precoDrapp||0), 0);
-      totalParticular.textContent = moeda(sp);
-      totalDrapp.textContent      = moeda(sd);
-      totalEconomia.textContent   = moeda(sp - sd);
+      const isA = i => (i.laboratorio||"").toLowerCase().includes("a+") || (i.laboratorio||"").toLowerCase().includes("medicina");
+      const isH = i => (i.laboratorio||"").toLowerCase().includes("hermes") || (i.laboratorio||"").toLowerCase().includes("pardini");
+
+      const selA = selecionados.filter(isA);
+      const selH = selecionados.filter(isH);
+      const temA = selA.length > 0;
+      const temH = selH.length > 0;
+      const ambos = temA && temH;
+
+      const spA = selA.reduce((a,i) => a + Number(i.precoParticular||0), 0);
+      const sdA = selA.reduce((a,i) => a + Number(i.precoDrapp||0), 0);
+      const spH = selH.reduce((a,i) => a + Number(i.precoParticular||0), 0);
+      const sdH = selH.reduce((a,i) => a + Number(i.precoDrapp||0), 0);
+      const spT = spA + spH, sdT = sdA + sdH;
+
+      // Blocos por lab (só quando modo "Comparar ambos")
+      const bA = document.getElementById("resumoAplus");
+      const bH = document.getElementById("resumoHermes");
+      const bT = document.getElementById("resumoTotal");
+      const bS = document.getElementById("resumoSimples");
+
+      if (ambos) {
+        if (bA) { bA.style.display = "block";
+          document.getElementById("totalParticularA").textContent = moeda(spA);
+          document.getElementById("totalDrappA").textContent      = moeda(sdA);
+          document.getElementById("totalEconomiaA").textContent   = moeda(spA - sdA);
+        }
+        if (bH) { bH.style.display = "block";
+          document.getElementById("totalParticularH").textContent = moeda(spH);
+          document.getElementById("totalDrappH").textContent      = moeda(sdH);
+          document.getElementById("totalEconomiaH").textContent   = moeda(spH - sdH);
+        }
+        if (bT) { bT.style.display = "block";
+          document.getElementById("totalParticular").textContent = moeda(spT);
+          document.getElementById("totalDrapp").textContent      = moeda(sdT);
+          document.getElementById("totalEconomia").textContent   = moeda(spT - sdT);
+        }
+        if (bS) bS.style.display = "none";
+      } else {
+        if (bA) bA.style.display = "none";
+        if (bH) bH.style.display = "none";
+        if (bT) bT.style.display = "none";
+        const sp = spA + spH, sd = sdA + sdH;
+        if (bS) { bS.style.display = selecionados.length ? "block" : "none";
+          document.getElementById("totalParticularS").textContent = moeda(sp);
+          document.getElementById("totalDrappS").textContent      = moeda(sd);
+          document.getElementById("totalEconomiaS").textContent   = moeda(sp - sd);
+        }
+        // mantém compatibilidade com elementos legados usados em outros lugares
+        if (totalParticular) totalParticular.textContent = moeda(sp);
+        if (totalDrapp)      totalDrapp.textContent      = moeda(sd);
+        if (totalEconomia)   totalEconomia.textContent   = moeda(sp - sd);
+      }
     }
 
     function limparErrosFormulario() {
