@@ -474,6 +474,7 @@
       padding: 0 24px;
       box-sizing: border-box;
       width: 100%;
+      overflow-x: hidden;
     }
 
     .main-grid {
@@ -1326,28 +1327,47 @@
               </div>
             </div>
             <div class="summary-box" id="resumoPrecos">
-              <div id="resumoAplus" style="display:none;margin-bottom:10px;">
-                <div style="font-size:12px;font-weight:700;color:#0077cc;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">A+ Medicina</div>
-                <div class="summary-row"><span>Particular</span><span id="totalParticularA">R$ 0,00</span></div>
-                <div class="summary-row total"><span>DrApp</span><span id="totalDrappA">R$ 0,00</span></div>
-                <div class="summary-row saving"><span>💰 Economia</span><span id="totalEconomiaA">R$ 0,00</span></div>
-              </div>
-              <div id="resumoHermes" style="display:none;margin-bottom:10px;">
-                <div style="font-size:12px;font-weight:700;color:#c0392b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Hermes Pardini</div>
-                <div class="summary-row"><span>Particular</span><span id="totalParticularH">R$ 0,00</span></div>
-                <div class="summary-row total"><span>DrApp</span><span id="totalDrappH">R$ 0,00</span></div>
-                <div class="summary-row saving"><span>💰 Economia</span><span id="totalEconomiaH">R$ 0,00</span></div>
-              </div>
-              <div id="resumoTotal" style="display:none;border-top:1px solid #dde6f0;padding-top:10px;margin-top:4px;">
-                <div class="summary-row"><span>Total particular</span><span id="totalParticular">R$ 0,00</span></div>
-                <div class="summary-row total"><span>Total DrApp</span><span id="totalDrapp">R$ 0,00</span></div>
-                <div class="summary-row saving"><span>💰 Você economiza</span><span id="totalEconomia">R$ 0,00</span></div>
-              </div>
+              <!-- Modo: um lab só -->
               <div id="resumoSimples" style="display:none;">
-                <div class="summary-row"><span>Total particular</span><span id="totalParticularS">R$ 0,00</span></div>
-                <div class="summary-row total"><span>Total DrApp</span><span id="totalDrappS">R$ 0,00</span></div>
+                <div class="summary-row"><span>Particular</span><span id="totalParticularS" style="font-size:13px;color:#666;">R$ 0,00</span></div>
+                <div class="summary-row total"><span>DrApp</span><span id="totalDrappS">R$ 0,00</span></div>
                 <div class="summary-row saving"><span>💰 Você economiza</span><span id="totalEconomiaS">R$ 0,00</span></div>
               </div>
+              <!-- Modo: comparar ambos -->
+              <div id="resumoAplus" style="display:none;padding-bottom:12px;">
+                <div style="font-size:11px;font-weight:700;color:#0077cc;text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;">A+ Medicina</div>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;">
+                  <span style="font-size:13px;color:#666;">Particular</span>
+                  <span id="totalParticularA" style="font-size:13px;color:#666;">R$ 0,00</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;">
+                  <span style="font-size:16px;font-weight:700;">DrApp</span>
+                  <span id="totalDrappA" style="font-size:20px;font-weight:800;">R$ 0,00</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <span style="font-size:13px;color:var(--orange);font-weight:600;">💰 Economia</span>
+                  <span id="totalEconomiaA" style="font-size:13px;color:var(--orange);font-weight:700;">R$ 0,00</span>
+                </div>
+              </div>
+              <div id="resumoHermes" style="display:none;padding-top:12px;border-top:2px solid #e74c3c;">
+                <div style="font-size:11px;font-weight:700;color:#c0392b;text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;">Hermes Pardini</div>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;">
+                  <span style="font-size:13px;color:#666;">Particular</span>
+                  <span id="totalParticularH" style="font-size:13px;color:#666;">R$ 0,00</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;">
+                  <span style="font-size:16px;font-weight:700;">DrApp</span>
+                  <span id="totalDrappH" style="font-size:20px;font-weight:800;">R$ 0,00</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <span style="font-size:13px;color:var(--orange);font-weight:600;">💰 Economia</span>
+                  <span id="totalEconomiaH" style="font-size:13px;color:var(--orange);font-weight:700;">R$ 0,00</span>
+                </div>
+              </div>
+              <!-- ids legados usados em outros trechos do código -->
+              <span id="totalParticular" style="display:none;"></span>
+              <span id="totalDrapp"      style="display:none;"></span>
+              <span id="totalEconomia"   style="display:none;"></span>
             </div>
             <div class="info-box" id="resumoInfoBox">Revise os exames selecionados antes de seguir para o fechamento.</div>
             <button id="btnContinuar" class="primary-btn" disabled>Continuar para fechar orçamento →</button>
