@@ -2096,6 +2096,56 @@
         : (item.id || item.nome);
     }
 
+    // ── Contraste automático ───────────────────────────────
+    const CONTRASTE_AUTO = [
+      { palavras: ["tomograf", "tomo"],
+        siglaA: "TCCONTRASTE", siglaH: "CON TOMO" },
+      { palavras: ["ressona", "ressonancia", "ressonância", "magneti"],
+        siglaA: "RMCONTRASTE", siglaH: "CON RM" }
+    ];
+
+    function precisaContraste(nomeExame) {
+      const n = normCli(nomeExame);
+      if (n.includes("sem contraste")) return null;
+      return CONTRASTE_AUTO.find(c => c.palavras.some(p => n.includes(p))) || null;
+    }
+
+    function buscarItemContrasteNoMapa(siglaA, siglaH, laboratorio) {
+      if (!catalogo) return null;
+      const isH = (laboratorio || "").toLowerCase().includes("hermes") ||
+                  (laboratorio || "").toLowerCase().includes("pardini");
+      const sigla = isH ? siglaH : siglaA;
+      const mp = catalogo.mapeamento.find(m => isH ? m.sH === sigla : m.sA === sigla);
+      if (!mp) return null;
+      const labs = obterLabsSelecionados();
+      const labA = labs.find(l => l.includes("A+") || l.includes("Medicina"));
+      const labH = labs.find(l => l.includes("Hermes") || l.includes("Pardini"));
+      if (isH && mp.sH && labH) {
+        const p = (catalogo.precos[labH] || {})[mp.sH];
+        return sanitizarItem_(mkItem(mp.sH, mp.dH, labH, p));
+      }
+      if (!isH && mp.sA && labA) {
+        const p = (catalogo.precos[labA] || {})[mp.sA];
+        return sanitizarItem_(mkItem(mp.sA, mp.dA, labA, p));
+      }
+      return null;
+    }
+
+    function adicionarContrasteAuto(examesAdicionados) {
+      const novoContraste = [];
+      examesAdicionados.forEach(exame => {
+        const cfg = precisaContraste(exame.nome || "");
+        if (!cfg) return;
+        const itemContraste = buscarItemContrasteNoMapa(cfg.siglaA, cfg.siglaH, exame.laboratorio);
+        if (!itemContraste) return;
+        const jaNoCarrinho = selecionados.some(s => s.id === itemContraste.id && s.laboratorio === itemContraste.laboratorio);
+        if (jaNoCarrinho) return;
+        selecionados.push(itemContraste);
+        novoContraste.push(itemContraste);
+      });
+      return novoContraste;
+    }
+
     function registrarEscolha_(item) {
       fetch(APPS_SCRIPT_URL, {
         method: "POST",
@@ -2124,6 +2174,8 @@
         }
       }
       adicionados.forEach(registrarEscolha_);
+      const contrasteAdicionado = adicionarContrasteAuto(adicionados);
+      contrasteAdicionado.forEach(registrarEscolha_);
       buscaExame.value = "";
       suggestions.style.display = "none";
       suggestions.innerHTML = "";
