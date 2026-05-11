@@ -482,6 +482,7 @@
       grid-template-columns: 1.3fr 1fr;
       gap: 24px;
       align-items: flex-start;
+      min-width: 0;
     }
 
     .left-column, .right-column {
@@ -489,6 +490,8 @@
       flex-direction: column;
       gap: 24px;
       align-self: start;
+      min-width: 0;
+      overflow: hidden;
     }
 
     .card {
@@ -700,7 +703,8 @@
     /* ─── TABLE ──────────────────────────────────────── */
     .table-wrap {
       margin-top: 20px; border: 1px solid var(--line);
-      border-radius: 18px; overflow: hidden; background: #fff;
+      border-radius: 18px; overflow-x: auto; background: #fff;
+      max-width: 100%;
     }
 
     table { width: 100%; border-collapse: collapse; }
@@ -764,6 +768,8 @@
       background: linear-gradient(135deg, #f0f9ff 0%, #e6f3fb 100%);
       border-radius: 18px; padding: 20px; margin-bottom: 16px;
       border: 1px solid #cde8f4;
+      word-break: break-word;
+      overflow-wrap: break-word;
     }
 
     .summary-row {
