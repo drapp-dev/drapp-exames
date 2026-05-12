@@ -1125,6 +1125,11 @@
             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
           <span class="lab-badge-trust aplus" style="display:none;">A+ Medicina Diagnóstica</span>
         </div>
+        <div class="trust-logo-wrap" title="APM">
+          <img src="logo-apm.png" alt="APM"
+            onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+          <span class="lab-badge-trust apm" style="display:none;">APM</span>
+        </div>
       </div>
     </div>
   </div>
@@ -1149,7 +1154,7 @@
         <div class="benefit-icon blue">🏥</div>
         <div class="benefit-title">Os melhores laboratórios do Brasil</div>
         <div class="benefit-text">
-          Hermes Pardini e A+ Medicina Diagnóstica do Grupo Fleury — referências nacionais em qualidade diagnóstica, disponíveis para você a preço acessível.
+          Hermes Pardini, A+ Medicina Diagnóstica e Grupo Fleury — referências nacionais em qualidade diagnóstica, disponíveis para você a preço acessível.
         </div>
       </div>
 
@@ -1461,7 +1466,7 @@
               <button id="btnFinalizar" class="primary-btn btn-finalizar" type="button" disabled>Finalizar →</button>
             </div>
             <div id="checkoutNote" class="checkout-note piscando" style="margin-top:12px;background:#fff3e0;border:1px solid #ffb74d;border-radius:12px;padding:10px 16px;font-size:14px;font-weight:600;color:#e65100;text-align:center;">
-              valide o CPF para liberar o botão
+              ⚠️ Preencha todos os campos e valide o CPF para liberar o botão.
             </div>
           </div>
         </div><!-- /right-column -->
@@ -1765,13 +1770,24 @@
 
     function atualizarBotoes() {
       atualizarBotaoContinuar();
-      const liberado = temExamesOuFotos() &&
-        validarTelefone(telefoneInput.value) &&
-        validarEmail(emailInput.value) &&
-        cpfValidado && cpfConfirmado;
+      const temItens  = temExamesOuFotos();
+      const telOk     = validarTelefone(telefoneInput.value);
+      const emailOk   = validarEmail(emailInput.value);
+      const liberado  = temItens && telOk && emailOk && cpfValidado && cpfConfirmado;
       btnFinalizar.disabled = !liberado;
       const nota = document.getElementById("checkoutNote");
-      if (nota) nota.style.display = liberado ? "none" : "block";
+      if (nota) {
+        if (liberado) {
+          nota.style.display = "none";
+        } else {
+          nota.style.display = "block";
+          if (!temItens)          nota.textContent = "⚠️ Adicione pelo menos um exame ou foto para continuar.";
+          else if (!telOk)        nota.textContent = "⚠️ Informe um telefone válido para liberar o botão.";
+          else if (!emailOk)      nota.textContent = "⚠️ Informe um e-mail válido para liberar o botão.";
+          else if (!cpfValidado)  nota.textContent = "⚠️ Valide o CPF para liberar o botão.";
+          else if (!cpfConfirmado)nota.textContent = "⚠️ Clique em '✓ correto!' para confirmar os dados do CPF.";
+        }
+      }
     }
 
     function mascaraCPF(valor) {
