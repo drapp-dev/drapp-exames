@@ -833,9 +833,8 @@
     .btn-finalizar:not(:disabled):hover { background: #16a34a !important; transform: translateY(-1px); box-shadow: 0 10px 26px rgba(34,197,94,0.45); }
     .btn-finalizar:disabled { background: #b8c3cf !important; box-shadow: none; cursor: not-allowed; }
 
-    .cpf-row { display: flex; gap: 10px; align-items: flex-end; }
-    .cpf-row input { flex: 0 0 58%; min-width: 0; }
-    .cpf-row .inline-btn { flex: 1; min-width: 0; white-space: nowrap; }
+    .cpf-row { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: end; }
+    .cpf-row .inline-btn { white-space: nowrap; }
 
     .cpf-result {
       margin-top: 18px; padding: 16px; border-radius: 16px;
