@@ -829,6 +829,10 @@
     @keyframes blink-alert { 0%, 100% { color: var(--muted); } 50% { color: var(--danger); } }
     .checkout-note.piscando { animation: blink-alert 1.2s ease-in-out infinite; }
 
+    .btn-finalizar { background: #22c55e !important; box-shadow: 0 6px 20px rgba(34,197,94,0.35); }
+    .btn-finalizar:not(:disabled):hover { background: #16a34a !important; transform: translateY(-1px); box-shadow: 0 10px 26px rgba(34,197,94,0.45); }
+    .btn-finalizar:disabled { background: #b8c3cf !important; box-shadow: none; cursor: not-allowed; }
+
     .cpf-row { display: grid; grid-template-columns: 1fr 180px; gap: 12px; align-items: end; }
 
     .cpf-result {
@@ -839,26 +843,28 @@
     .cpf-result.active { display: block; }
     .cpf-result-title { font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 12px; }
 
-    .cpf-result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+    .cpf-result-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 14px; }
 
     .cpf-result-item {
       background: #fff; border: 1px solid #d5edf1;
-      border-radius: 14px; padding: 12px;
+      border-radius: 12px; padding: 12px 14px;
     }
 
-    .cpf-result-label { font-size: 14px; color: var(--muted); margin-bottom: 6px; }
-    .cpf-result-value { font-size: 18px; font-weight: 700; color: var(--text); line-height: 1.4; }
+    .cpf-result-label { font-size: 13px; color: var(--muted); margin-bottom: 4px; }
+    .cpf-result-value { font-size: 16px; font-weight: 700; color: var(--text); line-height: 1.4; }
 
-    .cpf-confirm-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+    .cpf-confirm-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
 
     .cpf-confirm-btn {
-      border: none; border-radius: 12px;
-      padding: 12px 16px; font-size: 17px;
+      border: none; border-radius: 20px;
+      padding: 7px 16px; font-size: 14px;
       font-weight: 700; cursor: pointer; font-family: inherit;
+      white-space: nowrap;
     }
 
-    .cpf-ok    { background: #dcfce7; color: #166534; }
-    .cpf-wrong { background: #fee2e2; color: #b91c1c; }
+    .cpf-ok     { background: #dcfce7; color: #166534; }
+    .cpf-wrong  { background: #fee2e2; color: #b91c1c; }
+    .cpf-alterar{ background: #dbeafe; color: #1e40af; }
 
     .cpf-status { margin-top: 10px; font-size: 17px; color: var(--muted); display: none; }
     .cpf-status.active  { display: block; }
@@ -1389,28 +1395,26 @@
               <div class="cpf-result-title">Confira os dados encontrados</div>
               <div class="cpf-result-grid">
                 <div class="cpf-result-item">
-                  <div class="cpf-result-label">Nome completo</div>
+                  <div class="cpf-result-label">Nome Completo</div>
                   <div id="cpfNome" class="cpf-result-value">-</div>
                 </div>
                 <div class="cpf-result-item">
-                  <div class="cpf-result-label" style="display:flex;align-items:center;justify-content:space-between;">
-                    Data de nascimento
-                    <button type="button" id="btnEditarNasc" style="background:var(--blue);color:#fff;border:none;border-radius:8px;padding:4px 10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">✏️ alterar</button>
-                  </div>
+                  <div class="cpf-result-label">Data de Nascimento</div>
                   <div id="cpfNascimento" class="cpf-result-value">-</div>
-                  <div id="nascEditorWrap" style="display:none;margin-top:8px;display:none;">
+                  <div id="nascEditorWrap" style="display:none;margin-top:8px;">
                     <input type="date" id="nascInput" style="height:40px;border-radius:10px;border:1.5px solid var(--cyan);padding:0 10px;font-size:15px;font-family:inherit;outline:none;width:100%;">
                     <button type="button" id="btnNascOk" style="margin-top:8px;width:100%;height:38px;background:var(--blue);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;">✔ Confirmar data</button>
                   </div>
                 </div>
               </div>
               <div class="cpf-confirm-actions">
-                <button id="btnCpfOk" class="cpf-confirm-btn cpf-ok" type="button">✔ Está correto</button>
-                <button id="btnCpfWrong" class="cpf-confirm-btn cpf-wrong" type="button">✗ Não, está errado</button>
+                <button id="btnCpfOk"    class="cpf-confirm-btn cpf-ok"     type="button">✓ correto!</button>
+                <button id="btnCpfWrong" class="cpf-confirm-btn cpf-wrong"  type="button">✗ errado</button>
+                <button id="btnEditarNasc" class="cpf-confirm-btn cpf-alterar" type="button">✏️ alterar</button>
               </div>
             </div>
 
-            <div class="grid-2" style="margin-top:16px;">
+            <div style="margin-top:16px;display:flex;flex-direction:column;gap:14px;">
               <div class="field">
                 <label for="telefone">Telefone / WhatsApp</label>
                 <div style="display:flex;gap:4px;align-items:center;">
@@ -1453,15 +1457,14 @@
                 <input type="email" id="email" placeholder="voce@exemplo.com.br" />
                 <div id="emailError" class="field-error">Informe um e-mail válido.</div>
               </div>
-            </div>
+            </div><!-- /campos telefone+email -->
 
             <div class="checkout-actions">
-              <button id="btnVoltarOrçamento" class="secondary-btn" type="button" style="margin-top:0;">← Voltar ao Orçamento</button>
-              <button id="btnFinalizar" class="primary-btn" type="button" disabled>Finalizar solicitação →</button>
+              <button id="btnVoltarOrçamento" class="secondary-btn" type="button" style="margin-top:0;">← Voltar</button>
+              <button id="btnFinalizar" class="primary-btn btn-finalizar" type="button" disabled>Finalizar →</button>
             </div>
-            <div style="display:flex;">
-              <div style="flex:1;"></div>
-              <div id="checkoutNote" class="checkout-note piscando" style="flex:1;">O botão só será liberado após validação e confirmação do CPF.</div>
+            <div id="checkoutNote" class="checkout-note piscando" style="margin-top:12px;background:#fff3e0;border:1px solid #ffb74d;border-radius:12px;padding:10px 16px;font-size:14px;font-weight:600;color:#e65100;text-align:center;">
+              valide o CPF para liberar o botão
             </div>
           </div>
         </div><!-- /right-column -->
