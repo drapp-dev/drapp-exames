@@ -2477,6 +2477,7 @@
       const payload = {
         action: "criarPedido",
         contactId: dadosCpfValidados ? dadosCpfValidados.contactId : "",
+        labsSelecionados: obterLabsSelecionados(),
         paciente: {
           cpf: cpfInput.value.trim(),
           telefone: "+" + document.getElementById("paisTelefone").value + " " + telefoneInput.value.trim(),
@@ -2542,14 +2543,22 @@
 
     function renderUploadPreview() {
       uploadPreview.innerHTML = "";
-      const aguardando = document.getElementById("fotoResumoAguardando");
-      const anexado    = document.getElementById("fotoResumoAnexado");
-      if (imagensPedido.length > 0) {
+      const aguardando  = document.getElementById("fotoResumoAguardando");
+      const anexado     = document.getElementById("fotoResumoAnexado");
+      const labSection  = document.getElementById("labSelectorSection");
+      const temFotos    = imagensPedido.length > 0;
+      const emModoFoto  = secaoFoto.style.display !== "none";
+
+      if (temFotos) {
         if (aguardando) aguardando.style.display = "none";
         if (anexado)    anexado.style.display    = "block";
+        // Mostra seletor de lab para o usuário escolher o fornecedor
+        if (labSection && emModoFoto) labSection.style.display = "block";
       } else {
         if (aguardando) aguardando.style.display = "block";
         if (anexado)    anexado.style.display    = "none";
+        // Sem fotos: esconde seletor de lab (só aparece no modo digitar)
+        if (labSection && emModoFoto) labSection.style.display = "none";
       }
       imagensPedido.forEach((fileObj, index) => {
         const item = document.createElement("div");
