@@ -833,8 +833,9 @@
     .btn-finalizar:not(:disabled):hover { background: #16a34a !important; transform: translateY(-1px); box-shadow: 0 10px 26px rgba(34,197,94,0.45); }
     .btn-finalizar:disabled { background: #b8c3cf !important; box-shadow: none; cursor: not-allowed; }
 
-    .cpf-row { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: end; }
-    .cpf-row .inline-btn { white-space: nowrap; }
+    .cpf-row { display: flex; gap: 10px; align-items: flex-end; }
+    .cpf-row input { width: calc(14ch + 40px); flex-shrink: 0; }
+    .cpf-row .inline-btn { white-space: nowrap; flex-shrink: 0; }
 
     .cpf-result {
       margin-top: 18px; padding: 16px; border-radius: 16px;
@@ -1153,7 +1154,7 @@
         <div class="benefit-icon blue">🏥</div>
         <div class="benefit-title">Os melhores laboratórios do Brasil</div>
         <div class="benefit-text">
-          Hermes Pardini, A+ Medicina Diagnóstica e Grupo Fleury — referências nacionais em qualidade diagnóstica, disponíveis para você a preço acessível.
+          Hermes Pardini e A+ Medicina Diagnóstica do Grupo Fleury — referências nacionais em qualidade diagnóstica, disponíveis para você a preço acessível.
         </div>
       </div>
 
