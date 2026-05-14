@@ -689,6 +689,43 @@
     .loading-box, .error-box { margin-top: 10px; font-size: 14px; color: var(--muted); }
     .error-box { color: var(--danger); }
 
+    /* ─── EXAMES MAIS FREQUENTES ─────────────────────── */
+    .freq-section { margin: 18px 0 10px; }
+    .freq-title {
+      font-size: 16px; font-weight: 700; color: var(--text);
+      margin-bottom: 12px; text-align: center;
+    }
+    .freq-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    @media (max-width: 500px) { .freq-grid { grid-template-columns: repeat(2, 1fr); } }
+    .pill-exame {
+      cursor: pointer;
+      padding: 10px 8px;
+      border: 2px solid var(--aplus);
+      border-radius: 10px;
+      background: #fff;
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 600;
+      text-align: center;
+      line-height: 1.3;
+      transition: background .15s, border-color .15s, color .15s;
+      word-break: break-word;
+    }
+    .pill-exame:hover { background: rgba(230,88,37,0.07); }
+    .pill-exame.adicionado {
+      background: #e6f4ea; border-color: #34a853; color: #1e7e34;
+    }
+    .freq-ver-mais {
+      margin-top: 12px; text-align: center;
+      font-size: 13px; color: var(--blue); cursor: pointer;
+      background: none; border: none; font-weight: 600;
+    }
+    .freq-ver-mais:hover { text-decoration: underline; }
+
     /* ─── TABLE ──────────────────────────────────────── */
     .table-wrap {
       margin-top: 20px; border: 1px solid var(--line);
@@ -1244,6 +1281,17 @@
               <input type="checkbox" class="lab-checkbox" value="A+ Medicina Diagnóstica" hidden>
             </div>
 
+            <!-- Exames mais frequentes — só no modo Digitar -->
+            <div id="examesFreqSection" class="freq-section" style="display:none;">
+              <div class="freq-title">Exames mais frequentes</div>
+              <div id="examesFreqGrid" class="freq-grid"></div>
+              <div style="text-align:center;margin-top:10px;">
+                <button type="button" id="examesFreqVerMais" class="freq-ver-mais" style="display:none;">
+                  ver mais ↓
+                </button>
+              </div>
+            </div>
+
             <!-- Seção foto -->
             <div id="secaoFoto">
               <p style="font-size:17px;font-weight:700;color:var(--text);margin-bottom:14px;margin-top:4px;">Anexe a foto do seu pedido médico:</p>
@@ -1676,6 +1724,104 @@
       return resultado.slice(0, 60);
     }
 
+    // ── Exames mais frequentes ────────────────────────────────
+    const FREQ_INICIAL = 6;
+    const FREQ_TOTAL   = 20;
+    let   freqExpandido = false;
+
+    function getExamesFrequentes(limite) {
+      if (!catalogo) return [];
+      const labs = obterLabsSelecionados();
+      const labA = labs.find(l => l.includes("A+") || l.includes("Medicina"));
+      const labH = labs.find(l => l.includes("Hermes") || l.includes("Pardini"));
+      const pA   = labA ? (catalogo.precos[labA] || {}) : {};
+      const pH   = labH ? (catalogo.precos[labH] || {}) : {};
+      const pop  = catalogo.popularidade || {};
+
+      const visto = new Set();
+      const scored = [];
+      (catalogo.mapeamento || []).forEach(mp => {
+        const { sA, dA, sH, dH } = mp;
+        const temA = !!(labA && sA && pA[sA]);
+        const temH = !!(labH && sH && pH[sH]);
+        if (!temA && !temH) return;
+        const key = (sA || "") + "||" + (sH || "");
+        if (visto.has(key)) return;
+        visto.add(key);
+        const cntA = temA ? (pop[sA + "|" + labA] || 0) : 0;
+        const cntH = temH ? (pop[sH + "|" + labH] || 0) : 0;
+        const score = Math.max(cntA, cntH);
+        if (score === 0) return; // só exames que já foram pedidos
+        const desc = (dA || dH || "").trim();
+        if (!desc) return;
+        scored.push({ sA, dA, sH, dH, score, temA, temH, labA, labH, pA, pH });
+      });
+      scored.sort((a, b) => b.score - a.score);
+      return scored.slice(0, limite);
+    }
+
+    function adicionarExamePill(item) {
+      const labs = obterLabsSelecionados();
+      const labA = labs.find(l => l.includes("A+") || l.includes("Medicina"));
+      const labH = labs.find(l => l.includes("Hermes") || l.includes("Pardini"));
+      const adicionados = [];
+      if (labA && item.sA && item.temA) {
+        const i = sanitizarItem_(mkItem(item.sA, item.dA, labA, item.pA[item.sA]));
+        if (!selecionados.some(s => s.id === i.id && s.laboratorio === i.laboratorio)) {
+          selecionados.push(i); adicionados.push(i);
+        }
+      }
+      if (labH && item.sH && item.temH) {
+        const i = sanitizarItem_(mkItem(item.sH, item.dH, labH, item.pH[item.sH]));
+        if (!selecionados.some(s => s.id === i.id && s.laboratorio === i.laboratorio)) {
+          selecionados.push(i); adicionados.push(i);
+        }
+      }
+      adicionados.forEach(registrarEscolha_);
+      const contraste = adicionarContrasteAuto(adicionados);
+      contraste.forEach(registrarEscolha_);
+      renderTabela();
+      atualizarResumo();
+      atualizarBotaoContinuar();
+      atualizarBotoes();
+      renderExamesFrequentes(); // atualiza estado "adicionado"
+    }
+
+    function renderExamesFrequentes() {
+      const section = document.getElementById("examesFreqSection");
+      const grid    = document.getElementById("examesFreqGrid");
+      const btnMais = document.getElementById("examesFreqVerMais");
+      if (!section || !grid) return;
+
+      // Só exibe no modo Digitar
+      const emModoDigitar = (typeof secaoDigitar !== "undefined") && secaoDigitar.style.display !== "none";
+      if (!emModoDigitar) { section.style.display = "none"; return; }
+
+      const limite  = freqExpandido ? FREQ_TOTAL : FREQ_INICIAL;
+      const exames  = getExamesFrequentes(FREQ_TOTAL);
+      if (exames.length === 0) { section.style.display = "none"; return; }
+
+      section.style.display = "block";
+
+      const visiveis = exames.slice(0, limite);
+      grid.innerHTML = visiveis.map(item => {
+        const desc = (item.dA || item.dH || "").trim();
+        const jaAdicionado = selecionados.some(s =>
+          (item.sA && s.id === item.sA) || (item.sH && s.id === item.sH)
+        );
+        const cls = "pill-exame" + (jaAdicionado ? " adicionado" : "");
+        return `<button type="button" class="${cls}" data-freq='${JSON.stringify({ sA: item.sA||"", sH: item.sH||"" })}'>${desc}${jaAdicionado ? " ✓" : ""}</button>`;
+      }).join("");
+
+      // Botão "ver mais"
+      if (exames.length > FREQ_INICIAL) {
+        btnMais.style.display = "inline-block";
+        btnMais.textContent   = freqExpandido ? "ver menos ↑" : "ver mais ↓";
+      } else {
+        btnMais.style.display = "none";
+      }
+    }
+
     // Carrega catálogo uma vez ao abrir a página
     (async function carregarCatalogo() {
       try {
@@ -1684,6 +1830,7 @@
         // Mantém mapeamentoLabs atualizado
         mapeamentoLabs = {};
         (catalogo.mapeamento || []).forEach(m => { if (m.sA && m.sH) mapeamentoLabs[m.sH] = m.sA; });
+        renderExamesFrequentes();
       } catch (_) {}
     })();
 
@@ -1759,6 +1906,8 @@
       labCheckboxes.find(c => c.value === "Hermes Pardini").checked = hermes;
       atualizarVisualLabs();
       mostrarErro(false);
+      freqExpandido = false;
+      renderExamesFrequentes();
     }
 
     function temExamesOuFotos() {
@@ -2119,6 +2268,7 @@
       atualizarResumo();
       atualizarBotaoContinuar();
       atualizarBotoes();
+      renderExamesFrequentes();
       if (!selecionados.length) checkoutCard.classList.remove("active");
     }
 
@@ -2339,6 +2489,7 @@
       const fotoResumo    = document.getElementById("fotoResumo");
       const tableWrap     = document.querySelector(".table-wrap");
 
+      const freqSection = document.getElementById("examesFreqSection");
       if (modo === "foto") {
         secaoFoto.style.display    = "block";
         secaoDigitar.style.display = "none";
@@ -2347,6 +2498,7 @@
         if (resumoInfoBox) resumoInfoBox.style.display = "none";
         if (fotoResumo)    fotoResumo.style.display    = "block";
         if (tableWrap)     tableWrap.style.display     = "none";
+        if (freqSection)   freqSection.style.display   = "none";
         btnModoFoto.style.cssText    = btnModoFoto.style.cssText.replace(/border-color:[^;]+;background:[^;]+;color:[^;]+;/g,"") + MODO_ATIVO;
         btnModoDigitar.style.cssText = btnModoDigitar.style.cssText.replace(/border-color:[^;]+;background:[^;]+;color:[^;]+;/g,"") + MODO_INATIVO;
       } else {
@@ -2357,7 +2509,7 @@
         if (resumoInfoBox) resumoInfoBox.style.display = "block";
         if (fotoResumo)    fotoResumo.style.display    = "none";
         if (tableWrap)     tableWrap.style.display     = "";
-        setLab(true, true); // auto-seleciona "Comparar ambos"
+        setLab(true, true); // auto-seleciona "Comparar ambos" — também chama renderExamesFrequentes
         btnModoDigitar.style.cssText = btnModoDigitar.style.cssText.replace(/border-color:[^;]+;background:[^;]+;color:[^;]+;/g,"") + MODO_ATIVO;
         btnModoFoto.style.cssText    = btnModoFoto.style.cssText.replace(/border-color:[^;]+;background:[^;]+;color:[^;]+;/g,"") + MODO_INATIVO;
       }
@@ -2365,6 +2517,37 @@
 
     btnModoFoto.addEventListener("click",    () => setModo("foto"));
     btnModoDigitar.addEventListener("click", () => setModo("digitar"));
+
+    // ── Exames frequentes: click em pill ─────────────────────
+    document.getElementById("examesFreqGrid").addEventListener("click", e => {
+      const btn = e.target.closest(".pill-exame");
+      if (!btn) return;
+      try {
+        const dados = JSON.parse(btn.dataset.freq);
+        const labs  = obterLabsSelecionados();
+        const labA  = labs.find(l => l.includes("A+") || l.includes("Medicina"));
+        const labH  = labs.find(l => l.includes("Hermes") || l.includes("Pardini"));
+        const pA    = labA ? (catalogo.precos[labA] || {}) : {};
+        const pH    = labH ? (catalogo.precos[labH] || {}) : {};
+        const mp    = (catalogo.mapeamento || []).find(m => m.sA === dados.sA && m.sH === dados.sH)
+                   || (catalogo.mapeamento || []).find(m => m.sA === dados.sA)
+                   || (catalogo.mapeamento || []).find(m => m.sH === dados.sH);
+        if (!mp) return;
+        const item = {
+          sA: mp.sA || "", dA: mp.dA || "",
+          sH: mp.sH || "", dH: mp.dH || "",
+          temA: !!(labA && mp.sA && pA[mp.sA]),
+          temH: !!(labH && mp.sH && pH[mp.sH]),
+          labA, labH, pA, pH
+        };
+        adicionarExamePill(item);
+      } catch(_) {}
+    });
+
+    document.getElementById("examesFreqVerMais").addEventListener("click", () => {
+      freqExpandido = !freqExpandido;
+      renderExamesFrequentes();
+    });
 
     cpfInput.addEventListener("input", function () {
       this.value = mascaraCPF(this.value);
