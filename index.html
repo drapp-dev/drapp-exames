@@ -1795,11 +1795,22 @@
 
       // Só exibe no modo Digitar
       const emModoDigitar = (typeof secaoDigitar !== "undefined") && secaoDigitar.style.display !== "none";
+      console.log("[FreqDebug] emModoDigitar:", emModoDigitar, "| catalogo:", !!catalogo);
       if (!emModoDigitar) { section.style.display = "none"; return; }
 
       const limite  = freqExpandido ? FREQ_TOTAL : FREQ_INICIAL;
       const exames  = getExamesFrequentes(FREQ_TOTAL);
-      if (exames.length === 0) { section.style.display = "none"; return; }
+      console.log("[FreqDebug] exames encontrados:", exames.length);
+      if (exames.length === 0) {
+        // Log para diagnóstico
+        if (catalogo) {
+          const pop = catalogo.popularidade || {};
+          const keys = Object.keys(pop);
+          console.log("[FreqDebug] popularidade total keys:", keys.length, "| exemplo:", keys.slice(0,3));
+          console.log("[FreqDebug] mapeamento total:", (catalogo.mapeamento||[]).length);
+        }
+        section.style.display = "none"; return;
+      }
 
       section.style.display = "block";
 
