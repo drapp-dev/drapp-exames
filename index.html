@@ -1738,6 +1738,15 @@
       const pH   = labH ? (catalogo.precos[labH] || {}) : {};
       const pop  = catalogo.popularidade || {};
 
+      // Busca score de popularidade por sigla, independente do nome exato do lab na planilha
+      function popScore(sigla) {
+        if (!sigla) return 0;
+        const prefix = sigla + "|";
+        let total = 0;
+        for (const k in pop) { if (k.startsWith(prefix)) total += (pop[k] || 0); }
+        return total;
+      }
+
       const visto = new Set();
       const scored = [];
       (catalogo.mapeamento || []).forEach(mp => {
@@ -1748,8 +1757,8 @@
         const key = (sA || "") + "||" + (sH || "");
         if (visto.has(key)) return;
         visto.add(key);
-        const cntA = temA ? (pop[sA + "|" + labA] || 0) : 0;
-        const cntH = temH ? (pop[sH + "|" + labH] || 0) : 0;
+        const cntA = temA ? popScore(sA) : 0;
+        const cntH = temH ? popScore(sH) : 0;
         const score = Math.max(cntA, cntH);
         if (score === 0) return; // só exames que já foram pedidos
         const desc = (dA || dH || "").trim();
