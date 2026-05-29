@@ -2175,23 +2175,19 @@
         return resultado;
       }
 
-      // 2. Fallback: Hub do Desenvolvedor direto do browser
+      // 2. Fallback: Hub via backend (sem CORS — servidor chama o Hub, não o browser)
       if (data.needsHub) {
-        const hubResp = await fetch(HUB_URL + "?cpf=" + cpfLimpo + "&token=" + HUB_TOKEN);
+        const hubResp = await fetch(APPS_SCRIPT_URL + "?action=hubcpf&cpf=" + encodeURIComponent(cpfLimpo));
         if (!hubResp.ok) throw new Error("CPF não encontrado na base de dados.");
         const hub = await hubResp.json();
 
-        // Suporta resposta plana { return, nome } e aninhada { result: { nome } } ou { result: [{ nome }] }
-        const hubRes  = hub.result ? (Array.isArray(hub.result) ? (hub.result[0] || {}) : hub.result) : {};
-        const nomeHub = hubRes.nome || hubRes.NOME || hub.nome || hub.NOME || "";
-        const nascHub = hubRes.data_de_nascimento || hubRes.nascimento || hub.nascimento || hub.data_nascimento || "";
-        if (!nomeHub) {
+        if (!hub.ok || !hub.nome) {
           throw new Error("CPF não encontrado na base de dados.");
         }
 
         const resultado = {
-          nome:       nomeHub,
-          nascimento: formatarNascimento(nascHub),
+          nome:       hub.nome,
+          nascimento: formatarNascimento(hub.nascimento || ""),
           origem:     "hub",
           negocioId:  "",
           contactId:  ""
