@@ -1464,6 +1464,22 @@
               </div>
             </div>
 
+            <!-- ── Entrada manual de dados (CPF não encontrado ou dados errados) ── -->
+            <div id="cpfManualWrap" style="display:none; margin-top:16px; background:#f0f7ff; border:1.5px solid var(--cyan,#00bcd4); border-radius:14px; padding:18px 16px;">
+              <div style="font-weight:700; font-size:15px; margin-bottom:12px; color:var(--blue,#1565c0);">✏️ Preencha os dados manualmente</div>
+              <div style="display:flex; flex-direction:column; gap:10px;">
+                <div>
+                  <label style="font-size:13px; color:#555; font-weight:600; margin-bottom:4px; display:block;">Nome Completo</label>
+                  <input type="text" id="cpfNomeManual" placeholder="Nome completo do paciente" style="width:100%; height:42px; border-radius:10px; border:1.5px solid var(--cyan,#00bcd4); padding:0 12px; font-size:15px; font-family:inherit; outline:none; box-sizing:border-box;">
+                </div>
+                <div>
+                  <label style="font-size:13px; color:#555; font-weight:600; margin-bottom:4px; display:block;">Data de Nascimento</label>
+                  <input type="date" id="cpfNascManual" style="width:100%; height:42px; border-radius:10px; border:1.5px solid var(--cyan,#00bcd4); padding:0 12px; font-size:15px; font-family:inherit; outline:none; box-sizing:border-box;">
+                </div>
+                <button type="button" id="btnConfirmarManual" style="height:44px; background:var(--blue,#1565c0); color:#fff; border:none; border-radius:10px; font-size:15px; font-weight:700; cursor:pointer; font-family:inherit; margin-top:4px;">✓ Confirmar dados</button>
+              </div>
+            </div>
+
             <div style="margin-top:16px;display:flex;flex-direction:column;gap:14px;">
               <div class="field">
                 <label for="telefone">Telefone / WhatsApp</label>
@@ -2021,6 +2037,7 @@
       cpfNome.textContent = cpfNascimento.textContent = "-";
       cpfStatus.className = "cpf-status";
       cpfStatus.textContent = "";
+      document.getElementById("cpfManualWrap").style.display = "none";
       atualizarBotoes();
     }
 
@@ -2142,8 +2159,11 @@
           try {
             const hubResp = await fetch(HUB_URL + "?cpf=" + cpfLimpo + "&token=" + HUB_TOKEN);
             const hub = await hubResp.json();
-            if (hub.status && hub.result && hub.result.data_de_nascimento) {
-              resultado.nascimento = formatarNascimento(hub.result.data_de_nascimento);
+            // Suporta resposta plana { nascimento } e aninhada { result: { data_de_nascimento } }
+            const hubRes2 = hub.result ? (Array.isArray(hub.result) ? (hub.result[0] || {}) : hub.result) : {};
+            const nascHub2 = hubRes2.data_de_nascimento || hubRes2.nascimento || hub.nascimento || hub.data_nascimento || "";
+            if (nascHub2) {
+              resultado.nascimento = formatarNascimento(nascHub2);
               // Atualiza o cache com a data encontrada
               fetch(APPS_SCRIPT_URL, {
                 method: "POST",
@@ -2161,13 +2181,17 @@
         if (!hubResp.ok) throw new Error("CPF não encontrado na base de dados.");
         const hub = await hubResp.json();
 
-        if (!hub.status || !hub.result || !hub.result.nome) {
+        // Suporta resposta plana { return, nome } e aninhada { result: { nome } } ou { result: [{ nome }] }
+        const hubRes  = hub.result ? (Array.isArray(hub.result) ? (hub.result[0] || {}) : hub.result) : {};
+        const nomeHub = hubRes.nome || hubRes.NOME || hub.nome || hub.NOME || "";
+        const nascHub = hubRes.data_de_nascimento || hubRes.nascimento || hub.nascimento || hub.data_nascimento || "";
+        if (!nomeHub) {
           throw new Error("CPF não encontrado na base de dados.");
         }
 
         const resultado = {
-          nome:       hub.result.nome,
-          nascimento: formatarNascimento(hub.result.data_de_nascimento || ""),
+          nome:       nomeHub,
+          nascimento: formatarNascimento(nascHub),
           origem:     "hub",
           negocioId:  "",
           contactId:  ""
@@ -2629,7 +2653,8 @@
         cpfValidado = cpfConfirmado = false;
         dadosCpfValidados = null;
         cpfResult.classList.remove("active");
-        mostrarStatusCpf(erro.message || "Não foi possível validar o CPF.", "error");
+        mostrarStatusCpf((erro.message || "Não foi possível validar o CPF.") + " Preencha os dados abaixo.", "error");
+        document.getElementById("cpfManualWrap").style.display = "block";
         atualizarBotoes();
       } finally {
         btnValidarCpf.disabled = false;
@@ -2666,7 +2691,44 @@
 
     btnCpfWrong.addEventListener("click", function () {
       cpfConfirmado = false;
-      mostrarStatusCpf("Os dados foram marcados como incorretos. Revise o CPF ou siga com atendimento manual.", "error");
+      mostrarStatusCpf("Dados marcados como incorretos. Corrija abaixo.", "error");
+      // Pré-preenche o manual com os dados que vieram para facilitar correção
+      const nomeAtual = cpfNome.textContent;
+      if (nomeAtual && nomeAtual !== "-") {
+        document.getElementById("cpfNomeManual").value = nomeAtual;
+      }
+      document.getElementById("cpfManualWrap").style.display = "block";
+      atualizarBotoes();
+    });
+
+    document.getElementById("btnConfirmarManual").addEventListener("click", function () {
+      const nomeM = document.getElementById("cpfNomeManual").value.trim();
+      const nascM = document.getElementById("cpfNascManual").value; // "YYYY-MM-DD"
+      if (!nomeM) {
+        alert("Informe o nome completo do paciente.");
+        return;
+      }
+      if (!nascM) {
+        alert("Informe a data de nascimento.");
+        return;
+      }
+      const [ano, mes, dia] = nascM.split("-");
+      const MESES = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
+      const nascFormatado = dia + "/" + MESES[parseInt(mes,10)-1] + "/" + ano;
+      dadosCpfValidados = {
+        nome:       nomeM,
+        nascimento: nascFormatado,
+        contactId:  "",
+        negocioId:  "",
+        origem:     "manual"
+      };
+      cpfValidado   = true;
+      cpfConfirmado = true;
+      cpfNome.textContent        = nomeM;
+      cpfNascimento.textContent  = nascFormatado;
+      cpfResult.classList.add("active");
+      document.getElementById("cpfManualWrap").style.display = "none";
+      mostrarStatusCpf("✔ Dados preenchidos manualmente e confirmados.", "success");
       atualizarBotoes();
     });
 
