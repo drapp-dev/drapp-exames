@@ -1613,8 +1613,7 @@
   <!-- ═══ SCRIPTS (lógica original preservada) ══════════════ -->
   <script>
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxyeHFlUzJ6sQCEjFdgviwtdpTJ9zwxVipswMIWj1IPzWm00zRBgVFAHy-B0ajaIyNGQg/exec";
-    const HUB_TOKEN       = "184460735tqMfkWQhmV333038264";
-    const HUB_URL         = "https://ws.hubdodesenvolvedor.com.br/v2/nome_cpf/";
+    // HUB_TOKEN removido do frontend — token fica SOMENTE no Config.gs (Apps Script privado)
 
     const buscaExame        = document.getElementById("buscaExame");
     const suggestions       = document.getElementById("suggestions");
@@ -2154,16 +2153,13 @@
           negocioId:  data.negocioId || "",
           contactId:  data.contactId || ""
         };
-        // Bitrix pode retornar sem data de nascimento — suplementa pelo Hub
+        // Bitrix pode retornar sem data de nascimento — suplementa pelo Hub via backend (token protegido)
         if (!resultado.nascimento) {
           try {
-            const hubResp = await fetch(HUB_URL + "?cpf=" + cpfLimpo + "&token=" + HUB_TOKEN);
-            const hub = await hubResp.json();
-            // Suporta resposta plana { nascimento } e aninhada { result: { data_de_nascimento } }
-            const hubRes2 = hub.result ? (Array.isArray(hub.result) ? (hub.result[0] || {}) : hub.result) : {};
-            const nascHub2 = hubRes2.data_de_nascimento || hubRes2.nascimento || hub.nascimento || hub.data_nascimento || "";
-            if (nascHub2) {
-              resultado.nascimento = formatarNascimento(nascHub2);
+            const hubResp2 = await fetch(APPS_SCRIPT_URL + "?action=hubcpf&cpf=" + encodeURIComponent(cpfLimpo));
+            const hub2 = hubResp2.ok ? await hubResp2.json() : {};
+            if (hub2.ok && hub2.nascimento) {
+              resultado.nascimento = formatarNascimento(hub2.nascimento);
               // Atualiza o cache com a data encontrada
               fetch(APPS_SCRIPT_URL, {
                 method: "POST",
@@ -2847,14 +2843,40 @@
       });
     }
 
+    // ── Compressão Canvas: reduz imagens para max 1000×1000 px antes do upload ──
+    function comprimirImagem(dataUrl, maxDim, quality) {
+      return new Promise(function (resolve) {
+        const img = new Image();
+        img.onload = function () {
+          let w = img.width;
+          let h = img.height;
+          if (w > maxDim || h > maxDim) {
+            if (w >= h) { h = Math.round(h * maxDim / w); w = maxDim; }
+            else        { w = Math.round(w * maxDim / h); h = maxDim; }
+          }
+          const canvas = document.createElement("canvas");
+          canvas.width  = w;
+          canvas.height = h;
+          canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+          resolve(canvas.toDataURL("image/jpeg", quality));
+        };
+        img.onerror = function () { resolve(dataUrl); }; // fallback sem compressão
+        img.src = dataUrl;
+      });
+    }
+
     function processarArquivos(files) {
       files.forEach(file => {
         const ehImagem = file.type.startsWith("image/");
         const ehPdf    = file.type === "application/pdf";
         if (!ehImagem && !ehPdf) return;
         const reader = new FileReader();
-        reader.onload = e => {
-          imagensPedido.push({ file, preview: e.target.result, nome: file.name });
+        reader.onload = async function (e) {
+          let preview = e.target.result;
+          if (ehImagem) {
+            preview = await comprimirImagem(preview, 1000, 0.85);
+          }
+          imagensPedido.push({ file, preview, nome: file.name });
           renderUploadPreview();
           atualizarBotaoContinuar();
           atualizarBotoes();
