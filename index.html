@@ -3,6 +3,17 @@
 
 <head>
   <meta charset="UTF-8" />
+  <script>
+    // Redirect drapp.com.br/p?d=DEAL_ID → página de upload
+    (function () {
+      var d = new URLSearchParams(window.location.search).get('d');
+      if (d && /^\d+$/.test(d)) {
+        window.location.replace(
+          'https://script.google.com/macros/s/AKfycbxyeHFlUzJ6sQCEjFdgviwtdpTJ9zwxVipswMIWj1IPzWm00zRBgVFAHy-B0ajaIyNGQg/exec?action=upload&deal=' + d
+        );
+      }
+    })();
+  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>DrApp Exames – Os Melhores Laboratórios do Brasil com Preços Especiais</title>
   <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/drapp-dev/drapp-exames/main/FAVICON.png">
