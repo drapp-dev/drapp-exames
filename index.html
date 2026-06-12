@@ -19,6 +19,75 @@
   <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/drapp-dev/drapp-exames/main/FAVICON.png">
   <meta name="description" content="Faça exames na Hermes Pardini e A+ Medicina Diagnóstica (Grupo Fleury) com descontos de até 30%. Sem assinatura, sem mensalidade. Só pague o que usar." />
   <link rel="canonical" href="https://drapp-dev.github.io/drapp-exames/" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://drapp-dev.github.io/drapp-exames/" />
+  <meta property="og:title" content="DrApp Exames – Os Melhores Laboratórios do Brasil com Preços Especiais" />
+  <meta property="og:description" content="Faça exames na Hermes Pardini e A+ Medicina Diagnóstica (Grupo Fleury) com descontos de até 30%. Sem assinatura, sem mensalidade. Só pague o que usar." />
+  <meta property="og:image" content="https://drapp-dev.github.io/drapp-exames/og-image.jpg" />
+  <meta property="og:locale" content="pt_BR" />
+  <meta property="og:site_name" content="DrApp Exames" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="DrApp Exames – Os Melhores Laboratórios do Brasil com Preços Especiais" />
+  <meta name="twitter:description" content="Faça exames na Hermes Pardini e A+ Medicina Diagnóstica (Grupo Fleury) com descontos de até 30%. Sem assinatura, sem mensalidade. Só pague o que usar." />
+  <meta name="twitter:image" content="https://drapp-dev.github.io/drapp-exames/og-image.jpg" />
+
+  <!-- Schema.org: Organization + FAQPage -->
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "DrApp Exames",
+      "url": "https://drapp-dev.github.io/drapp-exames/",
+      "logo": "https://drapp-dev.github.io/drapp-exames/og-image.jpg",
+      "description": "Marketplace de orçamentos de exames laboratoriais com até 30% de desconto. Parceiros: A+ Medicina Diagnóstica e Hermes Pardini (Grupo Fleury).",
+      "sameAs": ["https://drapp.com.br"]
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "O DrApp cobra alguma taxa?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Não. O orçamento é 100% gratuito. Sem assinatura, sem mensalidade, sem taxa de adesão — você paga apenas pelos exames que escolher."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Quais laboratórios fazem parte do DrApp?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "O DrApp tem parceria com Hermes Pardini, A+ Medicina Diagnóstica e Grupo Fleury — referências nacionais em qualidade diagnóstica."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Como funciona o orçamento?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Você escolhe os exames, seleciona o laboratório e envia seu pedido médico. Nossa equipe retorna com o orçamento via WhatsApp, sem custo e sem compromisso."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Qual é o desconto oferecido pelo DrApp?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Nossos clientes economizam até 30% em relação ao preço particular dos laboratórios parceiros. Você vê o preço antes de confirmar — sem surpresas."
+          }
+        }
+      ]
+    }
+  ]
+  </script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -1276,12 +1345,12 @@
               <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
                 <button type="button" class="lab-tab" id="tabAplus" data-lab="A+ Medicina Diagnóstica"
                   style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 8px;border-radius:12px;border:2px solid #e2e8f0;background:#f8fafc;cursor:pointer;transition:all .2s;font-size:12px;font-weight:600;color:var(--text);">
-                  <img src="logo-aplus.png" alt="A+" style="height:32px;object-fit:contain;display:block;">
+                  <img src="logo-aplus.png" alt="A+ Medicina Diagnóstica" style="height:32px;object-fit:contain;display:block;">
                   <span>A+ Medicina</span>
                 </button>
                 <button type="button" class="lab-tab" id="tabHermes" data-lab="Hermes Pardini"
                   style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 8px;border-radius:12px;border:2px solid #e2e8f0;background:#f8fafc;cursor:pointer;transition:all .2s;font-size:12px;font-weight:600;color:var(--text);">
-                  <img src="logo-hermes.png" alt="Hermes" style="height:32px;object-fit:contain;display:block;">
+                  <img src="logo-hermes.png" alt="Hermes Pardini" style="height:32px;object-fit:contain;display:block;">
                   <span>Hermes Pardini</span>
                 </button>
                 <button type="button" id="tabAmbos"
@@ -1617,7 +1686,12 @@
       <span class="footer-lab-pill">APM</span>
     </div>
     <div class="footer-copy">© 2024 DrApp · Todos os direitos reservados · drapp.com.br</div>
-    <div style="margin-top:14px;">
+    <div style="margin-top:12px;font-size:14px;">
+      <a href="politica.html" style="color:rgba(255,255,255,0.45);text-decoration:none;">Política de Privacidade</a>
+      <span style="color:rgba(255,255,255,0.2);margin:0 8px;">·</span>
+      <a href="politica.html#termos" style="color:rgba(255,255,255,0.45);text-decoration:none;">Termos de Uso</a>
+    </div>
+    <div style="margin-top:10px;">
       <a href="admin.html" style="font-size:12px;color:rgba(255,255,255,0.25);text-decoration:none;" title="Área restrita">· Operação DrApp ·</a>
     </div>
   </footer>
