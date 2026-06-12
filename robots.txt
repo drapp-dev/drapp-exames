@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /admin.html
+
+Sitemap: https://drapp-dev.github.io/drapp-exames/sitemap.xml
