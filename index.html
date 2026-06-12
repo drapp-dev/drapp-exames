@@ -1046,15 +1046,49 @@
       padding: 60px 24px;
     }
 
-    .testimonials-grid {
+    .testimonials-carousel-wrap {
+      position: relative;
       max-width: 1100px;
       margin: 0 auto;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
     }
 
+    .testimonials-grid {
+      display: flex;
+      gap: 20px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding-bottom: 4px;
+    }
+
+    .testimonials-grid::-webkit-scrollbar { display: none; }
+
+    .carousel-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      background: #fff;
+      border: 1px solid var(--line);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+      cursor: pointer;
+      font-size: 20px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text);
+      transition: box-shadow 0.2s;
+      z-index: 2;
+    }
+
+    .carousel-btn:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
+    .carousel-btn-prev { left: -22px; }
+    .carousel-btn-next { right: -22px; }
+
     .testimonial-card {
+      flex: 0 0 calc(33.333% - 14px);
+      scroll-snap-align: start;
       background: #fff;
       border: 1px solid var(--line);
       border-radius: 18px;
@@ -1093,11 +1127,16 @@
     }
 
     .testimonial-avatar {
-      width: 40px; height: 40px;
+      width: 48px; height: 48px;
       border-radius: 50%;
+      overflow: hidden;
       background: linear-gradient(135deg, var(--blue) 0%, var(--cyan) 100%);
       display: flex; align-items: center; justify-content: center;
-      font-size: 16px; font-weight: 800; color: #fff; flex-shrink: 0;
+      font-size: 18px; font-weight: 800; color: #fff; flex-shrink: 0;
+    }
+
+    .testimonial-avatar img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
     }
 
     .testimonial-name { font-size: 17px; font-weight: 700; color: var(--text); }
@@ -1145,7 +1184,8 @@
     /* ─── RESPONSIVE ─────────────────────────────────── */
     @media (max-width: 980px) {
       .benefits-grid { grid-template-columns: 1fr; max-width: 520px; }
-      .testimonials-grid { grid-template-columns: 1fr; max-width: 480px; }
+      .testimonial-card { flex: 0 0 calc(50% - 10px); }
+      .carousel-btn { display: none; }
       .main-grid { grid-template-columns: 1fr; }
       .stats-strip { grid-template-columns: repeat(2, 1fr); }
       .grid-2, .cpf-result-grid, .cpf-row, .lab-selector, .selected-card-prices { grid-template-columns: 1fr; }
@@ -1635,48 +1675,98 @@
     <h2 class="section-heading" style="margin-bottom:8px;">Mais de <em>1 milhão</em> de histórias</h2>
     <p class="section-sub">Quem usou o DrApp não volta a pagar preço cheio.</p>
 
-    <div class="testimonials-grid">
-      <div class="testimonial-card">
-        <div class="testimonial-stars">★★★★★</div>
-        <p class="testimonial-text">
-          "Encontrei o DrApp e descobri que posso pagar valores acessíveis em um dos melhores laboratórios do país! Economizei 74% em relação ao que pagava antes."
-        </p>
-        <div class="testimonial-author">
-          <div class="testimonial-avatar">M</div>
-          <div>
-            <div class="testimonial-name">Mariana S.</div>
-            <div class="testimonial-detail">São Paulo, SP</div>
+    <div class="testimonials-carousel-wrap">
+      <button class="carousel-btn carousel-btn-prev" aria-label="Anterior">&#8592;</button>
+
+      <div class="testimonials-grid" id="testimonialsGrid">
+
+        <div class="testimonial-card">
+          <p class="testimonial-text">"É impressionante a economia que fiz em meus exames laboratoriais. Na média, tenho economizado quase 80%!"</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">
+              <img src="https://drapp.com.br/assets/depoimentos/unnamed.jpg" alt="Fausto Di Giacomo Filho"
+                onerror="this.style.display='none';this.parentElement.innerHTML='F';">
+            </div>
+            <div>
+              <div class="testimonial-name">Fausto Di Giacomo Filho</div>
+              <div class="testimonial-detail">CRECI/SP · Corretor de Imóveis</div>
+            </div>
           </div>
         </div>
+
+        <div class="testimonial-card">
+          <p class="testimonial-text">"Em dois dias do primeiro contato já estava com os meus exames agendados. Paguei 64% a menos do que o preço de tabela!"</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">
+              <img src="https://drapp.com.br/assets/depoimentos/zeca.png" alt="José Ferraz de Camargo"
+                onerror="this.style.display='none';this.parentElement.innerHTML='J';">
+            </div>
+            <div>
+              <div class="testimonial-name">José Ferraz de Camargo</div>
+              <div class="testimonial-detail">CRECI/SP · Corretor de Imóveis</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card">
+          <p class="testimonial-text">"Recomendo fortemente o DrApp da CAASP. É realmente livre de burocracia, fiz tudo pelo celular: super moderno!"</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">
+              <img src="https://drapp.com.br/assets/depoimentos/renato.jpg" alt="Dr. Renato Sormani"
+                onerror="this.style.display='none';this.parentElement.innerHTML='R';">
+            </div>
+            <div>
+              <div class="testimonial-name">Dr. Renato Sormani</div>
+              <div class="testimonial-detail">CAASP/OABSP · Advogado</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card">
+          <p class="testimonial-text">"Encontrei o DrApp e descobri que posso pagar valores acessíveis por um dos melhores laboratórios do país!"</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">
+              <img src="https://drapp.com.br/assets/depoimentos/cecilia.jpg" alt="Drª Cecília Helena"
+                onerror="this.style.display='none';this.parentElement.innerHTML='C';">
+            </div>
+            <div>
+              <div class="testimonial-name">Drª Cecília Helena</div>
+              <div class="testimonial-detail">OABSP · Advogada</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card">
+          <p class="testimonial-text">"As atendentes do SAC do DrApp, assim como do a+, foram eficientes e simpáticas, me ajudaram em tudo."</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">
+              <img src="https://drapp.com.br/assets/depoimentos/silvia.jpeg" alt="Silvia Prado de Camargo"
+                onerror="this.style.display='none';this.parentElement.innerHTML='S';">
+            </div>
+            <div>
+              <div class="testimonial-name">Silvia Prado de Camargo</div>
+              <div class="testimonial-detail">Usuária do DrApp</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card">
+          <p class="testimonial-text">"O DrApp tem um ótimo atendimento. O laboratório a+ conseguiu o agendamento e o resultado do exame antes da data que precisava."</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">
+              <img src="https://drapp.com.br/assets/depoimentos/anonimo.jpg" alt="Cleonaldo Rabelo"
+                onerror="this.style.display='none';this.parentElement.innerHTML='C';">
+            </div>
+            <div>
+              <div class="testimonial-name">Cleonaldo Rabelo</div>
+              <div class="testimonial-detail">Usuário do DrApp</div>
+            </div>
+          </div>
+        </div>
+
       </div>
 
-      <div class="testimonial-card">
-        <div class="testimonial-stars">★★★★★</div>
-        <p class="testimonial-text">
-          "Valor acessível, atendimento excelente. O modo de trabalho via WhatsApp é ótimo — em dois dias do primeiro contato já tinha meu resultado em mãos."
-        </p>
-        <div class="testimonial-author">
-          <div class="testimonial-avatar">R</div>
-          <div>
-            <div class="testimonial-name">Roberto A.</div>
-            <div class="testimonial-detail">Guarulhos, SP</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="testimonial-card">
-        <div class="testimonial-stars">★★★★★</div>
-        <p class="testimonial-text">
-          "Indicado por minha médica. Fiz todos os exames de rotina com 68% de desconto na Hermes Pardini. Qualidade top e ainda economizei muito. Recomendo demais!"
-        </p>
-        <div class="testimonial-author">
-          <div class="testimonial-avatar">A</div>
-          <div>
-            <div class="testimonial-name">Ana C.</div>
-            <div class="testimonial-detail">Santo André, SP</div>
-          </div>
-        </div>
-      </div>
+      <button class="carousel-btn carousel-btn-next" aria-label="Próximo">&#8594;</button>
     </div>
   </section>
 
@@ -2983,6 +3073,18 @@
 
     uploadInput.addEventListener("change", function () { processarArquivos(Array.from(this.files)); this.value = ""; });
     uploadInputMais.addEventListener("change", function () { processarArquivos(Array.from(this.files)); this.value = ""; });
+  </script>
+
+  <script>
+    (function () {
+      const grid = document.getElementById("testimonialsGrid");
+      const btnPrev = document.querySelector(".carousel-btn-prev");
+      const btnNext = document.querySelector(".carousel-btn-next");
+      if (!grid || !btnPrev || !btnNext) return;
+      const pageWidth = () => grid.offsetWidth;
+      btnNext.addEventListener("click", () => grid.scrollBy({ left: pageWidth(), behavior: "smooth" }));
+      btnPrev.addEventListener("click", () => grid.scrollBy({ left: -pageWidth(), behavior: "smooth" }));
+    })();
   </script>
 </body>
 </html>
