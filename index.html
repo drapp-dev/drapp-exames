@@ -97,7 +97,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -122,9 +122,10 @@
     }
 
     html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+    h1, h2, h3, h4, h5, h6 { font-family: 'Figtree', Arial, sans-serif; }
 
     body {
-      font-family: 'Inter', Arial, sans-serif;
+      font-family: 'Noto Sans', Arial, sans-serif;
       background: #f0f6fb;
       color: var(--text);
       overflow-x: hidden;
@@ -905,6 +906,7 @@
     .primary-btn, .secondary-btn, .inline-btn {
       border: none; border-radius: 14px; font-size: 16px;
       font-weight: 700; cursor: pointer; font-family: inherit;
+      min-height: 48px;
       transition: background 0.18s, transform 0.15s, box-shadow 0.18s;
     }
 
@@ -952,8 +954,10 @@
 
     .checkout-actions { display: flex; gap: 12px; margin-top: 20px; }
     .checkout-note { margin-top: 10px; font-size: 15px; line-height: 1.5; text-align: center; }
-    @keyframes blink-alert { 0%, 100% { color: var(--muted); } 50% { color: var(--danger); } }
-    .checkout-note.piscando { animation: blink-alert 1.2s ease-in-out infinite; }
+    .checkout-ind { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: #94a3b8; }
+    .checkout-ind .ind-box { width: 16px; height: 16px; border: 2px solid #cbd5e1; border-radius: 3px; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 900; color: transparent; transition: background 0.15s, border-color 0.15s, color 0.15s; }
+    .checkout-ind.ok { color: #16324a; }
+    .checkout-ind.ok .ind-box { background: #16a34a; border-color: #16a34a; color: #fff; }
 
     .btn-finalizar { background: #22c55e !important; box-shadow: 0 6px 20px rgba(34,197,94,0.35); }
     .btn-finalizar:not(:disabled):hover { background: #16a34a !important; transform: translateY(-1px); box-shadow: 0 10px 26px rgba(34,197,94,0.45); }
@@ -1213,10 +1217,28 @@
       .stats-strip { grid-template-columns: 1fr; }
       .navbar-cta { font-size: 13px; padding: 8px 14px; }
     }
+
+    .skip-link {
+      position: absolute; top: -100px; left: 16px; z-index: 9999;
+      background: var(--blue-deep); color: #fff; padding: 10px 18px;
+      border-radius: 0 0 10px 10px; font-size: 14px; font-weight: 700;
+      text-decoration: none; transition: top 0.15s;
+    }
+    .skip-link:focus { top: 0; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      html { scroll-behavior: auto; }
+    }
   </style>
 </head>
 
 <body>
+  <a href="#main" class="skip-link">Ir para o conteúdo principal</a>
 
   <!-- ═══ NAVBAR ══════════════════════════════════════════ -->
   <nav class="navbar">
@@ -1228,6 +1250,8 @@
     </a>
     <a href="#orcamento" class="navbar-cta">Fazer Orçamento Grátis →</a>
   </nav>
+
+  <main id="main">
 
   <!-- ═══ HERO ═════════════════════════════════════════════ -->
   <section class="hero">
@@ -1268,7 +1292,7 @@
           <div class="stat-label">Sem assinaturas ou taxas ocultas</div>
         </div>
         <div class="stat-item">
-          <div class="stat-number"><em>4,85</em>⭐</div>
+          <div class="stat-number"><em>4,85</em><svg width="0.85em" height="0.85em" viewBox="0 0 20 20" fill="#f59e0b" aria-hidden="true" style="vertical-align:-0.12em;margin-left:2px;"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg></div>
           <div class="stat-label">Avaliação média de +900 clientes</div>
         </div>
       </div>
@@ -1308,7 +1332,7 @@
 
     <div class="benefits-grid">
       <div class="benefit-card">
-        <div class="benefit-icon orange">💰</div>
+        <div class="benefit-icon orange"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#f58319" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
         <div class="benefit-title">Descontos que fazem diferença</div>
         <div class="benefit-text">
           Nossos clientes economizam até 30% em relação ao preço particular. Você vê o preço antes de confirmar — sem surpresas.
@@ -1317,7 +1341,7 @@
       </div>
 
       <div class="benefit-card">
-        <div class="benefit-icon blue">🏥</div>
+        <div class="benefit-icon blue"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#006dc7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg></div>
         <div class="benefit-title">Os melhores laboratórios do Brasil</div>
         <div class="benefit-text">
           Hermes Pardini, A+ Medicina Diagnóstica e Grupo Fleury — referências nacionais em qualidade diagnóstica, disponíveis para você a preço acessível.
@@ -1325,7 +1349,7 @@
       </div>
 
       <div class="benefit-card">
-        <div class="benefit-icon cyan">✅</div>
+        <div class="benefit-icon cyan"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#51c9d2" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
         <div class="benefit-title">Pague só o que usar</div>
         <div class="benefit-text">
           Sem assinatura, sem mensalidade, sem taxa de adesão. Você monta seu orçamento, confere os valores e só paga pelos exames que escolheu.
@@ -1557,11 +1581,12 @@
             <h2 class="section-title">Fechar orçamento</h2>
             <p class="section-subtitle">Preencha seus dados para concluir a solicitação dos exames escolhidos.</p>
 
+            <form autocomplete="on" novalidate>
             <div class="grid-2">
               <div class="field">
                 <label for="cpf">CPF</label>
                 <div class="cpf-row">
-                  <input type="text" id="cpf" placeholder="000.000.000-00" maxlength="14" />
+                  <input type="text" id="cpf" placeholder="000.000.000-00" maxlength="14" autocomplete="off" />
                   <button id="btnValidarCpf" class="inline-btn" type="button">Validar CPF</button>
                 </div>
                 <div id="cpfError" class="field-error">Informe um CPF válido.</div>
@@ -1643,13 +1668,13 @@
                     </select>
                     <span style="position:absolute;right:5px;top:50%;transform:translateY(-50%);pointer-events:none;font-size:10px;color:#666;">▼</span>
                   </div>
-                  <input type="text" id="telefone" placeholder="(11) 99999-9999" maxlength="20" style="flex:1;min-width:0;" />
+                  <input type="tel" id="telefone" placeholder="(11) 99999-9999" maxlength="20" autocomplete="tel" style="flex:1;min-width:0;" />
                 </div>
                 <div id="telefoneError" class="field-error">Informe um telefone válido.</div>
               </div>
               <div class="field">
                 <label for="email">E-mail</label>
-                <input type="email" id="email" placeholder="voce@exemplo.com.br" />
+                <input type="email" id="email" placeholder="voce@exemplo.com.br" autocomplete="email" />
                 <div id="emailError" class="field-error">Informe um e-mail válido.</div>
               </div>
             </div><!-- /campos telefone+email -->
@@ -1658,9 +1683,16 @@
               <button id="btnVoltarOrçamento" class="secondary-btn" type="button" style="margin-top:0;">← Voltar</button>
               <button id="btnFinalizar" class="primary-btn btn-finalizar" type="button" disabled>Finalizar →</button>
             </div>
-            <div id="checkoutNote" class="checkout-note piscando" style="margin-top:12px;background:#fff3e0;border:1px solid #ffb74d;border-radius:12px;padding:10px 16px;font-size:14px;font-weight:600;color:#e65100;text-align:center;">
-              ⚠️ Preencha todos os campos e valide o CPF para liberar o botão.
+            <div id="checkoutNote" style="margin-top:10px;display:grid;grid-template-columns:1fr 1fr;gap:10px 24px;padding:10px 20px;background:#f8fafc;border:1px solid var(--line);border-radius:12px;">
+              <span id="indItens" class="checkout-ind"><span class="ind-box">✓</span> Exames</span>
+              <span id="indCpf"   class="checkout-ind"><span class="ind-box">✓</span> CPF</span>
+              <span id="indTel"   class="checkout-ind"><span class="ind-box">✓</span> Telefone</span>
+              <span id="indEmail" class="checkout-ind"><span class="ind-box">✓</span> E-mail</span>
             </div>
+            <div style="margin-top:8px;font-size:13px;color:var(--muted);text-align:center;">
+              🔒 Seus dados são usados apenas para enviar seu orçamento via WhatsApp
+            </div>
+            </form>
           </div>
         </div><!-- /right-column -->
       </div><!-- /main-grid -->
@@ -1674,7 +1706,7 @@
     <p class="section-sub">Quem usou o DrApp não volta a pagar preço cheio.</p>
 
     <div class="testimonials-carousel-wrap">
-      <button class="carousel-btn carousel-btn-prev" aria-label="Anterior">&#8592;</button>
+      <button class="carousel-btn carousel-btn-prev" aria-label="Depoimento anterior">&#8592;</button>
 
       <div class="testimonials-grid" id="testimonialsGrid">
 
@@ -1764,9 +1796,11 @@
 
       </div>
 
-      <button class="carousel-btn carousel-btn-next" aria-label="Próximo">&#8594;</button>
+      <button class="carousel-btn carousel-btn-next" aria-label="Próximo depoimento">&#8594;</button>
     </div>
   </section>
+
+  </main>
 
   <!-- ═══ FOOTER ═════════════════════════════════════════════ -->
   <footer class="footer">
@@ -2148,12 +2182,15 @@
         if (liberado) {
           nota.style.display = "none";
         } else {
-          nota.style.display = "block";
-          if (!temItens)          nota.textContent = "⚠️ Adicione pelo menos um exame ou foto para continuar.";
-          else if (!telOk)        nota.textContent = "⚠️ Informe um telefone válido para liberar o botão.";
-          else if (!emailOk)      nota.textContent = "⚠️ Informe um e-mail válido para liberar o botão.";
-          else if (!cpfValidado)  nota.textContent = "⚠️ Valide o CPF para liberar o botão.";
-          else if (!cpfConfirmado)nota.textContent = "⚠️ Clique em '✓ correto!' para confirmar os dados do CPF.";
+          nota.style.display = "grid";
+          const setInd = (id, ok) => {
+            const el = document.getElementById(id);
+            if (el) el.classList.toggle("ok", ok);
+          };
+          setInd("indItens", temItens);
+          setInd("indCpf",   cpfValidado && cpfConfirmado);
+          setInd("indTel",   telOk);
+          setInd("indEmail", emailOk);
         }
       }
     }
