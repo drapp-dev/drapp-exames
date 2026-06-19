@@ -1235,6 +1235,14 @@
       html { scroll-behavior: auto; }
     }
   </style>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-FZ9NB6E8KP"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-FZ9NB6E8KP');
+  </script>
 </head>
 
 <body>
@@ -2507,6 +2515,7 @@
           adicionados.push(exame);
         }
       }
+      adicionados.forEach(item => gtag('event', 'exam_added', { exam_name: item.nome, lab: item.laboratorio }));
       adicionados.forEach(registrarEscolha_);
       const contrasteAdicionado = adicionarContrasteAuto(adicionados);
       contrasteAdicionado.forEach(registrarEscolha_);
@@ -2520,6 +2529,8 @@
     }
 
     function removerExame(id, laboratorio) {
+      const removido = selecionados.find(i => i.id === id && i.laboratorio === laboratorio);
+      if (removido) gtag('event', 'exam_removed', { exam_name: removido.nome, lab: removido.laboratorio });
       selecionados = selecionados.filter(i => !(i.id === id && i.laboratorio === laboratorio));
       renderTabela();
       atualizarResumo();
@@ -2615,6 +2626,8 @@
 
     function removerExameGrupo(chaveEncoded) {
       const chave = decodeURIComponent(chaveEncoded);
+      const removidos = selecionados.filter(i => chaveCanonica(i) === chave);
+      removidos.forEach(i => gtag('event', 'exam_removed', { exam_name: i.nome, lab: i.laboratorio }));
       selecionados = selecionados.filter(i => chaveCanonica(i) !== chave);
       renderTabela();
       atualizarResumo();
@@ -2812,9 +2825,14 @@
       limparValidacaoCpf();
     });
 
+    let _phoneFired = false;
     telefoneInput.addEventListener("input", function () {
       this.value = mascaraTelefone(this.value);
       telefoneError.style.display = "none";
+      if (!_phoneFired && validarTelefone(this.value)) {
+        gtag('event', 'phone_completed');
+        _phoneFired = true;
+      }
       atualizarBotoes();
     });
 
@@ -2826,13 +2844,19 @@
       atualizarBotoes();
     });
 
+    let _emailFired = false;
     emailInput.addEventListener("input", function () {
       emailError.style.display = "none";
+      if (!_emailFired && validarEmail(this.value)) {
+        gtag('event', 'email_completed');
+        _emailFired = true;
+      }
       atualizarBotoes();
     });
 
     btnContinuar.addEventListener("click", function () {
       if (!temExamesOuFotos()) return;
+      gtag('event', 'checkout_opened', { exam_count: selecionados.length });
       checkoutCard.classList.add("active");
       checkoutCard.scrollIntoView({ behavior: "smooth", block: "start" });
     });
@@ -2855,6 +2879,7 @@
         if (!dados || !dados.nome) throw new Error("Não foi possível localizar dados para este CPF.");
         dadosCpfValidados = dados;
         cpfValidado = true; cpfConfirmado = false;
+        gtag('event', 'cpf_validated', { method: dados.origem || 'unknown' });
         cpfNome.textContent = dados.nome || "-";
         cpfNascimento.textContent = dados.nascimento || "-";
         cpfResult.classList.add("active");
@@ -2949,6 +2974,11 @@
       if (!validarFormularioBase()) return;
       if (!cpfValidado || !cpfConfirmado) return;
 
+      gtag('event', 'form_submitted', {
+        exam_count: selecionados.length,
+        labs: [...new Set(selecionados.map(e => e.laboratorio))].join(',')
+      });
+
       btnFinalizar.disabled = true;
       btnFinalizar.textContent = "Enviando...";
 
@@ -2986,6 +3016,11 @@
         const data = await resp.json();
 
         if (data.sucesso || data.ok) {
+          gtag('event', 'lead_generated', {
+            exam_count: selecionados.length,
+            labs: [...new Set(selecionados.map(e => e.laboratorio))].join(','),
+            value: selecionados.reduce((s, i) => s + (parseFloat(i.precoDrapp) || 0), 0)
+          });
           checkoutCard.innerHTML = `
             <div style="text-align:center;padding:40px 20px;">
               <div style="font-size:48px;margin-bottom:16px;">✅</div>
@@ -2997,6 +3032,7 @@
           throw new Error(data.mensagem || data.erro || "Erro desconhecido");
         }
       } catch (err) {
+        gtag('event', 'form_error', { error_message: err.message });
         mostrarStatusCpf("Erro ao enviar pedido: " + err.message, "error");
         btnFinalizar.disabled = false;
         btnFinalizar.textContent = "Finalizar solicitação";
