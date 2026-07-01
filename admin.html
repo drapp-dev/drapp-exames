@@ -228,6 +228,16 @@
     }
     .badge-ativo   { background: #dcfce7; color: var(--success); }
     .badge-inativo { background: #f1f5f9; color: var(--muted); }
+    .badge-aprovado { background: #dcfce7; color: var(--success); }
+    .badge-rascunho { background: #fef3c7; color: #92400e; }
+
+    /* ── Catálogo de exibição ─────────────────────────── */
+    .candidato-item {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; margin-bottom: 8px;
+    }
+    .candidato-desc { font-size: 14px; font-weight: 600; color: var(--text); }
+    .candidato-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
 
     .lab-card-meta { font-size: 13px; color: var(--muted); margin-bottom: 14px; line-height: 1.6; }
 
@@ -378,6 +388,9 @@
         </a>
         <a class="sidebar-item" data-view="viewHistorico" onclick="trocarView('viewHistorico', this)">
           <span class="icon">📋</span> Histórico
+        </a>
+        <a class="sidebar-item" data-view="viewCatalogo" onclick="trocarView('viewCatalogo', this)">
+          <span class="icon">⭐</span> Catálogo
         </a>
         <div class="sidebar-sep"></div>
         <a class="sidebar-item" data-view="viewSenha" onclick="trocarView('viewSenha', this)">
@@ -551,6 +564,74 @@
           </div>
         </div>
 
+        <!-- ─── VIEW: CATÁLOGO DE EXIBIÇÃO ─────────── -->
+        <div id="viewCatalogo" class="dash-view">
+          <div class="page-header">
+            <h1>⭐ Catálogo de Exibição</h1>
+            <p>Nomes e categorias mostrados ao paciente nos "Exames mais frequentes" do site — separado da planilha de preço bruta dos laboratórios.</p>
+          </div>
+
+          <div class="card">
+            <div class="card-title">💡 Sugestões (exames pedidos que ainda não têm nome curado)</div>
+            <p class="card-sub">Baseado na popularidade real de pedidos. Clique em "Curar" pra dar um nome amigável ao paciente.</p>
+            <div id="candidatosList"><p style="color:var(--muted);font-size:14px;">Carregando sugestões...</p></div>
+          </div>
+
+          <div class="card" id="formCatalogoCard" style="display:none;">
+            <div class="card-title" id="formCatalogoTitulo">✏️ Curar exame</div>
+            <input type="hidden" id="catSigla">
+            <div class="form-row">
+              <div class="field">
+                <label>Nome de exibição (paciente) *</label>
+                <input type="text" id="catNome" placeholder="Ex: Exame de urina">
+              </div>
+              <div class="field">
+                <label>Categoria</label>
+                <select id="catCategoria">
+                  <option value="Sangue">🩸 Sangue</option>
+                  <option value="Urina">🧪 Urina</option>
+                  <option value="Imagem">🩻 Imagem</option>
+                  <option value="Cardio">❤️ Cardio</option>
+                  <option value="Outro">🔬 Outro</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="field">
+                <label>Ícone (emoji)</label>
+                <input type="text" id="catIcone" placeholder="🩸" maxlength="4">
+              </div>
+              <div class="field">
+                <label>Prioridade (menor = aparece primeiro; deixe vazio p/ automático)</label>
+                <input type="number" id="catPrioridade" placeholder="Ex: 1">
+              </div>
+            </div>
+            <div class="field" style="margin-bottom:20px;max-width:280px;">
+              <label>Status</label>
+              <select id="catStatus">
+                <option value="rascunho">Rascunho (não aparece no site)</option>
+                <option value="aprovado">Aprovado (visível no site)</option>
+              </select>
+            </div>
+            <button class="btn btn-primary" id="btnSalvarCatalogo">💾 Salvar</button>
+            <button class="btn btn-secondary" id="btnCancelarCatalogo">Cancelar</button>
+            <div class="alert" id="alertCatalogo"></div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">📋 Itens curados</div>
+            <p class="card-sub">Só os "Aprovados" aparecem no site.</p>
+            <table class="data-table" id="tblCatalogo">
+              <thead>
+                <tr><th>Sigla</th><th>Nome de exibição</th><th>Categoria</th><th>Status</th><th>Prioridade</th><th></th></tr>
+              </thead>
+              <tbody id="tbodyCatalogo">
+                <tr><td colspan="6" style="text-align:center;padding:32px;color:var(--muted);">Carregando...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
         <!-- ─── VIEW: ALTERAR SENHA ───────────────── -->
         <div id="viewSenha" class="dash-view">
           <div class="page-header">
@@ -629,6 +710,8 @@
         renderLabs();
         renderHistorico();
         atualizarSelectLabs();
+        carregarCandidatos();
+        carregarCatalogoAdmin();
       } else {
         erro.style.display = "block";
         document.getElementById("loginSenha").value = "";
@@ -990,6 +1073,124 @@
           <td><span style="padding:4px 10px;border-radius:999px;font-size:12px;font-weight:700;background:${h.ok?"#dcfce7":"#fee2e2"};color:${h.ok?"#166534":"#b91c1c"}">${h.ok?"✔ Enviado":"✗ Erro"}</span></td>`;
         tbody.appendChild(tr);
       });
+    }
+
+    // ════════════════════════════════════════════════════
+    // CATÁLOGO DE EXIBIÇÃO
+    // ════════════════════════════════════════════════════
+    async function carregarCandidatos() {
+      const el = document.getElementById("candidatosList");
+      try {
+        const res  = await fetch(APPS_URL + "?action=catalogocandidatos");
+        const data = await res.json();
+        const candidatos = data.candidatos || [];
+        if (!candidatos.length) {
+          el.innerHTML = '<p style="color:var(--muted);font-size:14px;">Nenhuma sugestão pendente. 🎉</p>';
+          return;
+        }
+        el.innerHTML = candidatos.map(c => `
+          <div class="candidato-item">
+            <div>
+              <div class="candidato-desc">${c.descricaoBruta || c.sigla}</div>
+              <div class="candidato-meta">sigla: ${c.sigla} · pedido ${c.score}x</div>
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick='abrirFormCatalogo(${JSON.stringify({ sigla: c.sigla, nome: c.descricaoBruta || "", categoria: "Outro", icone: "🔬", status: "rascunho", prioridade: "" })})'>✏️ Curar</button>
+          </div>
+        `).join("");
+      } catch (e) {
+        el.innerHTML = '<p style="color:var(--danger);font-size:14px;">Erro ao carregar sugestões.</p>';
+      }
+    }
+
+    async function carregarCatalogoAdmin() {
+      const tbody = document.getElementById("tbodyCatalogo");
+      try {
+        const res  = await fetch(APPS_URL + "?action=catalogoexibicaoadmin");
+        const data = await res.json();
+        const itens = data.itens || [];
+        if (!itens.length) {
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--muted);">Nenhum item curado ainda.</td></tr>';
+          return;
+        }
+        tbody.innerHTML = itens.map(it => `
+          <tr>
+            <td>${it.sigla}</td>
+            <td>${it.icone || ""} ${it.nome}</td>
+            <td>${it.categoria}</td>
+            <td><span class="lab-card-badge ${it.status === 'aprovado' ? 'badge-aprovado' : 'badge-rascunho'}">${it.status === 'aprovado' ? '✔ Aprovado' : '📝 Rascunho'}</span></td>
+            <td>${it.prioridade === 999 ? "—" : it.prioridade}</td>
+            <td>
+              <button class="btn btn-secondary btn-sm" onclick='abrirFormCatalogo(${JSON.stringify(it)})'>✏️ Editar</button>
+              <button class="btn btn-danger btn-sm" onclick="excluirItemCatalogo('${it.sigla}')">🗑</button>
+            </td>
+          </tr>
+        `).join("");
+      } catch (e) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--danger);">Erro ao carregar catálogo.</td></tr>';
+      }
+    }
+
+    function abrirFormCatalogo(item) {
+      document.getElementById("formCatalogoCard").style.display = "block";
+      document.getElementById("formCatalogoTitulo").textContent = "✏️ Curar: " + (item.nome || item.sigla);
+      document.getElementById("catSigla").value      = item.sigla || "";
+      document.getElementById("catNome").value       = item.nome || "";
+      document.getElementById("catCategoria").value  = item.categoria || "Outro";
+      document.getElementById("catIcone").value      = item.icone || "🔬";
+      document.getElementById("catPrioridade").value = (item.prioridade === 999 || item.prioridade === undefined) ? "" : item.prioridade;
+      document.getElementById("catStatus").value     = item.status || "rascunho";
+      document.getElementById("formCatalogoCard").scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+
+    document.getElementById("btnCancelarCatalogo").addEventListener("click", () => {
+      document.getElementById("formCatalogoCard").style.display = "none";
+    });
+
+    document.getElementById("btnSalvarCatalogo").addEventListener("click", async () => {
+      const alerta = document.getElementById("alertCatalogo");
+      alerta.className = "alert";
+      const sigla = document.getElementById("catSigla").value.trim();
+      const nome  = document.getElementById("catNome").value.trim();
+      if (!sigla || !nome) {
+        alerta.textContent = "⚠ Nome de exibição é obrigatório.";
+        alerta.className = "alert error show";
+        return;
+      }
+      const payload = {
+        action:     "salvarCatalogoExibicao",
+        sigla:      sigla,
+        nome:       nome,
+        categoria:  document.getElementById("catCategoria").value,
+        icone:      document.getElementById("catIcone").value.trim() || "🔬",
+        status:     document.getElementById("catStatus").value,
+        prioridade: document.getElementById("catPrioridade").value
+      };
+      try {
+        const res  = await fetch(APPS_URL, { method: "POST", body: JSON.stringify(payload) });
+        const data = await res.json();
+        if (!data.ok) throw new Error(data.erro || "Erro desconhecido.");
+        alerta.textContent = "✔ Salvo com sucesso!";
+        alerta.className = "alert success show";
+        document.getElementById("formCatalogoCard").style.display = "none";
+        carregarCandidatos();
+        carregarCatalogoAdmin();
+      } catch (e) {
+        alerta.textContent = "❌ Erro ao salvar: " + e.message;
+        alerta.className = "alert error show";
+      }
+    });
+
+    async function excluirItemCatalogo(sigla) {
+      if (!confirm("Remover este item do catálogo de exibição?")) return;
+      try {
+        const res  = await fetch(APPS_URL, { method: "POST", body: JSON.stringify({ action: "excluirCatalogoExibicao", sigla: sigla }) });
+        const data = await res.json();
+        if (!data.ok) throw new Error(data.erro || "Erro desconhecido.");
+        carregarCandidatos();
+        carregarCatalogoAdmin();
+      } catch (e) {
+        alert("Erro ao excluir: " + e.message);
+      }
     }
 
     // ════════════════════════════════════════════════════

@@ -791,6 +791,18 @@
       gap: 10px;
     }
     @media (max-width: 500px) { .freq-grid { grid-template-columns: repeat(2, 1fr); } }
+    .freq-categoria { margin-bottom: 14px; }
+    .freq-categoria:last-child { margin-bottom: 0; }
+    .freq-categoria-titulo {
+      font-size: 12px; font-weight: 700; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 8px;
+    }
+    .freq-categoria-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    @media (max-width: 500px) { .freq-categoria-grid { grid-template-columns: repeat(2, 1fr); } }
     .pill-exame {
       cursor: pointer;
       padding: 10px 8px;
@@ -1976,49 +1988,40 @@
       return resultado.slice(0, 60);
     }
 
-    // ── Exames mais frequentes ────────────────────────────────
+    // ── Exames mais frequentes (catálogo curado, não a descrição crua do lab) ──
     const FREQ_INICIAL = 6;
-    const FREQ_TOTAL   = 20;
+    const FREQ_TOTAL   = 30;
     let   freqExpandido = false;
 
+    const CATEGORIA_ORDEM = ["Sangue", "Urina", "Imagem", "Cardio", "Outro"];
+    const CATEGORIA_ICONE = { Sangue: "🩸", Urina: "🧪", Imagem: "🩻", Cardio: "❤️", Outro: "🔬" };
+
     function getExamesFrequentes(limite) {
-      if (!catalogo) return [];
+      if (!catalogo || !catalogo.exibicao) return [];
       const labs = obterLabsSelecionados();
       const labA = labs.find(l => l.includes("A+") || l.includes("Medicina"));
       const labH = labs.find(l => l.includes("Hermes") || l.includes("Pardini"));
       const pA   = labA ? (catalogo.precos[labA] || {}) : {};
       const pH   = labH ? (catalogo.precos[labH] || {}) : {};
-      const pop  = catalogo.popularidade || {};
 
-      // Busca score de popularidade por sigla, independente do nome exato do lab na planilha
-      function popScore(sigla) {
-        if (!sigla) return 0;
-        const prefix = sigla + "|";
-        let total = 0;
-        for (const k in pop) { if (k.startsWith(prefix)) total += (pop[k] || 0); }
-        return total;
-      }
-
-      const visto = new Set();
-      const scored = [];
-      (catalogo.mapeamento || []).forEach(mp => {
-        const { sA, dA, sH, dH } = mp;
-        const temA = !!(labA && sA && pA[sA]);
-        const temH = !!(labH && sH && pH[sH]);
+      const resultado = [];
+      catalogo.exibicao.forEach(item => {
+        // Resolve a sigla canônica curada para o par A+/Hermes real (preços)
+        const mp = (catalogo.mapeamento || []).find(m => m.sA === item.sigla || m.sH === item.sigla);
+        if (!mp) return;
+        const temA = !!(labA && mp.sA && pA[mp.sA]);
+        const temH = !!(labH && mp.sH && pH[mp.sH]);
         if (!temA && !temH) return;
-        const key = (sA || "") + "||" + (sH || "");
-        if (visto.has(key)) return;
-        visto.add(key);
-        const cntA = temA ? popScore(sA) : 0;
-        const cntH = temH ? popScore(sH) : 0;
-        const score = Math.max(cntA, cntH);
-        if (score === 0) return; // só exames que já foram pedidos
-        const desc = (dA || dH || "").trim();
-        if (!desc) return;
-        scored.push({ sA, dA, sH, dH, score, temA, temH, labA, labH, pA, pH });
+        resultado.push({
+          sA: mp.sA || "", dA: mp.dA || "", sH: mp.sH || "", dH: mp.dH || "",
+          nome: item.nome, categoria: item.categoria || "Outro",
+          icone: item.icone || CATEGORIA_ICONE[item.categoria] || "🔬",
+          prioridade: item.prioridade,
+          temA, temH, labA, labH, pA, pH
+        });
       });
-      scored.sort((a, b) => b.score - a.score);
-      return scored.slice(0, limite);
+      resultado.sort((a, b) => a.prioridade - b.prioridade);
+      return resultado.slice(0, limite);
     }
 
     function adicionarExamePill(item) {
@@ -2056,33 +2059,38 @@
 
       // Só exibe no modo Digitar
       const emModoDigitar = (typeof secaoDigitar !== "undefined") && secaoDigitar.style.display !== "none";
-      console.log("[FreqDebug] emModoDigitar:", emModoDigitar, "| catalogo:", !!catalogo);
       if (!emModoDigitar) { section.style.display = "none"; return; }
 
-      const limite  = freqExpandido ? FREQ_TOTAL : FREQ_INICIAL;
-      const exames  = getExamesFrequentes(FREQ_TOTAL);
-      console.log("[FreqDebug] exames encontrados:", exames.length);
-      if (exames.length === 0) {
-        // Log para diagnóstico
-        if (catalogo) {
-          const pop = catalogo.popularidade || {};
-          const keys = Object.keys(pop);
-          console.log("[FreqDebug] popularidade total keys:", keys.length, "| exemplo:", keys.slice(0,3));
-          console.log("[FreqDebug] mapeamento total:", (catalogo.mapeamento||[]).length);
-        }
-        section.style.display = "none"; return;
-      }
+      const exames = getExamesFrequentes(FREQ_TOTAL);
+      if (exames.length === 0) { section.style.display = "none"; return; }
 
       section.style.display = "block";
 
+      const limite   = freqExpandido ? exames.length : FREQ_INICIAL;
       const visiveis = exames.slice(0, limite);
-      grid.innerHTML = visiveis.map(item => {
-        const desc = (item.dA || item.dH || "").trim();
-        const jaAdicionado = selecionados.some(s =>
-          (item.sA && s.id === item.sA) || (item.sH && s.id === item.sH)
-        );
-        const cls = "pill-exame" + (jaAdicionado ? " adicionado" : "");
-        return `<button type="button" class="${cls}" data-freq='${JSON.stringify({ sA: item.sA||"", sH: item.sH||"" })}'>${desc}${jaAdicionado ? " ✓" : ""}</button>`;
+
+      // Agrupa por categoria, preservando a ordem de prioridade dentro do grupo
+      const porCategoria = {};
+      visiveis.forEach(item => {
+        const cat = item.categoria || "Outro";
+        (porCategoria[cat] = porCategoria[cat] || []).push(item);
+      });
+      const categorias = Object.keys(porCategoria).sort((a, b) => {
+        const ia = CATEGORIA_ORDEM.indexOf(a), ib = CATEGORIA_ORDEM.indexOf(b);
+        return (ia < 0 ? 999 : ia) - (ib < 0 ? 999 : ib);
+      });
+
+      grid.innerHTML = categorias.map(cat => {
+        const itens    = porCategoria[cat];
+        const iconeCat = CATEGORIA_ICONE[cat] || "🔬";
+        const botoes = itens.map(item => {
+          const jaAdicionado = selecionados.some(s =>
+            (item.sA && s.id === item.sA) || (item.sH && s.id === item.sH)
+          );
+          const cls = "pill-exame" + (jaAdicionado ? " adicionado" : "");
+          return `<button type="button" class="${cls}" data-freq='${JSON.stringify({ sA: item.sA||"", sH: item.sH||"" })}'>${item.icone} ${item.nome}${jaAdicionado ? " ✓" : ""}</button>`;
+        }).join("");
+        return `<div class="freq-categoria"><div class="freq-categoria-titulo">${iconeCat} ${cat}</div><div class="freq-categoria-grid">${botoes}</div></div>`;
       }).join("");
 
       // Botão "ver mais"
