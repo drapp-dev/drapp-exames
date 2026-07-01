@@ -587,7 +587,7 @@
     const EMAIL        = "paula@drapp.com.br";
     // Senha nunca fica em texto puro no código-fonte (este repositório é público no GitHub).
     // Guardamos só o hash SHA-256 da senha padrão; a comparação é feita pelo hash.
-    const SENHA_HASH_PADRAO = "c49b1f455bd9da456ee351dfa0979338c9fff932b15d48c88d12c4730fc90170";
+    const SENHA_HASH_PADRAO = "aa654094210b1d2b305972ef2cd040f10cefb4fdb6bc54dcc90e9890fa94f168";
 
     async function sha256Hex_(texto) {
       const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(texto));
