@@ -585,9 +585,22 @@
     // ════════════════════════════════════════════════════
     const APPS_URL     = "https://script.google.com/macros/s/AKfycbxyeHFlUzJ6sQCEjFdgviwtdpTJ9zwxVipswMIWj1IPzWm00zRBgVFAHy-B0ajaIyNGQg/exec";
     const EMAIL        = "paula@drapp.com.br";
-    const SENHA_PADRAO = "DrApp@2026$";
+    // Senha nunca fica em texto puro no código-fonte (este repositório é público no GitHub).
+    // Guardamos só o hash SHA-256 da senha padrão; a comparação é feita pelo hash.
+    const SENHA_HASH_PADRAO = "c49b1f455bd9da456ee351dfa0979338c9fff932b15d48c88d12c4730fc90170";
 
-    function getSenha() { return localStorage.getItem("drapp_senha") || SENHA_PADRAO; }
+    async function sha256Hex_(texto) {
+      const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(texto));
+      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, "0")).join("");
+    }
+
+    // Se a senha já foi trocada neste navegador, ela fica em texto puro só no localStorage local
+    // (nunca sai do dispositivo). Sem troca local, comparamos pelo hash da senha padrão.
+    async function senhaValida_(digitada) {
+      const override = localStorage.getItem("drapp_senha");
+      if (override !== null) return digitada === override;
+      return (await sha256Hex_(digitada)) === SENHA_HASH_PADRAO;
+    }
 
     // ════════════════════════════════════════════════════
     // DADOS LOCAIS
@@ -600,13 +613,13 @@
     // ════════════════════════════════════════════════════
     // LOGIN
     // ════════════════════════════════════════════════════
-    function tentar_login() {
+    async function tentar_login() {
       const emailDigitado = document.getElementById("loginEmail").value.trim().toLowerCase();
       const senhaDigitada = document.getElementById("loginSenha").value;
       const erro          = document.getElementById("loginErro");
 
       const emailOk = emailDigitado === EMAIL;
-      const senhaOk = senhaDigitada === getSenha();
+      const senhaOk = await senhaValida_(senhaDigitada);
 
       if (emailOk && senhaOk) {
         erro.style.display = "none";
@@ -982,14 +995,14 @@
     // ════════════════════════════════════════════════════
     // ALTERAR SENHA
     // ════════════════════════════════════════════════════
-    document.getElementById("btnAlterarSenha").addEventListener("click", () => {
+    document.getElementById("btnAlterarSenha").addEventListener("click", async () => {
       const atual     = document.getElementById("senhaAtual").value;
       const nova      = document.getElementById("senhaNova").value;
       const confirma  = document.getElementById("senhaConfirma").value;
       const res       = document.getElementById("senhaResult");
       res.className   = "senha-result";
 
-      if (atual !== getSenha())  { res.textContent = "Senha atual incorreta."; res.className = "senha-result erro"; return; }
+      if (!(await senhaValida_(atual))) { res.textContent = "Senha atual incorreta."; res.className = "senha-result erro"; return; }
       if (nova.length < 8)       { res.textContent = "A nova senha precisa ter pelo menos 8 caracteres."; res.className = "senha-result erro"; return; }
       if (nova !== confirma)     { res.textContent = "A confirmação não coincide com a nova senha."; res.className = "senha-result erro"; return; }
 
