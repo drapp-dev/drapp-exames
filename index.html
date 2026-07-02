@@ -1855,6 +1855,10 @@
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxyeHFlUzJ6sQCEjFdgviwtdpTJ9zwxVipswMIWj1IPzWm00zRBgVFAHy-B0ajaIyNGQg/exec";
     // HUB_TOKEN removido do frontend — token fica SOMENTE no Config.gs (Apps Script privado)
 
+    // Backend novo (drapp-pipeline) — consulta de CPF já migrada pra cá.
+    // O resto (catálogo, criar pedido) continua no Apps Script por enquanto.
+    const PEDIDOS_API_URL = "https://pedidos.drapp.com.br";
+
     // Identificador aleatório por navegador (não é segredo, só ajuda o backend a limitar
     // o número de consultas de CPF por origem e dificultar varredura automatizada).
     function getClientToken_() {
@@ -2391,8 +2395,8 @@
 
     async function consultarCpf(cpfLimpo) {
       const ct = encodeURIComponent(getClientToken_());
-      // 1. Planilha + Bitrix via Apps Script
-      const response = await fetch(APPS_SCRIPT_URL + "?action=cpf&cpf=" + encodeURIComponent(cpfLimpo) + "&ct=" + ct);
+      // 1. Cache + Bitrix, via backend novo (drapp-pipeline)
+      const response = await fetch(PEDIDOS_API_URL + "/api/cpf?cpf=" + encodeURIComponent(cpfLimpo) + "&ct=" + ct);
       if (!response.ok) throw new Error("Erro ao consultar CPF");
       const data = await response.json();
 
@@ -2407,14 +2411,15 @@
         // Bitrix pode retornar sem data de nascimento — suplementa pelo Hub via backend (token protegido)
         if (!resultado.nascimento) {
           try {
-            const hubResp2 = await fetch(APPS_SCRIPT_URL + "?action=hubcpf&cpf=" + encodeURIComponent(cpfLimpo) + "&ct=" + ct);
+            const hubResp2 = await fetch(PEDIDOS_API_URL + "/api/cpf/hub?cpf=" + encodeURIComponent(cpfLimpo) + "&ct=" + ct);
             const hub2 = hubResp2.ok ? await hubResp2.json() : {};
             if (hub2.ok && hub2.nascimento) {
               resultado.nascimento = formatarNascimento(hub2.nascimento);
               // Atualiza o cache com a data encontrada
-              fetch(APPS_SCRIPT_URL, {
+              fetch(PEDIDOS_API_URL + "/api/cpf", {
                 method: "POST",
-                body: JSON.stringify({ action: "salvarCpf", cpf: cpfLimpo, ...resultado })
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ cpf: cpfLimpo, ...resultado })
               }).catch(() => {});
             }
           } catch (_) {}
@@ -2424,7 +2429,7 @@
 
       // 2. Fallback: Hub via backend (sem CORS — servidor chama o Hub, não o browser)
       if (data.needsHub) {
-        const hubResp = await fetch(APPS_SCRIPT_URL + "?action=hubcpf&cpf=" + encodeURIComponent(cpfLimpo) + "&ct=" + ct);
+        const hubResp = await fetch(PEDIDOS_API_URL + "/api/cpf/hub?cpf=" + encodeURIComponent(cpfLimpo) + "&ct=" + ct);
         if (!hubResp.ok) throw new Error("CPF não encontrado na base de dados.");
         const hub = await hubResp.json();
 
@@ -2440,10 +2445,11 @@
           contactId:  ""
         };
 
-        // Salva na planilha para consultas futuras
-        fetch(APPS_SCRIPT_URL, {
+        // Salva no cache pra consultas futuras
+        fetch(PEDIDOS_API_URL + "/api/cpf", {
           method: "POST",
-          body: JSON.stringify({ action: "salvarCpf", cpf: cpfLimpo, ...resultado })
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ cpf: cpfLimpo, ...resultado })
         }).catch(() => {});
 
         return resultado;
