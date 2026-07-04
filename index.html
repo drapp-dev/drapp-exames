@@ -3010,6 +3010,28 @@
       btnFinalizar.disabled = true;
       btnFinalizar.textContent = "Enviando...";
 
+      // Os arquivos já foram (ou estão sendo) enviados individualmente assim que
+      // anexados — aqui só garantimos que tudo terminou, reenviando o que falhou.
+      const comErroAntes = imagensPedido.filter(f => f.status === "error");
+      for (const f of comErroAntes) {
+        await tentarUploadFoto(f, imagensPedido.indexOf(f) + 1);
+      }
+      while (imagensPedido.some(f => f.status === "uploading" || f.status === "pending")) {
+        await new Promise(r => setTimeout(r, 300));
+      }
+      const aindaComErro = imagensPedido.filter(f => f.status === "error");
+      if (aindaComErro.length > 0) {
+        mostrarStatusCpf(
+          "Não foi possível enviar " + aindaComErro.length + " arquivo(s): " +
+          aindaComErro.map(f => f.nome).join(", ") +
+          ". Toque no arquivo para tentar reenviar ou remova-o antes de continuar.",
+          "error"
+        );
+        btnFinalizar.disabled = false;
+        btnFinalizar.textContent = "Finalizar solicitação";
+        return;
+      }
+
       const payload = {
         action: "criarPedido",
         contactId: dadosCpfValidados ? dadosCpfValidados.contactId : "",
@@ -3031,8 +3053,8 @@
           obs: item.obs, preparo: item.preparo, categoria: item.categoria
         })),
         fotos: imagensPedido.map(img => ({
-          nome: img.file.name,
-          base64: img.preview.split(",")[1]
+          nome: img.nome,
+          url: img.url
         }))
       };
 
@@ -3083,6 +3105,56 @@
     const uploadInputMais = document.getElementById("uploadPedidoMais");
     const uploadPreview   = document.getElementById("uploadPreview");
 
+    // Id único por sessão de formulário — agrupa os arquivos deste pedido no S3.
+    // Não precisa ser secreto, só evita colisão de nomes entre pedidos diferentes.
+    let uploadSessionId = null;
+    function getUploadSessionId_() {
+      if (!uploadSessionId) uploadSessionId = Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+      return uploadSessionId;
+    }
+
+    // Envia UM arquivo por vez pro Apps Script (payload pequeno) em vez de
+    // acumular tudo em base64 dentro do POST de criarPedido — pedidos com
+    // vários PDFs grandes estouravam o limite de tamanho/tempo do Apps Script
+    // e voltavam com uma página de erro do Google em vez de JSON.
+    async function tentarUploadFoto(fileObj, seq, maxTentativas) {
+      maxTentativas = maxTentativas || 4;
+      fileObj.status = "uploading";
+      renderUploadPreview();
+      for (let tentativa = 1; tentativa <= maxTentativas; tentativa++) {
+        try {
+          const resp = await fetch(APPS_SCRIPT_URL, {
+            method: "POST",
+            body: JSON.stringify({
+              action:   "uploadFoto",
+              uploadId: getUploadSessionId_(),
+              seq:      seq,
+              nome:     fileObj.nome,
+              base64:   fileObj.preview.split(",")[1]
+            })
+          });
+          const data = await resp.json();
+          if (data && data.ok && data.url) {
+            fileObj.status = "done";
+            fileObj.url    = data.url;
+            renderUploadPreview();
+            atualizarBotoes();
+            return true;
+          }
+          throw new Error((data && (data.mensagem || data.erro)) || "Falha ao enviar arquivo");
+        } catch (err) {
+          if (tentativa === maxTentativas) {
+            fileObj.status = "error";
+            renderUploadPreview();
+            atualizarBotoes();
+            return false;
+          }
+          await new Promise(r => setTimeout(r, 800 * tentativa)); // backoff
+        }
+      }
+      return false;
+    }
+
     function renderUploadPreview() {
       uploadPreview.innerHTML = "";
       const aguardando  = document.getElementById("fotoResumoAguardando");
@@ -3117,6 +3189,26 @@
           img.src = fileObj.preview;
           item.appendChild(img);
         }
+
+        // Selo de status do envio (enviando / ok / falhou — toque pra tentar de novo)
+        const selo = document.createElement("div");
+        selo.style.cssText = "position:absolute;left:4px;bottom:4px;font-size:11px;font-weight:700;padding:2px 6px;border-radius:6px;";
+        if (fileObj.status === "done") {
+          selo.textContent = "✓ enviado";
+          selo.style.background = "#e8f8ee"; selo.style.color = "#1e8e4a";
+        } else if (fileObj.status === "error") {
+          selo.textContent = "⟳ falhou, toque p/ reenviar";
+          selo.style.background = "#fdecea"; selo.style.color = "#c0392b";
+          selo.style.cursor = "pointer";
+          selo.title = "Toque para tentar reenviar";
+          selo.addEventListener("click", (ev) => { ev.stopPropagation(); tentarUploadFoto(fileObj, index + 1); });
+        } else {
+          selo.textContent = "enviando…";
+          selo.style.background = "#eef2ff"; selo.style.color = "#3b4ba0";
+        }
+        item.style.position = "relative";
+        item.appendChild(selo);
+
         const removeBtn = document.createElement("button");
         removeBtn.type = "button";
         removeBtn.className = "upload-remove";
@@ -3161,10 +3253,12 @@
           if (ehImagem) {
             preview = await comprimirImagem(preview, 1000, 0.85);
           }
-          imagensPedido.push({ file, preview, nome: file.name });
+          const fileObj = { file, preview, nome: file.name, status: "pending", url: null };
+          imagensPedido.push(fileObj);
           renderUploadPreview();
           atualizarBotaoContinuar();
           atualizarBotoes();
+          tentarUploadFoto(fileObj, imagensPedido.length);
         };
         reader.readAsDataURL(file);
       });
