@@ -1701,6 +1701,14 @@
               </div>
             </div><!-- /campos telefone+email -->
 
+            <div id="contatoConfirmWrap" style="display:none;margin-top:10px;padding:14px 16px;border:1.5px solid #f5a623;background:#fffaf0;border-radius:12px;">
+              <div id="contatoConfirmMsg" style="font-size:14px;color:#7a4d00;margin-bottom:12px;line-height:1.5;"></div>
+              <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                <button type="button" id="btnContatoOpt1" class="primary-btn" style="margin-top:0;flex:1;min-width:150px;"></button>
+                <button type="button" id="btnContatoOpt2" class="secondary-btn" style="margin-top:0;flex:1;min-width:150px;"></button>
+              </div>
+            </div>
+
             <div class="checkout-actions">
               <button id="btnVoltarOrçamento" class="secondary-btn" type="button" style="margin-top:0;">← Voltar</button>
               <button id="btnFinalizar" class="primary-btn btn-finalizar" type="button" disabled>Finalizar →</button>
@@ -2283,6 +2291,135 @@
       return n.length >= min && n.length <= max;
     }
 
+    // ── Conferência de telefone/e-mail contra o cadastro ──────────────────
+    // O que o cliente digita SEMPRE vence — mas antes de enviar conferimos se
+    // não foi erro de digitação, comparando com o que temos no cadastro
+    // (telefone/email vêm junto na resposta do /api/cpf).
+    const DOMINIOS_COMUNS = ["gmail.com","hotmail.com","outlook.com","outlook.com.br","yahoo.com.br","yahoo.com","icloud.com","uol.com.br","bol.com.br","terra.com.br","live.com"];
+
+    function escHtml(s) {
+      const d = document.createElement("div");
+      d.textContent = String(s == null ? "" : s);
+      return d.innerHTML;
+    }
+    // Canoniza telefone BR: só dígitos, tira o 55 e zeros à esquerda → DDD+número
+    function telCanonicoBR(s) {
+      let n = String(s || "").replace(/\D/g, "");
+      if (n.startsWith("55") && n.length >= 12) n = n.slice(2);
+      return n.replace(/^0+/, "");
+    }
+    // Remove o 9 do celular (cadastros antigos podem estar sem ele)
+    function telSemNove(n) {
+      return (n.length === 11 && n[2] === "9") ? n.slice(0, 2) + n.slice(3) : n;
+    }
+    function formatarTelExibicao(n) {
+      if (n.length === 11) return "(" + n.slice(0,2) + ") " + n.slice(2,7) + "-" + n.slice(7);
+      if (n.length === 10) return "(" + n.slice(0,2) + ") " + n.slice(2,6) + "-" + n.slice(6);
+      return n;
+    }
+    // Distância de edição ≤ 1 (um caractere trocado, faltando ou sobrando)
+    // ou dois vizinhos transpostos — o típico "errou só um número".
+    function quaseIgual(a, b) {
+      if (a === b) return true;
+      const la = a.length, lb = b.length;
+      if (Math.abs(la - lb) > 1) return false;
+      if (la === lb) {
+        const difs = [];
+        for (let i = 0; i < la; i++) if (a[i] !== b[i]) difs.push(i);
+        if (difs.length === 1) return true;
+        return difs.length === 2 && difs[1] === difs[0] + 1 &&
+               a[difs[0]] === b[difs[1]] && a[difs[1]] === b[difs[0]];
+      }
+      const curto = la < lb ? a : b, longo = la < lb ? b : a;
+      for (let i = 0; i < longo.length; i++) {
+        if (curto === longo.slice(0, i) + longo.slice(i + 1)) return true;
+      }
+      return false;
+    }
+    // "paula@gmial.com" → "paula@gmail.com" (domínio a 1 erro de um conhecido)
+    function sugerirDominio(email) {
+      const m = String(email || "").trim().toLowerCase().match(/^([^@\s]+)@([^@\s]+)$/);
+      if (!m || DOMINIOS_COMUNS.includes(m[2])) return null;
+      for (const d of DOMINIOS_COMUNS) {
+        if (quaseIgual(m[2], d)) return m[1] + "@" + d;
+      }
+      return null;
+    }
+
+    let telConferido = false, emailConferido = false;
+
+    function perguntarContato(mensagemHtml, rotulo1, rotulo2) {
+      return new Promise(resolve => {
+        const wrap = document.getElementById("contatoConfirmWrap");
+        const b1 = document.getElementById("btnContatoOpt1");
+        const b2 = document.getElementById("btnContatoOpt2");
+        document.getElementById("contatoConfirmMsg").innerHTML = mensagemHtml;
+        b1.textContent = rotulo1;
+        b2.textContent = rotulo2;
+        wrap.style.display = "block";
+        wrap.scrollIntoView({ behavior: "smooth", block: "center" });
+        const fechar = escolha => {
+          wrap.style.display = "none";
+          b1.onclick = b2.onclick = null;
+          resolve(escolha);
+        };
+        b1.onclick = () => fechar(1);
+        b2.onclick = () => fechar(2);
+      });
+    }
+
+    // Roda antes do envio. Devolve true pra seguir; o valor final (escolhido
+    // pelo cliente) fica nos próprios campos — e é ele que atualiza o cadastro.
+    async function conferirContato() {
+      const cad = dadosCpfValidados || {};
+
+      if (!telConferido && document.getElementById("paisTelefone").value === "55") {
+        const dig = telCanonicoBR(telefoneInput.value);
+        const cadTel = telCanonicoBR(cad.telefone || "");
+        if (dig && cadTel) {
+          const iguais = dig === cadTel || telSemNove(dig) === telSemNove(cadTel);
+          if (!iguais && quaseIgual(telSemNove(dig), telSemNove(cadTel))) {
+            const escolha = await perguntarContato(
+              "📱 Confira o telefone: você digitou <b>" + escHtml(formatarTelExibicao(dig)) +
+              "</b>, mas o cadastro tem <b>" + escHtml(formatarTelExibicao(cadTel)) + "</b>. Qual é o certo?",
+              "Usar o que digitei", "Usar o do cadastro"
+            );
+            if (escolha === 2) telefoneInput.value = mascaraTelefone(formatarTelExibicao(cadTel));
+          } else if (!iguais) {
+            const escolha = await perguntarContato(
+              "📱 Seu orçamento será enviado por WhatsApp para <b>" + escHtml(formatarTelExibicao(dig)) +
+              "</b> (um número diferente do que temos no cadastro). Está certo?",
+              "Sim, usar este número", "Corrigir"
+            );
+            if (escolha === 2) { telefoneInput.focus(); return false; }
+          }
+        }
+        telConferido = true;
+      }
+
+      if (!emailConferido) {
+        const dig = emailInput.value.trim().toLowerCase();
+        const cadEmail = String(cad.email || "").trim().toLowerCase();
+        const sugestao = sugerirDominio(dig);
+        if (sugestao && sugestao !== cadEmail) {
+          const escolha = await perguntarContato(
+            "✉️ Seu e-mail é <b>" + escHtml(sugestao) + "</b>? Você digitou <b>" + escHtml(dig) + "</b>.",
+            "Sim, corrigir", "Manter o que digitei"
+          );
+          if (escolha === 1) emailInput.value = sugestao;
+        } else if (dig && cadEmail && dig !== cadEmail && quaseIgual(dig, cadEmail)) {
+          const escolha = await perguntarContato(
+            "✉️ Confira o e-mail: você digitou <b>" + escHtml(dig) +
+            "</b>, mas o cadastro tem <b>" + escHtml(cadEmail) + "</b>. Qual é o certo?",
+            "Usar o que digitei", "Usar o do cadastro"
+          );
+          if (escolha === 2) emailInput.value = cadEmail;
+        }
+        emailConferido = true;
+      }
+      return true;
+    }
+
     function limparValidacaoCpf() {
       cpfValidado = cpfConfirmado = false;
       dadosCpfValidados = null;
@@ -2406,7 +2543,9 @@
           nascimento: formatarNascimento(data.nascimento),
           origem:     data.origem || "",
           negocioId:  data.negocioId || "",
-          contactId:  data.contactId || ""
+          contactId:  data.contactId || "",
+          telefone:   data.telefone || "",
+          email:      data.email || ""
         };
         // Bitrix pode retornar sem data de nascimento — suplementa pelo Hub via backend (token protegido)
         if (!resultado.nascimento) {
@@ -2442,7 +2581,9 @@
           nascimento: formatarNascimento(hub.nascimento || ""),
           origem:     "hub",
           negocioId:  "",
-          contactId:  ""
+          contactId:  "",
+          telefone:   "",
+          email:      ""
         };
 
         // Salva no cache pra consultas futuras
@@ -2857,6 +2998,7 @@
     telefoneInput.addEventListener("input", function () {
       this.value = mascaraTelefone(this.value);
       telefoneError.style.display = "none";
+      telConferido = false;
       if (!_phoneFired && validarTelefone(this.value)) {
         gtag('event', 'phone_completed');
         _phoneFired = true;
@@ -2875,6 +3017,7 @@
     let _emailFired = false;
     emailInput.addEventListener("input", function () {
       emailError.style.display = "none";
+      emailConferido = false;
       if (!_emailFired && validarEmail(this.value)) {
         gtag('event', 'email_completed');
         _emailFired = true;
@@ -2907,6 +3050,7 @@
         if (!dados || !dados.nome) throw new Error("Não foi possível localizar dados para este CPF.");
         dadosCpfValidados = dados;
         cpfValidado = true; cpfConfirmado = false;
+        telConferido = emailConferido = false; // novo cadastro → reconfere contato
         gtag('event', 'cpf_validated', { method: dados.origem || 'unknown' });
         cpfNome.textContent = dados.nome || "-";
         cpfNascimento.textContent = dados.nascimento || "-";
@@ -3001,6 +3145,7 @@
     btnFinalizar.addEventListener("click", async function () {
       if (!validarFormularioBase()) return;
       if (!cpfValidado || !cpfConfirmado) return;
+      if (!(await conferirContato())) return; // telefone/e-mail: checa erro de digitação e confirma com o cliente
 
       gtag('event', 'form_submitted', {
         exam_count: selecionados.length,
