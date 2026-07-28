@@ -3211,6 +3211,24 @@
         const data = await resp.json();
 
         if (data.sucesso || data.ok) {
+          // Grampo paralelo (raia de TESTE): além do Bitrix (via Google, acima),
+          // manda uma cópia pra fila do sistema novo pra testar o motor em
+          // paralelo. Fire-and-forget: se a API nova estiver lenta ou fora, o
+          // cliente vê sucesso do mesmo jeito — isto nunca bloqueia nem quebra.
+          try {
+            fetch(PEDIDOS_API_URL + "/api/pedido", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                modoTeste: true,
+                token: data.token || data.pedidoId || "",
+                labsSelecionados: obterLabsSelecionados(),
+                paciente: payload.paciente,
+                fotosUrls: imagensPedido.map(img => img.url).filter(Boolean)
+              })
+            }).catch(() => {});
+          } catch (_) {}
+
           gtag('event', 'lead_generated', {
             exam_count: selecionados.length,
             labs: [...new Set(selecionados.map(e => e.laboratorio))].join(','),
