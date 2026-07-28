@@ -1,4 +1,4 @@
 User-agent: *
 Disallow: /admin.html
 
-Sitemap: https://drapp.com.br/sitemap.xml
+Sitemap: https://www.drapp.com.br/sitemap.xml
