@@ -3222,6 +3222,12 @@
               body: JSON.stringify({
                 modoTeste: true,
                 token: data.token || data.pedidoId || "",
+                // Cards que o Google acabou de criar no Bitrix pra este pedido.
+                // Vão junto pra o sistema novo saber qual card é o mesmo pedido
+                // e dar pra comparar os dois motores lado a lado.
+                dealsBitrix: Array.isArray(data.deals)
+                  ? data.deals.map(d => ({ laboratorio: d.laboratorio, dealId: d.dealId }))
+                  : [],
                 labsSelecionados: obterLabsSelecionados(),
                 paciente: payload.paciente,
                 fotosUrls: imagensPedido.map(img => img.url).filter(Boolean)
