@@ -1529,12 +1529,18 @@
 
           <!-- Observações -->
           <div class="card" style="padding:20px 24px;">
-            <label for="obsTexto" style="font-weight:700;font-size:15px;color:var(--dark);display:block;margin-bottom:8px;">Observações</label>
+            <label for="obsTexto" style="font-weight:700;font-size:15px;color:var(--dark);display:block;margin-bottom:4px;">Escreva os exames ou alguma observação</label>
+            <div style="font-size:13px;color:var(--muted);line-height:1.45;margin-bottom:10px;">
+              Não tem a foto do pedido médico? Sem problema — é só digitar aqui os nomes dos exames que você precisa.
+            </div>
             <textarea id="obsTexto" rows="3" maxlength="600"
-              placeholder="Exames não encontrados no menu, informações importantes..."
+              placeholder="Ex.: hemograma completo, glicemia, TSH — ou qualquer informação importante"
               style="width:100%;box-sizing:border-box;resize:vertical;border:1.5px solid #e2e8f0;border-radius:10px;padding:10px 14px;font-size:14px;font-family:inherit;color:var(--dark);outline:none;transition:border .2s;"
               onfocus="this.style.borderColor='var(--cyan)'" onblur="this.style.borderColor='#e2e8f0'"
               oninput="atualizarBotaoContinuar()"></textarea>
+            <div style="margin-top:10px;background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:10px 12px;font-size:12.5px;color:#78350f;line-height:1.5;">
+              <strong>Atenção:</strong> exames de imagem (ultrassom, raio-x, tomografia, ressonância, mamografia) só podem ser <strong>realizados</strong> com o pedido médico. Nós fazemos o orçamento pelo que você escrever, mas leve o pedido no dia do exame.
+            </div>
           </div>
 
           <!-- Resumo -->
@@ -1619,6 +1625,9 @@
 
             <div id="cpfResult" class="cpf-result">
               <div class="cpf-result-title">Confira os dados encontrados</div>
+              <div style="font-size:12.5px;color:#78350f;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:8px 10px;margin-bottom:10px;line-height:1.45;">
+                Não é você? Confira se o <strong>CPF foi digitado corretamente</strong> antes de continuar.
+              </div>
               <div class="cpf-result-grid">
                 <div class="cpf-result-item">
                   <div class="cpf-result-label">Nome Completo</div>
@@ -1643,6 +1652,12 @@
             <!-- ── Entrada manual de dados (CPF não encontrado ou dados errados) ── -->
             <div id="cpfManualWrap" style="display:none; margin-top:16px; background:#f0f7ff; border:1.5px solid var(--cyan,#00bcd4); border-radius:14px; padding:18px 16px;">
               <div style="font-weight:700; font-size:15px; margin-bottom:12px; color:var(--blue,#1565c0);">✏️ Preencha os dados manualmente</div>
+              <!-- Trava anti-CPF-errado: o cliente costuma corrigir nome/data e esquecer o CPF digitado errado -->
+              <div style="background:#fffbeb; border:1px solid #fde68a; border-radius:10px; padding:10px 12px; margin-bottom:12px; font-size:13px; color:#78350f; line-height:1.5;">
+                O exame será feito no CPF <strong id="cpfDigitadoAviso">—</strong>.
+                <strong>Confira se está correto</strong> — se estiver errado, o pedido sai no nome de outra pessoa.
+                <button type="button" id="btnCorrigirCpf" style="display:block;margin-top:8px;background:#fff;border:1.5px solid #f59e0b;color:#92400e;border-radius:8px;padding:7px 12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">↩︎ Corrigir o CPF</button>
+              </div>
               <div style="display:flex; flex-direction:column; gap:10px;">
                 <div>
                   <label style="font-size:13px; color:#555; font-weight:600; margin-bottom:4px; display:block;">Nome Completo</label>
@@ -3038,6 +3053,26 @@
       window.scrollTo({ top: 0, behavior: "smooth" });
     });
 
+    // Abre o preenchimento manual sempre carimbando o CPF digitado, pra ninguém
+    // corrigir nome/data e deixar passar um CPF errado.
+    function abrirPreenchimentoManual() {
+      const aviso = document.getElementById("cpfDigitadoAviso");
+      if (aviso) aviso.textContent = cpfInput.value || "—";
+      document.getElementById("cpfManualWrap").style.display = "block";
+    }
+
+    document.getElementById("btnCorrigirCpf").addEventListener("click", function () {
+      document.getElementById("cpfManualWrap").style.display = "none";
+      cpfResult.classList.remove("active");
+      limparValidacaoCpf();
+      cpfValidado = cpfConfirmado = false;
+      dadosCpfValidados = null;
+      cpfInput.value = "";
+      cpfInput.focus();
+      cpfInput.scrollIntoView({ behavior: "smooth", block: "center" });
+      atualizarBotoes();
+    });
+
     btnValidarCpf.addEventListener("click", async function () {
       if (!validarSomenteCpf()) return;
       const cpfLimpo = cpfInput.value.replace(/\D/g,"");
@@ -3060,11 +3095,12 @@
         else mostrarStatusCpf("Confira os dados encontrados e confirme se estão corretos.", "success");
         atualizarBotoes();
       } catch (erro) {
+        console.warn("[CPF] falha na consulta:", erro && erro.message); // motivo real fica só no console
         cpfValidado = cpfConfirmado = false;
         dadosCpfValidados = null;
         cpfResult.classList.remove("active");
-        mostrarStatusCpf((erro.message || "Não foi possível validar o CPF.") + " Preencha os dados abaixo.", "error");
-        document.getElementById("cpfManualWrap").style.display = "block";
+        mostrarStatusCpf("Não localizamos seus dados automaticamente. Confira se o CPF está correto — se estiver, é só preencher nome e data de nascimento abaixo.", "error");
+        abrirPreenchimentoManual();
         atualizarBotoes();
       } finally {
         btnValidarCpf.disabled = false;
@@ -3101,13 +3137,13 @@
 
     btnCpfWrong.addEventListener("click", function () {
       cpfConfirmado = false;
-      mostrarStatusCpf("Dados marcados como incorretos. Corrija abaixo.", "error");
+      mostrarStatusCpf("Dados marcados como incorretos. Confira antes de tudo se o CPF está certo — depois corrija os dados abaixo.", "error");
       // Pré-preenche o manual com os dados que vieram para facilitar correção
       const nomeAtual = cpfNome.textContent;
       if (nomeAtual && nomeAtual !== "-") {
         document.getElementById("cpfNomeManual").value = nomeAtual;
       }
-      document.getElementById("cpfManualWrap").style.display = "block";
+      abrirPreenchimentoManual();
       atualizarBotoes();
     });
 
