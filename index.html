@@ -1653,10 +1653,9 @@
             <div id="cpfManualWrap" style="display:none; margin-top:16px; background:#f0f7ff; border:1.5px solid var(--cyan,#00bcd4); border-radius:14px; padding:18px 16px;">
               <div style="font-weight:700; font-size:15px; margin-bottom:12px; color:var(--blue,#1565c0);">✏️ Preencha os dados manualmente</div>
               <!-- Trava anti-CPF-errado: o cliente costuma corrigir nome/data e esquecer o CPF digitado errado -->
-              <div style="background:#fffbeb; border:1px solid #fde68a; border-radius:10px; padding:10px 12px; margin-bottom:12px; font-size:13px; color:#78350f; line-height:1.5;">
-                O exame será feito no CPF <strong id="cpfDigitadoAviso">—</strong>.
-                <strong>Confira se está correto</strong> — se estiver errado, o pedido sai no nome de outra pessoa.
-                <button type="button" id="btnCorrigirCpf" style="display:block;margin-top:8px;background:#fff;border:1.5px solid #f59e0b;color:#92400e;border-radius:8px;padding:7px 12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">↩︎ Corrigir o CPF</button>
+              <div style="background:#fffbeb; border:1px solid #fde68a; border-radius:10px; padding:10px 12px; margin-bottom:12px; font-size:13px; color:#78350f; line-height:1.5; display:flex; flex-wrap:wrap; align-items:center; gap:8px; justify-content:space-between;">
+                <span>Confira: o exame será feito no CPF <strong id="cpfDigitadoAviso">—</strong></span>
+                <button type="button" id="btnCorrigirCpf" style="flex-shrink:0;background:#fff;border:1.5px solid #f59e0b;color:#92400e;border-radius:8px;padding:6px 12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;">↩︎ Corrigir</button>
               </div>
               <div style="display:flex; flex-direction:column; gap:10px;">
                 <div>
@@ -3099,7 +3098,7 @@
         cpfValidado = cpfConfirmado = false;
         dadosCpfValidados = null;
         cpfResult.classList.remove("active");
-        mostrarStatusCpf("Não localizamos seus dados automaticamente. Confira se o CPF está correto — se estiver, é só preencher nome e data de nascimento abaixo.", "error");
+        mostrarStatusCpf("Não localizamos seus dados para este CPF.", "error");
         abrirPreenchimentoManual();
         atualizarBotoes();
       } finally {
@@ -3137,7 +3136,7 @@
 
     btnCpfWrong.addEventListener("click", function () {
       cpfConfirmado = false;
-      mostrarStatusCpf("Dados marcados como incorretos. Confira antes de tudo se o CPF está certo — depois corrija os dados abaixo.", "error");
+      mostrarStatusCpf("Dados marcados como incorretos. Corrija abaixo.", "error");
       // Pré-preenche o manual com os dados que vieram para facilitar correção
       const nomeAtual = cpfNome.textContent;
       if (nomeAtual && nomeAtual !== "-") {
