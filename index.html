@@ -1536,10 +1536,11 @@
             <div style="font-size:14px;color:var(--muted);line-height:1.45;margin-bottom:12px;">
               Digite os exames, te informaremos os preços.
             </div>
-            <textarea id="obsTexto" rows="3" maxlength="600"
-              placeholder="Ex.: hemograma completo, glicemia, TSH..."
-              style="width:100%;box-sizing:border-box;resize:vertical;border:1.5px solid #e2e8f0;border-radius:10px;padding:10px 14px;font-size:14px;font-family:inherit;color:var(--dark);outline:none;transition:border .2s;"
-              onfocus="this.style.borderColor='var(--cyan)'" onblur="this.style.borderColor='#e2e8f0'"
+            <textarea id="obsTexto" rows="4" maxlength="600"
+              placeholder="✍️ Escreva aqui — ex.: hemograma completo, glicemia, TSH..."
+              style="width:100%;box-sizing:border-box;resize:vertical;border:2px solid #94a3b8;border-radius:10px;padding:12px 14px;font-size:15px;font-family:inherit;color:var(--dark);background:#f8fafc;outline:none;box-shadow:inset 0 1px 3px rgba(15,23,42,.07);transition:border-color .2s, background .2s;"
+              onfocus="this.style.borderColor='var(--cyan)';this.style.background='#fff';"
+              onblur="this.style.borderColor='#94a3b8';this.style.background='#f8fafc';"
               oninput="atualizarBotaoContinuar()"></textarea>
             <div style="margin-top:12px;background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:9px 12px;font-size:13px;font-weight:700;color:#b45309;line-height:1.4;display:flex;gap:7px;align-items:center;">
               <span style="flex:none;">⚠️</span><span>Enviaremos só uma prévia de preço</span>
@@ -1567,18 +1568,7 @@
 
           <!-- Resumo -->
           <div class="card">
-            <h2 class="section-title">Resumo da solicitação</h2>
-            <div id="fotoResumo" style="display:none;border-radius:14px;margin-bottom:16px;text-align:center;">
-              <div id="fotoResumoAguardando" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:20px;">
-                <div style="font-size:32px;margin-bottom:8px;">⏳</div>
-                <div style="font-size:18px;font-weight:700;color:var(--muted);">Aguardando anexo</div>
-              </div>
-              <div id="fotoResumoAnexado" style="display:none;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:14px;padding:20px;">
-                <div style="font-size:36px;margin-bottom:8px;">📎</div>
-                <div style="font-size:18px;font-weight:700;color:#166534;">Foto do pedido anexada</div>
-                <div style="font-size:15px;color:#166534;margin-top:6px;">Nossa equipe irá revisar e preparar seu orçamento</div>
-              </div>
-            </div>
+            <h2 class="section-title" id="resumoTitulo">Resumo da solicitação</h2>
             <div class="summary-box" id="resumoPrecos">
               <!-- Modo: um lab só -->
               <div id="resumoSimples" style="display:none;">
@@ -2961,7 +2951,7 @@
       const labSection    = document.getElementById("labSelectorSection");
       const resumoPrecos  = document.getElementById("resumoPrecos");
       const resumoInfoBox = document.getElementById("resumoInfoBox");
-      const fotoResumo    = document.getElementById("fotoResumo");
+      const resumoTitulo  = document.getElementById("resumoTitulo");
       const tableWrap     = document.querySelector(".table-wrap");
 
       const freqSection = document.getElementById("examesFreqSection");
@@ -2971,7 +2961,7 @@
         if (labSection)    labSection.style.display    = "none";
         if (resumoPrecos)  resumoPrecos.style.display  = "none";
         if (resumoInfoBox) resumoInfoBox.style.display = "none";
-        if (fotoResumo)    fotoResumo.style.display    = "block";
+        if (resumoTitulo)  resumoTitulo.style.display  = "none";
         if (tableWrap)     tableWrap.style.display     = "none";
         if (freqSection)   freqSection.style.display   = "none";
         btnModoFoto.style.cssText    = btnModoFoto.style.cssText.replace(/border-color:[^;]+;background:[^;]+;color:[^;]+;/g,"") + MODO_ATIVO;
@@ -2982,7 +2972,7 @@
         if (labSection)    labSection.style.display    = "block";
         if (resumoPrecos)  resumoPrecos.style.display  = "block";
         if (resumoInfoBox) resumoInfoBox.style.display = "block";
-        if (fotoResumo)    fotoResumo.style.display    = "none";
+        if (resumoTitulo)  resumoTitulo.style.display  = "";
         if (tableWrap)     tableWrap.style.display     = "";
         setLab(true, true); // auto-seleciona "Comparar ambos" — também chama renderExamesFrequentes
         btnModoDigitar.style.cssText = btnModoDigitar.style.cssText.replace(/border-color:[^;]+;background:[^;]+;color:[^;]+;/g,"") + MODO_ATIVO;
@@ -3383,23 +3373,13 @@
 
     function renderUploadPreview() {
       uploadPreview.innerHTML = "";
-      const aguardando  = document.getElementById("fotoResumoAguardando");
-      const anexado     = document.getElementById("fotoResumoAnexado");
       const labSection  = document.getElementById("labSelectorSection");
       const temFotos    = imagensPedido.length > 0;
       const emModoFoto  = secaoFoto.style.display !== "none";
 
-      if (temFotos) {
-        if (aguardando) aguardando.style.display = "none";
-        if (anexado)    anexado.style.display    = "block";
-        // Mostra seletor de lab para o usuário escolher o fornecedor
-        if (labSection && emModoFoto) labSection.style.display = "block";
-      } else {
-        if (aguardando) aguardando.style.display = "block";
-        if (anexado)    anexado.style.display    = "none";
-        // Sem fotos: esconde seletor de lab (só aparece no modo digitar)
-        if (labSection && emModoFoto) labSection.style.display = "none";
-      }
+      // Mostra o seletor de lab só quando há foto anexada (no modo digitar ele
+      // aparece por outro caminho, pelo setModo).
+      if (labSection && emModoFoto) labSection.style.display = temFotos ? "block" : "none";
       imagensPedido.forEach((fileObj, index) => {
         const item = document.createElement("div");
         item.className = "upload-item";
