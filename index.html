@@ -2446,9 +2446,17 @@
       return true;
     }
 
+    // Cadastro que a consulta encontrou para o CPF digitado — guardado à parte
+    // de propósito. O NOME e a DATA o cliente corrige à vontade; QUEM É a pessoa
+    // (o contato no Bitrix) é decidido pelo CPF e não pode se perder na
+    // correção, senão o Apps Script cria um contato duplicado. Só é descartado
+    // quando o próprio CPF muda — aí é outra pessoa.
+    let cadastroEncontrado = null; // { cpf, contactId, negocioId }
+
     function limparValidacaoCpf() {
       cpfValidado = cpfConfirmado = false;
       dadosCpfValidados = null;
+      cadastroEncontrado = null;
       cpfResult.classList.remove("active");
       cpfNome.textContent = cpfNascimento.textContent = "-";
       cpfStatus.className = "cpf-status";
@@ -2602,14 +2610,20 @@
           throw new Error("CPF não encontrado na base de dados.");
         }
 
+        // O nome e a data vêm do Hub, mas o cadastro que já existe no Bitrix
+        // (quando existe) vem junto na resposta: aproveitamos o número do
+        // contato e o telefone/e-mail dele. Sem isso o Apps Script criava um
+        // contato NOVO por cima de um que já existia — foi assim que nasceram
+        // os duplicados de 03/08/2026.
+        const jaCadastrado = data.contatoConhecido || {};
         const resultado = {
           nome:       hub.nome,
           nascimento: formatarNascimento(hub.nascimento || ""),
           origem:     "hub",
-          negocioId:  "",
-          contactId:  "",
-          telefone:   "",
-          email:      ""
+          negocioId:  jaCadastrado.negocioId || "",
+          contactId:  jaCadastrado.contactId || "",
+          telefone:   jaCadastrado.telefone  || "",
+          email:      jaCadastrado.email     || ""
         };
 
         // Salva no cache pra consultas futuras
@@ -3095,6 +3109,11 @@
         const dados = await consultarCpf(cpfLimpo);
         if (!dados || !dados.nome) throw new Error("Não foi possível localizar dados para este CPF.");
         dadosCpfValidados = dados;
+        // Guarda o vínculo com o cadastro achado, carimbado com o CPF que o
+        // encontrou (ver `cadastroEncontrado`).
+        cadastroEncontrado = (dados.contactId || dados.negocioId)
+          ? { cpf: cpfLimpo, contactId: dados.contactId || "", negocioId: dados.negocioId || "" }
+          : null;
         cpfValidado = true; cpfConfirmado = false;
         telConferido = emailConferido = false; // novo cadastro → reconfere contato
         gtag('event', 'cpf_validated', { method: dados.origem || 'unknown' });
@@ -3172,11 +3191,19 @@
       const [ano, mes, dia] = nascM.split("-");
       const MESES = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
       const nascFormatado = dia + "/" + MESES[parseInt(mes,10)-1] + "/" + ano;
+      // Correção do cliente NÃO cria pessoa nova: se o cadastro encontrado veio
+      // deste mesmo CPF, o vínculo continua e o Apps Script vai ATUALIZAR aquele
+      // contato com o nome corrigido, em vez de criar um duplicado. Se o CPF
+      // mudou, `cadastroEncontrado` já foi zerado — aí sim é outra pessoa.
+      const cpfAgora = cpfInput.value.replace(/\D/g, "");
+      const mesmoCadastro = cadastroEncontrado && cadastroEncontrado.cpf === cpfAgora
+        ? cadastroEncontrado : null;
+
       dadosCpfValidados = {
         nome:       nomeM,
         nascimento: nascFormatado,
-        contactId:  "",
-        negocioId:  "",
+        contactId:  mesmoCadastro ? mesmoCadastro.contactId : "",
+        negocioId:  mesmoCadastro ? mesmoCadastro.negocioId : "",
         origem:     "manual"
       };
       cpfValidado   = true;
