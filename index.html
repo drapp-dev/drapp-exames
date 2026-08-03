@@ -1469,7 +1469,10 @@
 
             <!-- Seção foto -->
             <div id="secaoFoto">
-              <p style="font-size:17px;font-weight:700;color:var(--text);margin-bottom:14px;margin-top:4px;">Anexe a foto do seu pedido médico:</p>
+              <p style="font-size:19px;font-weight:800;color:var(--dark);margin-bottom:10px;margin-top:4px;">Anexe a foto do seu pedido médico</p>
+              <div style="display:inline-flex;align-items:center;gap:6px;background:#dcfce7;border:1px solid #86efac;border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:700;color:#166534;margin-bottom:16px;line-height:1.3;">
+                <span style="flex:none;">✅</span><span>Obrigatório para gerar seu token de desconto</span>
+              </div>
               <div class="upload-acoes">
                 <label class="upload-botao">
                   📎 Anexar ou fotografar
@@ -1529,17 +1532,39 @@
 
           <!-- Observações -->
           <div class="card" style="padding:20px 24px;">
-            <label for="obsTexto" style="font-weight:700;font-size:15px;color:var(--dark);display:block;margin-bottom:4px;">Escreva os exames ou alguma observação</label>
-            <div style="font-size:13px;color:var(--muted);line-height:1.45;margin-bottom:10px;">
-              Não tem a foto do pedido médico? Sem problema — é só digitar aqui os nomes dos exames que você precisa.
+            <label for="obsTexto" style="font-weight:800;font-size:19px;color:var(--dark);display:block;margin-bottom:4px;">Ainda não tem o pedido em mãos?</label>
+            <div style="font-size:14px;color:var(--muted);line-height:1.45;margin-bottom:12px;">
+              Digite os exames, te informaremos os preços.
             </div>
             <textarea id="obsTexto" rows="3" maxlength="600"
-              placeholder="Ex.: hemograma completo, glicemia, TSH — ou qualquer informação importante"
+              placeholder="Ex.: hemograma completo, glicemia, TSH..."
               style="width:100%;box-sizing:border-box;resize:vertical;border:1.5px solid #e2e8f0;border-radius:10px;padding:10px 14px;font-size:14px;font-family:inherit;color:var(--dark);outline:none;transition:border .2s;"
               onfocus="this.style.borderColor='var(--cyan)'" onblur="this.style.borderColor='#e2e8f0'"
               oninput="atualizarBotaoContinuar()"></textarea>
-            <div style="margin-top:10px;background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:10px 12px;font-size:12.5px;color:#78350f;line-height:1.5;">
-              <strong>Atenção:</strong> exames de imagem (ultrassom, raio-x, tomografia, ressonância, mamografia) só podem ser <strong>realizados</strong> com o pedido médico. Nós fazemos o orçamento pelo que você escrever, mas leve o pedido no dia do exame.
+            <div style="margin-top:12px;background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:9px 12px;font-size:13px;font-weight:700;color:#b45309;line-height:1.4;display:flex;gap:7px;align-items:center;">
+              <span style="flex:none;">⚠️</span><span>Isso é só uma prévia de preço</span>
+            </div>
+            <div style="margin-top:10px;font-size:13.5px;color:var(--text);line-height:1.5;">
+              <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:6px;">
+                <span style="flex:none;">❌</span><span>Sem foto do pedido depois: <strong>sem token</strong></span>
+              </div>
+              <div style="display:flex;gap:8px;align-items:flex-start;">
+                <span style="flex:none;">❌</span><span>Sem <strong>validação do orçamento</strong></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Caixa de atenção — pedido médico obrigatório -->
+          <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:14px;padding:18px 20px;margin-bottom:20px;font-size:13.5px;color:#78350f;line-height:1.55;">
+            <div style="font-weight:800;font-size:15px;margin-bottom:12px;">Atenção:</div>
+            <div style="display:flex;gap:9px;align-items:flex-start;margin-bottom:10px;">
+              <span style="flex:none;">📋</span><span>Pedido médico = <strong>obrigatório</strong> para token e orçamento validado</span>
+            </div>
+            <div style="display:flex;gap:9px;align-items:flex-start;margin-bottom:10px;">
+              <span style="flex:none;">🩻</span><span>Exames de imagem (US, RX, TC, RM, mamografia) = <strong>precisam do pedido físico no dia</strong></span>
+            </div>
+            <div style="display:flex;gap:9px;align-items:flex-start;">
+              <span style="flex:none;">📲</span><span>Sem pedido em mãos? Manda a foto assim que tiver</span>
             </div>
           </div>
 
