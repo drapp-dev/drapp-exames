@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DrApp — Orçamento de exames</title>
+
+<!-- Endereço do site ANTIGO. Ficou salvo no favorito de clientes e da própria
+     equipe: um atendente achou que o site estava fora do ar ao abrir esta
+     página (04/08/2026). Como GitHub Pages não faz redirecionamento de
+     servidor, a página existe só para mandar a pessoa para a home. -->
+<link rel="canonical" href="https://www.drapp.com.br/">
+<meta http-equiv="refresh" content="0; url=/">
+<meta name="robots" content="noindex, follow">
+<link rel="icon" href="/FAVICON.png">
+
+<style>
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f4f8fb;
+    color: #16324a;
+    font-family: 'Figtree', 'Noto Sans', Arial, sans-serif;
+    text-align: center;
+    padding: 24px;
+    box-sizing: border-box;
+  }
+  .caixa { max-width: 420px; }
+  img { width: 132px; height: auto; margin-bottom: 28px; }
+  p { font-size: 17px; line-height: 1.6; color: #5f7487; margin: 0 0 24px; }
+  a.botao {
+    display: inline-block;
+    background: #006dc7;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 16px;
+    padding: 14px 30px;
+    border-radius: 14px;
+  }
+  a.botao:hover { background: #004e93; }
+</style>
+</head>
+<body>
+  <div class="caixa">
+    <img src="/logo-drapp.png" alt="DrApp">
+    <p>Esta página mudou de endereço.<br>Estamos te levando para o site do DrApp…</p>
+    <a class="botao" href="/">Ir para o site agora</a>
+  </div>
+
+<script>
+  // Leva junto o que vier depois do endereço (?token=..., #ancora), pra não
+  // perder link de campanha. `replace` não deixa lixo no botão "voltar".
+  location.replace('/' + location.search + location.hash);
+</script>
+</body>
+</html>
