@@ -1200,6 +1200,231 @@
 
     .footer-copy { font-size: 16px; color: rgba(255,255,255,0.35); }
 
+    /* ─── WHATSAPP FLOAT ─────────────────────────────── */
+    .wa-float {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      z-index: 9999;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 18px 14px 14px;
+      border-radius: 999px;
+      background: #25d366;
+      color: #fff;
+      font-weight: 700;
+      font-size: 15px;
+      text-decoration: none;
+      box-shadow: 0 10px 28px rgba(37, 211, 102, 0.45);
+      transition: transform 0.18s, box-shadow 0.18s, background 0.18s;
+    }
+
+    .wa-float:hover {
+      background: #1ebe57;
+      transform: translateY(-2px);
+      box-shadow: 0 14px 32px rgba(37, 211, 102, 0.55);
+    }
+
+    .wa-float svg { flex-shrink: 0; display: block; }
+
+    .wa-float-label { line-height: 1; white-space: nowrap; }
+
+    @media (max-width: 480px) {
+      .wa-float { right: 14px; bottom: 14px; padding: 13px; }
+      .wa-float-label { display: none; }
+    }
+
+    /* ─── FEEDBACK WIDGET ────────────────────────────── */
+    .fb-widget {
+      position: fixed;
+      right: 0;
+      top: 42%;
+      z-index: 9998;
+      display: flex;
+      align-items: flex-start;
+      font-family: inherit;
+      transform: translateY(-50%);
+    }
+
+    .fb-tab {
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      background: var(--orange);
+      color: #fff;
+      border: none;
+      border-radius: 8px 8px 0 0;
+      padding: 14px 10px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      box-shadow: -4px 4px 18px rgba(245, 131, 25, 0.35);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      line-height: 1.2;
+    }
+
+    .fb-tab:hover { background: var(--orange-dark); }
+
+    .fb-tab-chevron {
+      display: inline-block;
+      font-size: 11px;
+      transform: rotate(90deg);
+      transition: transform 0.2s;
+    }
+
+    .fb-widget.is-open .fb-tab-chevron { transform: rotate(-90deg); }
+
+    .fb-panel {
+      display: none;
+      width: min(320px, calc(100vw - 48px));
+      background: #fff;
+      border-radius: 12px 0 0 12px;
+      box-shadow: -8px 8px 32px rgba(22, 50, 74, 0.18);
+      border: 1px solid var(--line);
+      border-right: none;
+      overflow: hidden;
+    }
+
+    .fb-widget.is-open .fb-panel { display: block; }
+
+    .fb-panel-inner { padding: 18px 16px 14px; }
+
+    .fb-title {
+      margin: 0 0 14px;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.35;
+    }
+
+    .fb-ratings {
+      display: flex;
+      justify-content: space-between;
+      gap: 4px;
+      margin-bottom: 6px;
+    }
+
+    .fb-rate {
+      flex: 1;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      padding: 8px 2px 4px;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      transition: background 0.15s, transform 0.15s;
+    }
+
+    .fb-rate:hover { background: var(--soft-orange); transform: translateY(-1px); }
+    .fb-rate.is-selected { background: #ffe8c8; }
+
+    .fb-rate-emoji { font-size: 26px; line-height: 1; }
+    .fb-rate-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--muted);
+      min-height: 1.2em;
+    }
+
+    .fb-textarea,
+    .fb-input {
+      width: 100%;
+      box-sizing: border-box;
+      border: 1.5px solid var(--line);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font: inherit;
+      font-size: 14px;
+      color: var(--text);
+      background: #fff;
+      resize: vertical;
+      min-height: 88px;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .fb-input { min-height: 0; }
+
+    .fb-textarea:focus,
+    .fb-input:focus {
+      border-color: var(--orange);
+      box-shadow: 0 0 0 3px rgba(245, 131, 25, 0.15);
+    }
+
+    .fb-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .fb-skip {
+      background: none;
+      border: none;
+      padding: 0;
+      font: inherit;
+      font-size: 13px;
+      color: var(--text);
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    .fb-skip:hover { color: var(--orange-dark); }
+
+    .fb-next {
+      background: var(--orange);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 9px 18px;
+      font: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .fb-next:hover { background: var(--orange-dark); }
+    .fb-next:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .fb-thanks {
+      text-align: center;
+      padding: 10px 4px 6px;
+    }
+
+    .fb-thanks-emoji { font-size: 36px; margin-bottom: 8px; }
+    .fb-thanks p {
+      margin: 0;
+      color: var(--text);
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+
+    .fb-error {
+      display: none;
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--danger);
+    }
+
+    .fb-error.is-visible { display: block; }
+
+    @media (max-width: 480px) {
+      .fb-widget { top: auto; bottom: 88px; transform: none; }
+      .fb-panel { border-radius: 12px 0 0 12px; }
+    }
+
     /* ─── RESPONSIVE ─────────────────────────────────── */
     @media (max-width: 980px) {
       .benefits-grid { grid-template-columns: 1fr; max-width: 520px; }
@@ -1882,6 +2107,83 @@
       <a href="admin.html" style="font-size:12px;color:rgba(255,255,255,0.25);text-decoration:none;" title="Área restrita">· Operação DrApp ·</a>
     </div>
   </footer>
+
+  <a
+    class="wa-float"
+    href="https://wa.me/5511969072017?text=Ol%C3%A1!%20Estou%20no%20site%20e%20tenho%20uma%20d%C3%BAvida."
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="Dúvidas pelo WhatsApp"
+  >
+    <svg width="28" height="28" viewBox="0 0 32 32" aria-hidden="true">
+      <path fill="currentColor" d="M16.01 3C9.4 3 4.02 8.37 4.02 14.98c0 2.64.86 5.09 2.33 7.08L4 29l7.15-2.28A11.9 11.9 0 0 0 16.01 27C22.63 27 28 21.63 28 14.98 28 8.37 22.63 3 16.01 3zm6.9 16.98c-.29.82-1.7 1.5-2.38 1.6-.61.08-1.38.12-2.23-.14-.51-.15-1.17-.38-2.02-.74-3.55-1.54-5.86-5.12-6.04-5.36-.17-.24-1.42-1.89-1.42-3.61s.9-2.56 1.22-2.91c.29-.33.64-.41.85-.41h.63c.2 0 .47-.08.73.56.29.7.97 2.38 1.06 2.55.08.17.14.37.03.6-.11.24-.17.38-.33.59-.17.2-.35.45-.5.61-.17.17-.34.35-.15.69.2.33.88 1.45 1.89 2.35 1.3 1.15 2.39 1.51 2.73 1.68.33.17.53.14.73-.08.2-.24.85-.99 1.08-1.33.22-.33.45-.28.76-.17.33.11 2.06.97 2.41 1.15.35.17.58.26.67.41.08.15.08.88-.21 1.7z"/>
+    </svg>
+    <span class="wa-float-label">Dúvidas pelo WhatsApp</span>
+  </a>
+
+  <div class="fb-widget" id="fbWidget">
+    <div class="fb-panel" id="fbPanel" role="dialog" aria-labelledby="fbTitle" aria-hidden="true">
+      <div class="fb-panel-inner">
+        <div class="fb-step" data-step="1">
+          <p class="fb-title" id="fbTitle">Como você classifica a experiência no site?</p>
+          <div class="fb-ratings" role="radiogroup" aria-label="Nota da experiência">
+            <button type="button" class="fb-rate" data-score="1" aria-label="Odeio">
+              <span class="fb-rate-emoji" aria-hidden="true">😡</span>
+              <span class="fb-rate-label">Odeio</span>
+            </button>
+            <button type="button" class="fb-rate" data-score="2" aria-label="Ruim">
+              <span class="fb-rate-emoji" aria-hidden="true">🙁</span>
+              <span class="fb-rate-label"></span>
+            </button>
+            <button type="button" class="fb-rate" data-score="3" aria-label="Neutro">
+              <span class="fb-rate-emoji" aria-hidden="true">😐</span>
+              <span class="fb-rate-label"></span>
+            </button>
+            <button type="button" class="fb-rate" data-score="4" aria-label="Bom">
+              <span class="fb-rate-emoji" aria-hidden="true">🙂</span>
+              <span class="fb-rate-label"></span>
+            </button>
+            <button type="button" class="fb-rate" data-score="5" aria-label="Amo">
+              <span class="fb-rate-emoji" aria-hidden="true">😍</span>
+              <span class="fb-rate-label">Amo</span>
+            </button>
+          </div>
+          <div class="fb-actions">
+            <button type="button" class="fb-next" id="fbNext1" disabled>Próximo</button>
+          </div>
+        </div>
+
+        <div class="fb-step" data-step="2" hidden>
+          <p class="fb-title">Conte-nos sobre a sua experiência...</p>
+          <textarea class="fb-textarea" id="fbComment" maxlength="2000" placeholder="O que funcionou bem? O que podemos melhorar?"></textarea>
+          <div class="fb-actions">
+            <button type="button" class="fb-next" id="fbNext2">Próximo</button>
+          </div>
+        </div>
+
+        <div class="fb-step" data-step="3" hidden>
+          <p class="fb-title">Podemos querer falar com você. Informe seu e-mail se quiser que entremos em contato.</p>
+          <input class="fb-input" type="email" id="fbEmail" placeholder="seu@email.com" autocomplete="email" />
+          <div class="fb-error" id="fbError"></div>
+          <div class="fb-actions">
+            <button type="button" class="fb-skip" id="fbSkip">Pular</button>
+            <button type="button" class="fb-next" id="fbSubmit">Enviar</button>
+          </div>
+        </div>
+
+        <div class="fb-step" data-step="4" hidden>
+          <div class="fb-thanks">
+            <div class="fb-thanks-emoji" aria-hidden="true">🙏</div>
+            <p>Obrigado pelo feedback!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <button type="button" class="fb-tab" id="fbTab" aria-expanded="false" aria-controls="fbPanel">
+      Avaliar experiência
+      <span class="fb-tab-chevron" aria-hidden="true">▾</span>
+    </button>
+  </div>
 
 
   <!-- ═══ SCRIPTS (lógica original preservada) ══════════════ -->
@@ -3510,6 +3812,131 @@
       const pageWidth = () => grid.offsetWidth;
       btnNext.addEventListener("click", () => grid.scrollBy({ left: pageWidth(), behavior: "smooth" }));
       btnPrev.addEventListener("click", () => grid.scrollBy({ left: -pageWidth(), behavior: "smooth" }));
+    })();
+  </script>
+
+  <script>
+    (function () {
+      const widget = document.getElementById("fbWidget");
+      const tab = document.getElementById("fbTab");
+      const panel = document.getElementById("fbPanel");
+      if (!widget || !tab || !panel) return;
+
+      const SCORE_LABELS = { 1: "Odeio", 2: "Ruim", 3: "Neutro", 4: "Bom", 5: "Amo" };
+      const state = { score: null, comment: "", email: "", sending: false };
+
+      function showStep(n) {
+        panel.querySelectorAll(".fb-step").forEach(function (el) {
+          el.hidden = Number(el.getAttribute("data-step")) !== n;
+        });
+      }
+
+      function setOpen(open) {
+        widget.classList.toggle("is-open", open);
+        tab.setAttribute("aria-expanded", open ? "true" : "false");
+        panel.setAttribute("aria-hidden", open ? "false" : "true");
+      }
+
+      tab.addEventListener("click", function () {
+        setOpen(!widget.classList.contains("is-open"));
+      });
+
+      panel.querySelectorAll(".fb-rate").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          state.score = Number(btn.getAttribute("data-score"));
+          panel.querySelectorAll(".fb-rate").forEach(function (b) {
+            b.classList.toggle("is-selected", b === btn);
+          });
+          document.getElementById("fbNext1").disabled = false;
+        });
+      });
+
+      document.getElementById("fbNext1").addEventListener("click", function () {
+        if (!state.score) return;
+        showStep(2);
+        document.getElementById("fbComment").focus();
+      });
+
+      document.getElementById("fbNext2").addEventListener("click", function () {
+        state.comment = (document.getElementById("fbComment").value || "").trim();
+        showStep(3);
+        document.getElementById("fbEmail").focus();
+      });
+
+      function validarEmailFb(email) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email || "").trim());
+      }
+
+      function mostrarErro(msg) {
+        const el = document.getElementById("fbError");
+        if (!msg) {
+          el.textContent = "";
+          el.classList.remove("is-visible");
+          return;
+        }
+        el.textContent = msg;
+        el.classList.add("is-visible");
+      }
+
+      async function enviarFeedback(pularEmail) {
+        if (state.sending) return;
+        const emailVal = (document.getElementById("fbEmail").value || "").trim();
+        if (!pularEmail && emailVal && !validarEmailFb(emailVal)) {
+          mostrarErro("Informe um e-mail válido ou use Pular.");
+          return;
+        }
+        mostrarErro("");
+        state.email = pularEmail ? "" : emailVal;
+        state.sending = true;
+
+        const submitBtn = document.getElementById("fbSubmit");
+        const skipBtn = document.getElementById("fbSkip");
+        submitBtn.disabled = true;
+        skipBtn.disabled = true;
+        submitBtn.textContent = "Enviando…";
+
+        const payload = {
+          action: "feedback",
+          score: state.score,
+          scoreLabel: SCORE_LABELS[state.score] || String(state.score),
+          comment: state.comment,
+          email: state.email,
+          page: location.href,
+          userAgent: navigator.userAgent || ""
+        };
+
+        try {
+          const resp = await fetch(APPS_SCRIPT_URL, {
+            method: "POST",
+            body: JSON.stringify(payload)
+          });
+          const data = await resp.json();
+          if (data && (data.ok || data.sucesso)) {
+            showStep(4);
+            try { gtag("event", "feedback_enviado", { score: state.score }); } catch (_) {}
+            setTimeout(function () { setOpen(false); }, 2500);
+          } else {
+            mostrarErro((data && data.mensagem) || "Não foi possível enviar. Tente de novo.");
+            submitBtn.disabled = false;
+            skipBtn.disabled = false;
+            submitBtn.textContent = "Enviar";
+          }
+        } catch (err) {
+          mostrarErro("Falha de conexão. Tente de novo.");
+          submitBtn.disabled = false;
+          skipBtn.disabled = false;
+          submitBtn.textContent = "Enviar";
+        } finally {
+          state.sending = false;
+        }
+      }
+
+      document.getElementById("fbSubmit").addEventListener("click", function () {
+        enviarFeedback(false);
+      });
+      document.getElementById("fbSkip").addEventListener("click", function () {
+        enviarFeedback(true);
+      });
     })();
   </script>
 </body>
