@@ -1681,8 +1681,8 @@
               </button>
             </div>
 
-            <!-- Lab selector — dentro do card, logo abaixo dos botões de modo -->
-            <div id="labSelectorSection" style="display:none;margin-bottom:20px;">
+            <!-- Lab selector — no modo foto fica visível desde o início (escolher A+/Hermes/ambos). -->
+            <div id="labSelectorSection" style="margin-bottom:20px;">
               <div class="lab-selector-title" style="margin-bottom:10px;">Em qual laboratório deseja orçar?</div>
               <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
                 <button type="button" class="lab-tab" id="tabAplus" data-lab="A+ Medicina Diagnóstica"
@@ -1748,7 +1748,7 @@
             <div id="loadingBox" class="loading-box" style="display:none;">Buscando exames...</div>
             <div id="errorBox" class="error-box" style="display:none;">Não foi possível consultar os exames agora.</div>
 
-            <div class="table-wrap">
+            <div class="table-wrap" style="display:none;">
               <table>
                 <thead>
                   <tr>
@@ -3334,12 +3334,13 @@
       if (modo === "foto") {
         secaoFoto.style.display    = "block";
         secaoDigitar.style.display = "none";
-        if (labSection)    labSection.style.display    = "none";
+        if (labSection)    labSection.style.display    = "block";
         if (resumoPrecos)  resumoPrecos.style.display  = "none";
         if (resumoInfoBox) resumoInfoBox.style.display = "none";
         if (resumoTitulo)  resumoTitulo.style.display  = "none";
         if (tableWrap)     tableWrap.style.display     = "none";
         if (freqSection)   freqSection.style.display   = "none";
+        setLab(true, true); // Comparar ambos, como antes — a pessoa pode trocar
         btnModoFoto.style.cssText    = btnModoFoto.style.cssText.replace(/border-color:[^;]+;background:[^;]+;color:[^;]+;/g,"") + MODO_ATIVO;
         btnModoDigitar.style.cssText = btnModoDigitar.style.cssText.replace(/border-color:[^;]+;background:[^;]+;color:[^;]+;/g,"") + MODO_INATIVO;
       } else {
@@ -3876,12 +3877,10 @@
     function renderUploadPreview() {
       uploadPreview.innerHTML = "";
       const labSection  = document.getElementById("labSelectorSection");
-      const temFotos    = imagensPedido.length > 0;
       const emModoFoto  = secaoFoto.style.display !== "none";
 
-      // Mostra o seletor de lab só quando há foto anexada (no modo digitar ele
-      // aparece por outro caminho, pelo setModo).
-      if (labSection && emModoFoto) labSection.style.display = temFotos ? "block" : "none";
+      // No modo foto os logos dos labs ficam sempre visíveis (escolher A+/Hermes/ambos).
+      if (labSection && emModoFoto) labSection.style.display = "block";
       imagensPedido.forEach((fileObj, index) => {
         const item = document.createElement("div");
         item.className = "upload-item" + (fileObj.status === "uploading" || fileObj.status === "pending" ? " uploading" : "");
