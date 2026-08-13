@@ -1701,16 +1701,19 @@
               <div class="lab-selector-title" style="margin-bottom:10px;">Em qual laboratório deseja orçar?</div>
               <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
                 <button type="button" class="lab-tab is-on" id="tabAplus" data-lab="A+ Medicina Diagnóstica"
+                  onclick="drappToggleLab('aplus')"
                   style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 8px;border-radius:12px;border:2px solid #e2e8f0;background:#f8fafc;cursor:pointer;transition:all .2s;font-size:12px;font-weight:600;color:var(--text);">
                   <img src="logo-aplus.png" alt="A+ Medicina Diagnóstica" style="height:32px;object-fit:contain;display:block;">
                   <span>A+ Medicina</span>
                 </button>
                 <button type="button" class="lab-tab is-on" id="tabHermes" data-lab="Hermes Pardini"
+                  onclick="drappToggleLab('hermes')"
                   style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 8px;border-radius:12px;border:2px solid #e2e8f0;background:#f8fafc;cursor:pointer;transition:all .2s;font-size:12px;font-weight:600;color:var(--text);">
                   <img src="logo-hermes.png" alt="Hermes Pardini" style="height:32px;object-fit:contain;display:block;">
                   <span>Hermes Pardini</span>
                 </button>
                 <button type="button" class="lab-tab is-on" id="tabAmbos"
+                  onclick="drappToggleLab('ambos')"
                   style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 8px;border-radius:12px;border:2px solid #e2e8f0;background:#f8fafc;cursor:pointer;transition:all .2s;font-size:12px;font-weight:600;color:var(--text);">
                   <span style="font-size:22px;">⚖️</span>
                   <span>Comparar ambos</span>
@@ -2582,6 +2585,29 @@
       renderExamesFrequentes();
     }
 
+    // Liga/desliga cada lab. Um clique = inverte. Não dá pra apagar os dois.
+    let labClickTrava_ = 0;
+    function drappToggleLab(qual) {
+      const agora = Date.now();
+      if (agora - labClickTrava_ < 350) return; // evita clique duplo (touch+click)
+      labClickTrava_ = agora;
+      const cbA = checkboxLab_("A+ Medicina Diagnóstica");
+      const cbH = checkboxLab_("Hermes Pardini");
+      if (!cbA || !cbH) return;
+      if (qual === "aplus") cbA.checked = !cbA.checked;
+      else if (qual === "hermes") cbH.checked = !cbH.checked;
+      else { cbA.checked = true; cbH.checked = true; }
+      if (!cbA.checked && !cbH.checked) {
+        if (qual === "hermes") cbH.checked = true;
+        else cbA.checked = true;
+      }
+      atualizarVisualLabs();
+      mostrarErro(false);
+      freqExpandido = false;
+      renderExamesFrequentes();
+    }
+    window.drappToggleLab = drappToggleLab;
+
     function temExamesOuFotos() {
       const obsPreenchida = (document.getElementById("obsTexto").value || "").trim().length > 0;
       return selecionados.length > 0 || imagensPedido.length > 0 || obsPreenchida;
@@ -3335,20 +3361,9 @@
       if (!e.target.closest(".autocomplete-wrap")) suggestions.style.display = "none";
     });
 
-    // ── Lab tabs ──────────────────────────────────────────────
-    // Default = os dois ligados. Clique em A+ ou Hermes = só aquele.
-    // Clique em Comparar ambos (ou no que estava apagado) = os dois de novo.
-    if (tabAplus) tabAplus.addEventListener("click", function () {
-      const soAplus = checkboxLab_("A+ Medicina Diagnóstica") && checkboxLab_("A+ Medicina Diagnóstica").checked
-        && checkboxLab_("Hermes Pardini") && !checkboxLab_("Hermes Pardini").checked;
-      setLab(true, soAplus ? true : false);
-    });
-    if (tabHermes) tabHermes.addEventListener("click", function () {
-      const soHermes = checkboxLab_("Hermes Pardini") && checkboxLab_("Hermes Pardini").checked
-        && checkboxLab_("A+ Medicina Diagnóstica") && !checkboxLab_("A+ Medicina Diagnóstica").checked;
-      setLab(soHermes ? true : false, true);
-    });
-    if (tabAmbos) tabAmbos.addEventListener("click", function () { setLab(true, true); });
+    // ── Lab tabs: o clique está no onclick do HTML (drappToggleLab).
+    // Não registrar de novo aqui — dois handlers inverteriam duas vezes e
+    // o botão parecia travado.
 
     // ── Modo: foto vs digitar ─────────────────────────────────
     const MODO_ATIVO   = "border-color:var(--blue);background:var(--blue);color:#fff;";
