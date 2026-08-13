@@ -2585,26 +2585,15 @@
       renderExamesFrequentes();
     }
 
-    // Liga/desliga cada lab. Um clique = inverte. Não dá pra apagar os dois.
+    // Clique escolhe: A+ só A+, Hermes só Hermes, Comparar ambos = os dois.
     let labClickTrava_ = 0;
     function drappToggleLab(qual) {
       const agora = Date.now();
       if (agora - labClickTrava_ < 350) return; // evita clique duplo (touch+click)
       labClickTrava_ = agora;
-      const cbA = checkboxLab_("A+ Medicina Diagnóstica");
-      const cbH = checkboxLab_("Hermes Pardini");
-      if (!cbA || !cbH) return;
-      if (qual === "aplus") cbA.checked = !cbA.checked;
-      else if (qual === "hermes") cbH.checked = !cbH.checked;
-      else { cbA.checked = true; cbH.checked = true; }
-      if (!cbA.checked && !cbH.checked) {
-        if (qual === "hermes") cbH.checked = true;
-        else cbA.checked = true;
-      }
-      atualizarVisualLabs();
-      mostrarErro(false);
-      freqExpandido = false;
-      renderExamesFrequentes();
+      if (qual === "aplus") setLab(true, false);
+      else if (qual === "hermes") setLab(false, true);
+      else setLab(true, true);
     }
     window.drappToggleLab = drappToggleLab;
 
