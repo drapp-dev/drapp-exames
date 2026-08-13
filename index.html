@@ -620,6 +620,21 @@
       margin-bottom: 12px;
     }
 
+    .lab-tab {
+      position: relative;
+      z-index: 2;
+      cursor: pointer;
+      pointer-events: auto;
+      -webkit-tap-highlight-color: rgba(0,109,199,0.15);
+    }
+    .lab-tab img, .lab-tab span { pointer-events: none; }
+    .lab-tab.is-on {
+      border-color: var(--blue) !important;
+      background: rgba(0,109,199,0.08) !important;
+      color: var(--blue) !important;
+      box-shadow: 0 0 0 1px rgba(0,109,199,0.2);
+    }
+
     .lab-selector {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -1685,24 +1700,24 @@
             <div id="labSelectorSection" style="margin-bottom:20px;">
               <div class="lab-selector-title" style="margin-bottom:10px;">Em qual laboratório deseja orçar?</div>
               <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
-                <button type="button" class="lab-tab" id="tabAplus" data-lab="A+ Medicina Diagnóstica"
+                <button type="button" class="lab-tab is-on" id="tabAplus" data-lab="A+ Medicina Diagnóstica"
                   style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 8px;border-radius:12px;border:2px solid #e2e8f0;background:#f8fafc;cursor:pointer;transition:all .2s;font-size:12px;font-weight:600;color:var(--text);">
                   <img src="logo-aplus.png" alt="A+ Medicina Diagnóstica" style="height:32px;object-fit:contain;display:block;">
                   <span>A+ Medicina</span>
                 </button>
-                <button type="button" class="lab-tab" id="tabHermes" data-lab="Hermes Pardini"
+                <button type="button" class="lab-tab is-on" id="tabHermes" data-lab="Hermes Pardini"
                   style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 8px;border-radius:12px;border:2px solid #e2e8f0;background:#f8fafc;cursor:pointer;transition:all .2s;font-size:12px;font-weight:600;color:var(--text);">
                   <img src="logo-hermes.png" alt="Hermes Pardini" style="height:32px;object-fit:contain;display:block;">
                   <span>Hermes Pardini</span>
                 </button>
-                <button type="button" id="tabAmbos"
+                <button type="button" class="lab-tab is-on" id="tabAmbos"
                   style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 8px;border-radius:12px;border:2px solid #e2e8f0;background:#f8fafc;cursor:pointer;transition:all .2s;font-size:12px;font-weight:600;color:var(--text);">
                   <span style="font-size:22px;">⚖️</span>
                   <span>Comparar ambos</span>
                 </button>
               </div>
-              <input type="checkbox" class="lab-checkbox" value="Hermes Pardini" hidden>
-              <input type="checkbox" class="lab-checkbox" value="A+ Medicina Diagnóstica" hidden>
+              <input type="checkbox" class="lab-checkbox" value="Hermes Pardini" checked hidden>
+              <input type="checkbox" class="lab-checkbox" value="A+ Medicina Diagnóstica" checked hidden>
             </div>
 
             <!-- Exames mais frequentes — só no modo Digitar -->
@@ -2540,21 +2555,27 @@
       return labCheckboxes.filter(cb => cb.checked).map(cb => cb.value);
     }
 
-    const TAB_ATIVO = "border-color:var(--blue);background:rgba(0,109,199,0.08);color:var(--blue);";
-    const TAB_INATIVO = "border-color:#e2e8f0;background:#f8fafc;color:var(--text);";
+    function checkboxLab_(nome) {
+      return labCheckboxes.find(c => c.value === nome);
+    }
 
     function atualizarVisualLabs() {
-      const cbAplus  = labCheckboxes.find(c => c.value === "A+ Medicina Diagnóstica");
-      const cbHermes = labCheckboxes.find(c => c.value === "Hermes Pardini");
-      tabAplus.style.cssText  = tabAplus.style.cssText.replace(/border-color:[^;]+;background:[^;]+;color:[^;]+;/g,"") + (cbAplus.checked  ? TAB_ATIVO : TAB_INATIVO);
-      tabHermes.style.cssText = tabHermes.style.cssText.replace(/border-color:[^;]+;background:[^;]+;color:[^;]+;/g,"") + (cbHermes.checked ? TAB_ATIVO : TAB_INATIVO);
-      const ambos = cbAplus.checked && cbHermes.checked;
-      tabAmbos.style.cssText  = tabAmbos.style.cssText.replace(/border-color:[^;]+;background:[^;]+;color:[^;]+;/g,"") + (ambos ? TAB_ATIVO : TAB_INATIVO);
+      const cbAplus  = checkboxLab_("A+ Medicina Diagnóstica");
+      const cbHermes = checkboxLab_("Hermes Pardini");
+      const aOn = !!(cbAplus && cbAplus.checked);
+      const hOn = !!(cbHermes && cbHermes.checked);
+      if (tabAplus)  tabAplus.classList.toggle("is-on", aOn);
+      if (tabHermes) tabHermes.classList.toggle("is-on", hOn);
+      if (tabAmbos)  tabAmbos.classList.toggle("is-on", aOn && hOn);
     }
 
     function setLab(aplus, hermes) {
-      labCheckboxes.find(c => c.value === "A+ Medicina Diagnóstica").checked = aplus;
-      labCheckboxes.find(c => c.value === "Hermes Pardini").checked = hermes;
+      // Nunca deixa os dois desligados — o pedido precisa de ao menos um lab.
+      if (!aplus && !hermes) { aplus = true; hermes = true; }
+      const cbA = checkboxLab_("A+ Medicina Diagnóstica");
+      const cbH = checkboxLab_("Hermes Pardini");
+      if (cbA) cbA.checked = !!aplus;
+      if (cbH) cbH.checked = !!hermes;
       atualizarVisualLabs();
       mostrarErro(false);
       freqExpandido = false;
@@ -3315,9 +3336,19 @@
     });
 
     // ── Lab tabs ──────────────────────────────────────────────
-    tabAplus.addEventListener("click",  () => { setLab(true, false); });
-    tabHermes.addEventListener("click", () => { setLab(false, true); });
-    tabAmbos.addEventListener("click",  () => { setLab(true, true);  });
+    // Default = os dois ligados. Clique em A+ ou Hermes = só aquele.
+    // Clique em Comparar ambos (ou no que estava apagado) = os dois de novo.
+    if (tabAplus) tabAplus.addEventListener("click", function () {
+      const soAplus = checkboxLab_("A+ Medicina Diagnóstica") && checkboxLab_("A+ Medicina Diagnóstica").checked
+        && checkboxLab_("Hermes Pardini") && !checkboxLab_("Hermes Pardini").checked;
+      setLab(true, soAplus ? true : false);
+    });
+    if (tabHermes) tabHermes.addEventListener("click", function () {
+      const soHermes = checkboxLab_("Hermes Pardini") && checkboxLab_("Hermes Pardini").checked
+        && checkboxLab_("A+ Medicina Diagnóstica") && !checkboxLab_("A+ Medicina Diagnóstica").checked;
+      setLab(soHermes ? true : false, true);
+    });
+    if (tabAmbos) tabAmbos.addEventListener("click", function () { setLab(true, true); });
 
     // ── Modo: foto vs digitar ─────────────────────────────────
     const MODO_ATIVO   = "border-color:var(--blue);background:var(--blue);color:#fff;";
