@@ -1015,6 +1015,27 @@
     .cpf-status.success { color: var(--success); }
     .cpf-status.error   { color: var(--danger); }
 
+    .upload-status {
+      display: none;
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.45;
+    }
+    .upload-status.active { display: block; }
+    .upload-status.error {
+      background: #fdecea;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
+    }
+    .upload-status.success {
+      background: #e8f8ee;
+      color: #166534;
+      border: 1px solid #86efac;
+    }
+
     /* ─── UPLOAD ─────────────────────────────────────── */
     .upload-opcao { margin-top: 20px; }
 
@@ -1045,7 +1066,10 @@
     .upload-item img {
       width: 100%; height: 100%; object-fit: cover;
       border-radius: 10px; border: 1px solid #ddd;
+      background: #e8eef5;
     }
+
+    .upload-item.uploading img { opacity: 0.65; }
 
     .upload-remove {
       position: absolute; top: -8px; right: -8px;
@@ -1708,6 +1732,7 @@
                   <input type="file" id="uploadPedidoMais" accept="image/*,application/pdf" multiple hidden>
                 </label>
               </div>
+              <div id="uploadStatus" class="upload-status" role="alert"></div>
               <div id="uploadPreview" class="upload-preview"></div>
             </div>
 
@@ -1964,6 +1989,7 @@
               <button id="btnVoltarOrçamento" class="secondary-btn" type="button" style="margin-top:0;">← Voltar</button>
               <button id="btnFinalizar" class="primary-btn btn-finalizar" type="button" disabled>Finalizar →</button>
             </div>
+            <div id="checkoutStatus" class="upload-status" role="alert"></div>
             <div id="checkoutNote" style="margin-top:10px;display:grid;grid-template-columns:1fr 1fr;gap:10px 24px;padding:10px 20px;background:#f8fafc;border:1px solid var(--line);border-radius:12px;">
               <span id="indItens" class="checkout-ind"><span class="ind-box">✓</span> Exames</span>
               <span id="indCpf"   class="checkout-ind"><span class="ind-box">✓</span> CPF</span>
@@ -2232,6 +2258,9 @@
     const secaoDigitar      = document.getElementById("secaoDigitar");
 
     let imagensPedido = [];
+    let envioEmAndamento = false;
+    let pedidoJaEnviado = false;
+    let idempotencyKeyPedido = "";
 
     const cpfInput      = document.getElementById("cpf");
     const telefoneInput = document.getElementById("telefone");
@@ -2545,7 +2574,11 @@
       const telOk     = validarTelefone(telefoneInput.value);
       const emailOk   = validarEmail(emailInput.value);
       const liberado  = temItens && telOk && emailOk && cpfValidado && cpfConfirmado;
-      btnFinalizar.disabled = !liberado;
+      // Nunca reativar o Finalizar no meio do envio — o upload das fotos
+      // chama atualizarBotoes() ao terminar e, sem esta trava, o botão
+      // voltava a ficar clicável enquanto o pedido ainda estava indo
+      // (ou já tinha ido), e o cliente mandava duplicado.
+      btnFinalizar.disabled = envioEmAndamento || pedidoJaEnviado || !liberado;
       const nota = document.getElementById("checkoutNote");
       if (nota) {
         if (liberado) {
@@ -2770,6 +2803,33 @@
     function mostrarStatusCpf(texto, tipo) {
       cpfStatus.textContent = texto;
       cpfStatus.className = "cpf-status active " + tipo;
+    }
+
+    function mostrarStatusUpload(texto, tipo, opts) {
+      const el = document.getElementById("uploadStatus");
+      if (!el) return;
+      if (!texto) {
+        el.textContent = "";
+        el.className = "upload-status";
+        return;
+      }
+      el.textContent = texto;
+      el.className = "upload-status active " + (tipo || "error");
+      if (opts && opts.scroll) {
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }
+
+    function mostrarStatusCheckout(texto, tipo) {
+      const el = document.getElementById("checkoutStatus");
+      if (!el) return;
+      if (!texto) {
+        el.textContent = "";
+        el.className = "upload-status";
+        return;
+      }
+      el.textContent = texto;
+      el.className = "upload-status active " + (tipo || "error");
     }
 
     function agruparPorLaboratorio(lista) {
@@ -3518,43 +3578,119 @@
       atualizarBotoes();
     });
 
+    function getIdempotencyKeyPedido_() {
+      if (!idempotencyKeyPedido) {
+        idempotencyKeyPedido = (crypto.randomUUID ? crypto.randomUUID() : (Date.now() + "-" + Math.random().toString(36).slice(2)));
+      }
+      return idempotencyKeyPedido;
+    }
+
+    function mostrarTelaPedidoEnviado(subtitulo) {
+      pedidoJaEnviado = true;
+      envioEmAndamento = false;
+      gtag('event', 'lead_generated', {
+        exam_count: selecionados.length,
+        labs: [...new Set(selecionados.map(e => e.laboratorio))].join(','),
+        value: selecionados.reduce((s, i) => s + (parseFloat(i.precoDrapp) || 0), 0)
+      });
+      checkoutCard.innerHTML = `
+        <div style="text-align:center;padding:40px 20px;">
+          <div style="font-size:48px;margin-bottom:16px;">✅</div>
+          <h3 style="color:var(--success);margin-bottom:8px;">Pedido enviado com sucesso!</h3>
+          <p style="color:var(--muted);margin-bottom:28px;">${subtitulo || "Nossa equipe entrará em contato em breve pelo WhatsApp ou e-mail informado."}</p>
+          <button onclick="location.reload()" style="background:var(--blue);color:#fff;border:none;border-radius:14px;font-size:16px;font-weight:700;padding:0 28px;height:50px;cursor:pointer;font-family:inherit;">+ Fazer outro pedido</button>
+        </div>`;
+    }
+
+    function liberarBotaoFinalizar() {
+      envioEmAndamento = false;
+      btnFinalizar.textContent = "Finalizar →";
+      atualizarBotoes();
+    }
+
+    function grampearPedidoNovoMotor_(data, payload) {
+      try {
+        fetch(PEDIDOS_API_URL + "/api/pedido", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            modoTeste: true,
+            token: (data && (data.token || data.pedidoId)) || "",
+            dealsBitrix: Array.isArray(data && data.deals)
+              ? data.deals.map(d => ({ laboratorio: d.laboratorio, dealId: d.dealId }))
+              : [],
+            labsSelecionados: obterLabsSelecionados(),
+            paciente: payload.paciente,
+            fotosUrls: imagensPedido.map(img => img.url).filter(Boolean)
+          })
+        }).catch(() => {});
+      } catch (_) {}
+    }
+
+    async function esperarUploadsPendentes_(timeoutMs) {
+      const limite = Date.now() + (timeoutMs || 90000);
+      while (imagensPedido.some(f => f.status === "uploading" || f.status === "pending")) {
+        if (Date.now() > limite) return false;
+        await new Promise(r => setTimeout(r, 250));
+      }
+      return true;
+    }
+
     btnFinalizar.addEventListener("click", async function () {
+      if (envioEmAndamento || pedidoJaEnviado) return;
       if (!validarFormularioBase()) return;
       if (!cpfValidado || !cpfConfirmado) return;
-      if (!(await conferirContato())) return; // telefone/e-mail: checa erro de digitação e confirma com o cliente
+
+      // Trava NA HORA — antes da confirmação de telefone/e-mail e antes do
+      // POST. Sem isto, um segundo clique (ou o atualizarBotoes do upload)
+      // reativava o botão e gerava pedido duplicado.
+      envioEmAndamento = true;
+      btnFinalizar.disabled = true;
+      btnFinalizar.textContent = "Enviando...";
+      mostrarStatusCheckout("");
+
+      if (!(await conferirContato())) {
+        liberarBotaoFinalizar();
+        return;
+      }
 
       gtag('event', 'form_submitted', {
         exam_count: selecionados.length,
         labs: [...new Set(selecionados.map(e => e.laboratorio))].join(',')
       });
 
-      btnFinalizar.disabled = true;
-      btnFinalizar.textContent = "Enviando...";
-
       // Os arquivos já foram (ou estão sendo) enviados individualmente assim que
       // anexados — aqui só garantimos que tudo terminou, reenviando o que falhou.
+      btnFinalizar.textContent = imagensPedido.length ? "Enviando fotos..." : "Enviando pedido...";
       const comErroAntes = imagensPedido.filter(f => f.status === "error");
       for (const f of comErroAntes) {
         await tentarUploadFoto(f, imagensPedido.indexOf(f) + 1);
       }
-      while (imagensPedido.some(f => f.status === "uploading" || f.status === "pending")) {
-        await new Promise(r => setTimeout(r, 300));
+      const uploadsOk = await esperarUploadsPendentes_(90000);
+      if (!uploadsOk) {
+        mostrarStatusUpload("Ainda estamos enviando as fotos. Aguarde o selo ✓ enviado e toque em Finalizar de novo — o pedido ainda não foi criado.", "error", { scroll: true });
+        liberarBotaoFinalizar();
+        return;
       }
       const aindaComErro = imagensPedido.filter(f => f.status === "error");
       if (aindaComErro.length > 0) {
-        mostrarStatusCpf(
+        mostrarStatusUpload(
           "Não foi possível enviar " + aindaComErro.length + " arquivo(s): " +
           aindaComErro.map(f => f.nome).join(", ") +
           ". Toque no arquivo para tentar reenviar ou remova-o antes de continuar.",
-          "error"
+          "error",
+          { scroll: true }
         );
-        btnFinalizar.disabled = false;
-        btnFinalizar.textContent = "Finalizar solicitação";
+        liberarBotaoFinalizar();
         return;
       }
+      mostrarStatusUpload("");
+
+      btnFinalizar.textContent = "Enviando pedido...";
 
       const payload = {
         action: "criarPedido",
+        idempotencyKey: getIdempotencyKeyPedido_(),
         contactId: dadosCpfValidados ? dadosCpfValidados.contactId : "",
         labsSelecionados: obterLabsSelecionados(),
         paciente: {
@@ -3579,58 +3715,44 @@
         }))
       };
 
+      // A partir daqui o POST já pode ter criado o card no Bitrix mesmo se
+      // a resposta falhar (timeout / HTML do Google em vez de JSON). Não
+      // reativamos o botão — isso era o que gerava o pedido duplicado.
+      let postDisparado = false;
       try {
+        postDisparado = true;
         const resp = await fetch(APPS_SCRIPT_URL, {
           method: "POST",
           body: JSON.stringify(payload)
         });
-        const data = await resp.json();
+        const texto = await resp.text();
+        let data = null;
+        try { data = JSON.parse(texto); } catch (_) { data = null; }
 
-        if (data.sucesso || data.ok) {
-          // Grampo paralelo (raia de TESTE): além do Bitrix (via Google, acima),
-          // manda uma cópia pra fila do sistema novo pra testar o motor em
-          // paralelo. Fire-and-forget: se a API nova estiver lenta ou fora, o
-          // cliente vê sucesso do mesmo jeito — isto nunca bloqueia nem quebra.
-          try {
-            fetch(PEDIDOS_API_URL + "/api/pedido", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                modoTeste: true,
-                token: data.token || data.pedidoId || "",
-                // Cards que o Google acabou de criar no Bitrix pra este pedido.
-                // Vão junto pra o sistema novo saber qual card é o mesmo pedido
-                // e dar pra comparar os dois motores lado a lado.
-                dealsBitrix: Array.isArray(data.deals)
-                  ? data.deals.map(d => ({ laboratorio: d.laboratorio, dealId: d.dealId }))
-                  : [],
-                labsSelecionados: obterLabsSelecionados(),
-                paciente: payload.paciente,
-                fotosUrls: imagensPedido.map(img => img.url).filter(Boolean)
-              })
-            }).catch(() => {});
-          } catch (_) {}
-
-          gtag('event', 'lead_generated', {
-            exam_count: selecionados.length,
-            labs: [...new Set(selecionados.map(e => e.laboratorio))].join(','),
-            value: selecionados.reduce((s, i) => s + (parseFloat(i.precoDrapp) || 0), 0)
-          });
-          checkoutCard.innerHTML = `
-            <div style="text-align:center;padding:40px 20px;">
-              <div style="font-size:48px;margin-bottom:16px;">✅</div>
-              <h3 style="color:var(--success);margin-bottom:8px;">Pedido enviado com sucesso!</h3>
-              <p style="color:var(--muted);margin-bottom:28px;">Nossa equipe entrará em contato em breve pelo WhatsApp ou e-mail informado.</p>
-              <button onclick="location.reload()" style="background:var(--blue);color:#fff;border:none;border-radius:14px;font-size:16px;font-weight:700;padding:0 28px;height:50px;cursor:pointer;font-family:inherit;">+ Fazer outro pedido</button>
-            </div>`;
+        if (data && (data.sucesso || data.ok)) {
+          grampearPedidoNovoMotor_(data, payload);
+          mostrarTelaPedidoEnviado();
+        } else if (data && (data.sucesso === false || data.erro === true)) {
+          throw Object.assign(new Error(data.mensagem || data.erro || "Erro desconhecido"), { negocio: true });
         } else {
-          throw new Error(data.mensagem || data.erro || "Erro desconhecido");
+          // Resposta vazia, HTML do Google, CORS opaco: o pedido em geral
+          // JÁ foi criado. Mostra sucesso e não deixa clicar de novo.
+          if (data && (data.token || (data.deals && data.deals.length))) {
+            grampearPedidoNovoMotor_(data, payload);
+          }
+          mostrarTelaPedidoEnviado("Nossa equipe entrará em contato em breve pelo WhatsApp ou e-mail informado. Não é preciso enviar de novo.");
         }
       } catch (err) {
         gtag('event', 'form_error', { error_message: err.message });
-        mostrarStatusCpf("Erro ao enviar pedido: " + err.message, "error");
-        btnFinalizar.disabled = false;
-        btnFinalizar.textContent = "Finalizar solicitação";
+        if (err && err.negocio) {
+          mostrarStatusCheckout("Erro ao enviar pedido: " + err.message, "error");
+          liberarBotaoFinalizar();
+        } else if (postDisparado) {
+          mostrarTelaPedidoEnviado("Seu pedido foi recebido. Não envie de novo — isso duplica o orçamento. Nossa equipe confirma pelo WhatsApp em instantes.");
+        } else {
+          mostrarStatusCheckout("Erro ao enviar pedido: " + err.message, "error");
+          liberarBotaoFinalizar();
+        }
       }
     });
 
@@ -3658,14 +3780,62 @@
       return uploadSessionId;
     }
 
+    function lerBase64Arquivo_(file) {
+      return new Promise(function (resolve, reject) {
+        const reader = new FileReader();
+        reader.onload = function () {
+          const r = String(reader.result || "");
+          resolve(r.includes(",") ? r.split(",")[1] : r);
+        };
+        reader.onerror = function () { reject(reader.error || new Error("Falha ao ler arquivo")); };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function garantirBase64_(fileObj) {
+      if (fileObj.base64) return fileObj.base64;
+      if (fileObj.preview && String(fileObj.preview).indexOf("data:") === 0) {
+        fileObj.base64 = fileObj.preview.split(",")[1];
+        return fileObj.base64;
+      }
+      if (fileObj.file) {
+        fileObj.base64 = await lerBase64Arquivo_(fileObj.file);
+        return fileObj.base64;
+      }
+      throw new Error("Arquivo sem conteúdo para enviar");
+    }
+
     // Envia UM arquivo por vez pro Apps Script (payload pequeno) em vez de
     // acumular tudo em base64 dentro do POST de criarPedido — pedidos com
     // vários PDFs grandes estouravam o limite de tamanho/tempo do Apps Script
     // e voltavam com uma página de erro do Google em vez de JSON.
-    async function tentarUploadFoto(fileObj, seq, maxTentativas) {
+    function atualizarAvisoUpload_() {
+      const comErro = imagensPedido.filter(f => f.status === "error");
+      if (!comErro.length) {
+        mostrarStatusUpload("");
+        return;
+      }
+      mostrarStatusUpload(
+        "Não foi possível enviar " + comErro.length + " arquivo(s): " +
+        comErro.map(f => f.nome).join(", ") +
+        ". Toque no arquivo para tentar reenviar ou remova-o antes de continuar.",
+        "error"
+      );
+    }
       maxTentativas = maxTentativas || 4;
+      if (fileObj.status === "done" && fileObj.url) return true;
       fileObj.status = "uploading";
       renderUploadPreview();
+      let base64;
+      try {
+        base64 = await garantirBase64_(fileObj);
+      } catch (ePrep) {
+        fileObj.status = "error";
+        renderUploadPreview();
+        atualizarBotoes();
+        atualizarAvisoUpload_();
+        return false;
+      }
       for (let tentativa = 1; tentativa <= maxTentativas; tentativa++) {
         try {
           const resp = await fetch(APPS_SCRIPT_URL, {
@@ -3675,15 +3845,17 @@
               uploadId: getUploadSessionId_(),
               seq:      seq,
               nome:     fileObj.nome,
-              base64:   fileObj.preview.split(",")[1]
+              base64:   base64
             })
           });
           const data = await resp.json();
           if (data && data.ok && data.url) {
             fileObj.status = "done";
             fileObj.url    = data.url;
+            fileObj.base64 = null; // libera memória depois de hospedar
             renderUploadPreview();
             atualizarBotoes();
+            atualizarAvisoUpload_();
             return true;
           }
           throw new Error((data && (data.mensagem || data.erro)) || "Falha ao enviar arquivo");
@@ -3692,6 +3864,7 @@
             fileObj.status = "error";
             renderUploadPreview();
             atualizarBotoes();
+            atualizarAvisoUpload_();
             return false;
           }
           await new Promise(r => setTimeout(r, 800 * tentativa)); // backoff
@@ -3711,17 +3884,18 @@
       if (labSection && emModoFoto) labSection.style.display = temFotos ? "block" : "none";
       imagensPedido.forEach((fileObj, index) => {
         const item = document.createElement("div");
-        item.className = "upload-item";
-        const ehPdf = fileObj.file.type === "application/pdf";
+        item.className = "upload-item" + (fileObj.status === "uploading" || fileObj.status === "pending" ? " uploading" : "");
+        const ehPdf = (fileObj.file && fileObj.file.type === "application/pdf") || /\.pdf$/i.test(fileObj.nome || "");
         if (ehPdf) {
           // Preview especial para PDF
           const pdfIcon = document.createElement("div");
           pdfIcon.style.cssText = "width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#f1f5f9;border-radius:10px;font-size:11px;color:#64748b;gap:4px;";
-          pdfIcon.innerHTML = `<div style="font-size:28px;">📄</div><div style="font-weight:700;color:#e74c3c;">PDF</div><div style="font-size:10px;text-align:center;padding:0 4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:80px;">${textoSeguro(fileObj.file.name)}</div>`;
+          pdfIcon.innerHTML = `<div style="font-size:28px;">📄</div><div style="font-weight:700;color:#e74c3c;">PDF</div><div style="font-size:10px;text-align:center;padding:0 4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:80px;">${textoSeguro(fileObj.nome || (fileObj.file && fileObj.file.name) || "arquivo")}</div>`;
           item.appendChild(pdfIcon);
         } else {
           const img = document.createElement("img");
-          img.src = fileObj.preview;
+          img.alt = fileObj.nome || "pedido médico";
+          img.src = fileObj.preview || "";
           item.appendChild(img);
         }
 
@@ -3737,6 +3911,9 @@
           selo.style.cursor = "pointer";
           selo.title = "Toque para tentar reenviar";
           selo.addEventListener("click", (ev) => { ev.stopPropagation(); tentarUploadFoto(fileObj, index + 1); });
+        } else if (fileObj.status === "pending") {
+          selo.textContent = "preparando…";
+          selo.style.background = "#eef2ff"; selo.style.color = "#3b4ba0";
         } else {
           selo.textContent = "enviando…";
           selo.style.background = "#eef2ff"; selo.style.color = "#3b4ba0";
@@ -3749,53 +3926,109 @@
         removeBtn.className = "upload-remove";
         removeBtn.innerHTML = "✕";
         removeBtn.title = "Excluir arquivo";
-        removeBtn.addEventListener("click", () => { imagensPedido.splice(index, 1); renderUploadPreview(); atualizarBotaoContinuar(); atualizarBotoes(); });
+        removeBtn.addEventListener("click", () => {
+          if (fileObj.preview && String(fileObj.preview).indexOf("blob:") === 0) {
+            try { URL.revokeObjectURL(fileObj.preview); } catch (_) {}
+          }
+          imagensPedido.splice(index, 1);
+          renderUploadPreview();
+          atualizarBotaoContinuar();
+          atualizarBotoes();
+          atualizarAvisoUpload_();
+        });
         item.appendChild(removeBtn);
         uploadPreview.appendChild(item);
       });
     }
 
-    // ── Compressão Canvas: reduz imagens para max 1000×1000 px antes do upload ──
-    function comprimirImagem(dataUrl, maxDim, quality) {
+    // Reduz a foto ANTES do upload (pedido médico cabe em ~1280 px).
+    // Preview na tela usa blob URL na hora — não espera esta compressão.
+    function dimensoesDestino_(w, h, maxDim) {
+      if (w <= maxDim && h <= maxDim) return { w: w, h: h };
+      if (w >= h) return { w: maxDim, h: Math.round(h * maxDim / w) };
+      return { w: Math.round(w * maxDim / h), h: maxDim };
+    }
+
+    function canvasParaJpeg_(canvas, quality) {
+      return canvas.toDataURL("image/jpeg", quality);
+    }
+
+    function comprimirArquivoImagem_(file, maxDim, quality) {
+      maxDim = maxDim || 1280;
+      quality = quality || 0.72;
       return new Promise(function (resolve) {
-        const img = new Image();
-        img.onload = function () {
-          let w = img.width;
-          let h = img.height;
-          if (w > maxDim || h > maxDim) {
-            if (w >= h) { h = Math.round(h * maxDim / w); w = maxDim; }
-            else        { w = Math.round(w * maxDim / h); h = maxDim; }
-          }
+        function peloElementoImagem() {
+          const url = URL.createObjectURL(file);
+          const img = new Image();
+          img.onload = function () {
+            const d = dimensoesDestino_(img.naturalWidth || img.width, img.naturalHeight || img.height, maxDim);
+            const canvas = document.createElement("canvas");
+            canvas.width = d.w;
+            canvas.height = d.h;
+            canvas.getContext("2d").drawImage(img, 0, 0, d.w, d.h);
+            URL.revokeObjectURL(url);
+            resolve(canvasParaJpeg_(canvas, quality));
+          };
+          img.onerror = function () {
+            URL.revokeObjectURL(url);
+            resolve(null);
+          };
+          img.src = url;
+        }
+        if (typeof createImageBitmap !== "function") {
+          peloElementoImagem();
+          return;
+        }
+        createImageBitmap(file).then(function (bmp) {
+          const d = dimensoesDestino_(bmp.width, bmp.height, maxDim);
           const canvas = document.createElement("canvas");
-          canvas.width  = w;
-          canvas.height = h;
-          canvas.getContext("2d").drawImage(img, 0, 0, w, h);
-          resolve(canvas.toDataURL("image/jpeg", quality));
-        };
-        img.onerror = function () { resolve(dataUrl); }; // fallback sem compressão
-        img.src = dataUrl;
+          canvas.width = d.w;
+          canvas.height = d.h;
+          canvas.getContext("2d").drawImage(bmp, 0, 0, d.w, d.h);
+          if (bmp.close) bmp.close();
+          resolve(canvasParaJpeg_(canvas, quality));
+        }).catch(function () { peloElementoImagem(); });
       });
     }
+
+    const MAX_PDF_MB = 8;
 
     function processarArquivos(files) {
       files.forEach(file => {
         const ehImagem = file.type.startsWith("image/");
         const ehPdf    = file.type === "application/pdf";
         if (!ehImagem && !ehPdf) return;
-        const reader = new FileReader();
-        reader.onload = async function (e) {
-          let preview = e.target.result;
-          if (ehImagem) {
-            preview = await comprimirImagem(preview, 1000, 0.85);
+        if (ehPdf && file.size > MAX_PDF_MB * 1024 * 1024) {
+          mostrarStatusUpload("O PDF \"" + file.name + "\" tem mais de " + MAX_PDF_MB + " MB. Tire uma foto do pedido ou envie um arquivo menor.", "error", { scroll: true });
+          return;
+        }
+
+        // Preview imediato (blob URL) — não espera ler/comprimir o arquivo original.
+        const preview = ehImagem ? URL.createObjectURL(file) : null;
+        const fileObj = { file: file, preview: preview, nome: file.name, status: "pending", url: null, base64: null };
+        imagensPedido.push(fileObj);
+        const seq = imagensPedido.length;
+        renderUploadPreview();
+        atualizarBotaoContinuar();
+        atualizarBotoes();
+
+        (async function prepararEEnviar() {
+          try {
+            if (ehImagem) {
+              const comprimida = await comprimirArquivoImagem_(file, 1280, 0.72);
+              if (comprimida) {
+                fileObj.base64 = comprimida.split(",")[1];
+                fileObj.nome = String(file.name || "pedido").replace(/\.[^.]+$/, "") + ".jpg";
+              }
+            }
+            await tentarUploadFoto(fileObj, seq);
+          } catch (_) {
+            fileObj.status = "error";
+            renderUploadPreview();
+            atualizarBotoes();
+            atualizarAvisoUpload_();
           }
-          const fileObj = { file, preview, nome: file.name, status: "pending", url: null };
-          imagensPedido.push(fileObj);
-          renderUploadPreview();
-          atualizarBotaoContinuar();
-          atualizarBotoes();
-          tentarUploadFoto(fileObj, imagensPedido.length);
-        };
-        reader.readAsDataURL(file);
+        })();
       });
     }
 
