@@ -3869,6 +3869,8 @@
         "error"
       );
     }
+
+    async function tentarUploadFoto(fileObj, seq, maxTentativas) {
       maxTentativas = maxTentativas || 4;
       if (fileObj.status === "done" && fileObj.url) return true;
       fileObj.status = "uploading";
