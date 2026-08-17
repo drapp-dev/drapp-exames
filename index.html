@@ -2232,8 +2232,9 @@
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxyeHFlUzJ6sQCEjFdgviwtdpTJ9zwxVipswMIWj1IPzWm00zRBgVFAHy-B0ajaIyNGQg/exec";
     // HUB_TOKEN removido do frontend — token fica SOMENTE no Config.gs (Apps Script privado)
 
-    // Backend novo (drapp-pipeline) — consulta de CPF já migrada pra cá.
-    // O resto (catálogo, criar pedido) continua no Apps Script por enquanto.
+    // Backend novo (drapp-pipeline). CPF e criar pedido vão pra cá.
+    // Fotos ainda sobem pelo Apps Script (S3). Bitrix está fora — o pedido
+    // entra só no admin (https://admin.drapp.com.br).
     const PEDIDOS_API_URL = "https://pedidos.drapp.com.br";
 
     // Identificador aleatório por navegador (não é segredo, só ajuda o backend a limitar
@@ -2861,7 +2862,11 @@
         el.className = "upload-status";
         return;
       }
-      el.textContent = texto;
+      var t = String(texto);
+      if (/FEATURE_NOT_AVAILABLE|"error"|error_description/i.test(t)) {
+        t = "Não foi possível registrar o pedido agora. Tente de novo em instantes.";
+      }
+      el.textContent = t;
       el.className = "upload-status active " + (tipo || "error");
     }
 
@@ -3641,23 +3646,21 @@
       atualizarBotoes();
     }
 
-    function grampearPedidoNovoMotor_(data, payload) {
-      try {
-        fetch(PEDIDOS_API_URL + "/api/pedido", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            modoTeste: true,
-            token: (data && (data.token || data.pedidoId)) || "",
-            dealsBitrix: Array.isArray(data && data.deals)
-              ? data.deals.map(d => ({ laboratorio: d.laboratorio, dealId: d.dealId }))
-              : [],
-            labsSelecionados: obterLabsSelecionados(),
-            paciente: payload.paciente,
-            fotosUrls: imagensPedido.map(img => img.url).filter(Boolean)
-          })
-        }).catch(() => {});
-      } catch (_) {}
+    async function enviarPedidoParaAdmin_(payload) {
+      const resp = await fetch(PEDIDOS_API_URL + "/api/pedido", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          registrarSemBitrix: true,
+          labsSelecionados: payload.labsSelecionados,
+          paciente: payload.paciente,
+          fotosUrls: imagensPedido.map(img => img.url).filter(Boolean)
+        })
+      });
+      const texto = await resp.text();
+      let data = null;
+      try { data = JSON.parse(texto); } catch (_) { data = null; }
+      return { resp, data, texto };
     }
 
     async function esperarUploadsPendentes_(timeoutMs) {
@@ -3748,32 +3751,22 @@
         }))
       };
 
-      // A partir daqui o POST já pode ter criado o card no Bitrix mesmo se
-      // a resposta falhar (timeout / HTML do Google em vez de JSON). Não
-      // reativamos o botão — isso era o que gerava o pedido duplicado.
+      // Pedido vai só pro admin (API nova). Bitrix está fora.
       let postDisparado = false;
       try {
         postDisparado = true;
-        const resp = await fetch(APPS_SCRIPT_URL, {
-          method: "POST",
-          body: JSON.stringify(payload)
-        });
-        const texto = await resp.text();
-        let data = null;
-        try { data = JSON.parse(texto); } catch (_) { data = null; }
+        const { resp, data } = await enviarPedidoParaAdmin_(payload);
 
         if (data && (data.sucesso || data.ok)) {
-          grampearPedidoNovoMotor_(data, payload);
+          pedidoJaEnviado = true;
           mostrarTelaPedidoEnviado();
         } else if (data && (data.sucesso === false || data.erro === true)) {
           throw Object.assign(new Error(data.mensagem || data.erro || "Erro desconhecido"), { negocio: true });
+        } else if (resp && resp.ok && data && (data.token || (data.pedidos && data.pedidos.length))) {
+          pedidoJaEnviado = true;
+          mostrarTelaPedidoEnviado();
         } else {
-          // Resposta vazia, HTML do Google, CORS opaco: o pedido em geral
-          // JÁ foi criado. Mostra sucesso e não deixa clicar de novo.
-          if (data && (data.token || (data.deals && data.deals.length))) {
-            grampearPedidoNovoMotor_(data, payload);
-          }
-          mostrarTelaPedidoEnviado("Nossa equipe entrará em contato em breve pelo WhatsApp ou e-mail informado. Não é preciso enviar de novo.");
+          throw Object.assign(new Error((data && data.mensagem) || "Não foi possível registrar o pedido. Tente de novo."), { negocio: true });
         }
       } catch (err) {
         gtag('event', 'form_error', { error_message: err.message });
@@ -3781,7 +3774,9 @@
           mostrarStatusCheckout("Erro ao enviar pedido: " + err.message, "error");
           liberarBotaoFinalizar();
         } else if (postDisparado) {
-          mostrarTelaPedidoEnviado("Seu pedido foi recebido. Não envie de novo — isso duplica o orçamento. Nossa equipe confirma pelo WhatsApp em instantes.");
+          // Rede caiu DEPOIS do POST: o admin pode já ter o pedido.
+          pedidoJaEnviado = true;
+          mostrarTelaPedidoEnviado("Se o pedido já tiver sido recebido, nossa equipe confirma pelo WhatsApp. Não envie de novo.");
         } else {
           mostrarStatusCheckout("Erro ao enviar pedido: " + err.message, "error");
           liberarBotaoFinalizar();
