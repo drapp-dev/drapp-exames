@@ -3,8 +3,6 @@
 
 <head>
   <meta charset="UTF-8" />
-  <!-- OpenAI Measurement Pixel -->
-  <script>!function(w,d,s,u){if(w.oaiq)return;var q=function(){q.q.push(arguments)};q.q=[];w.oaiq=q;var j=d.createElement(s);j.async=1;j.src=u;var f=d.getElementsByTagName(s)[0];f.parentNode.insertBefore(j,f)}(window,document,"script","https://bzrcdn.openai.com/sdk/oaiq.min.js");oaiq("init",{pixelId:"UDzcZbGKRcQru9fmdby6Hw",debug:true});</script>
   <script>
     // Redirect drapp.com.br/p?d=DEAL_ID → página de upload
     (function () {
@@ -1512,14 +1510,122 @@
       }
       html { scroll-behavior: auto; }
     }
+
+    .privacy-banner {
+      position: fixed; inset: auto 16px 16px 16px; z-index: 10020;
+      max-width: 1120px; margin: 0 auto; padding: 20px;
+      background: #fff; border: 1px solid #dbe5ef; border-radius: 18px;
+      box-shadow: 0 18px 55px rgba(10, 44, 74, 0.24);
+      display: none; align-items: center; gap: 22px;
+    }
+    .privacy-banner.is-visible { display: flex; }
+    .privacy-banner-copy { flex: 1; color: var(--text); font-size: 14px; line-height: 1.55; }
+    .privacy-banner-copy strong { display: block; font-size: 17px; margin-bottom: 4px; color: var(--blue-deep); }
+    .privacy-banner-copy a { color: var(--blue); font-weight: 700; }
+    .privacy-actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; }
+    .privacy-btn {
+      min-height: 44px; padding: 10px 16px; border-radius: 10px;
+      border: 1px solid var(--blue); font: inherit; font-size: 14px; font-weight: 700;
+      cursor: pointer; background: #fff; color: var(--blue);
+    }
+    .privacy-btn:hover { background: #eef7ff; }
+    .privacy-btn.primary { background: var(--blue); color: #fff; }
+    .privacy-btn.primary:hover { background: var(--blue-deep); }
+    .privacy-settings-link {
+      border: 0; padding: 0; background: none; color: rgba(255,255,255,0.45);
+      font: inherit; font-size: 14px; cursor: pointer;
+    }
+    .privacy-settings-link:hover, .privacy-settings-link:focus { color: #fff; text-decoration: underline; }
+    .privacy-modal-backdrop {
+      position: fixed; inset: 0; z-index: 10030; padding: 20px;
+      background: rgba(5, 24, 42, 0.62); display: none;
+      align-items: center; justify-content: center;
+    }
+    .privacy-modal-backdrop.is-visible { display: flex; }
+    .privacy-modal {
+      width: min(620px, 100%); max-height: min(760px, calc(100vh - 40px)); overflow: auto;
+      background: #fff; border-radius: 20px; box-shadow: 0 24px 70px rgba(0,0,0,0.3);
+      padding: 24px;
+    }
+    .privacy-modal-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+    .privacy-modal h2 { margin: 0 0 8px; color: var(--blue-deep); font-size: 24px; }
+    .privacy-modal-intro { margin: 0 0 20px; color: var(--muted); font-size: 14px; line-height: 1.55; }
+    .privacy-close { border: 0; background: none; color: var(--muted); font-size: 28px; cursor: pointer; line-height: 1; }
+    .privacy-option { padding: 16px 0; border-top: 1px solid #e5edf4; }
+    .privacy-option-row { display: flex; align-items: center; justify-content: space-between; gap: 18px; }
+    .privacy-option-title { font-weight: 800; color: var(--text); }
+    .privacy-option p { margin: 5px 0 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
+    .privacy-required { color: var(--success); font-size: 12px; font-weight: 800; white-space: nowrap; }
+    .privacy-toggle { width: 22px; height: 22px; accent-color: var(--blue); flex: 0 0 auto; }
+    .privacy-modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+    @media (max-width: 760px) {
+      .privacy-banner { align-items: stretch; flex-direction: column; }
+      .privacy-actions { justify-content: stretch; }
+      .privacy-actions .privacy-btn { flex: 1 1 100%; }
+      .privacy-modal-actions .privacy-btn { flex: 1 1 100%; }
+    }
   </style>
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-FZ9NB6E8KP"></script>
+  <!-- Analytics e publicidade permanecem bloqueados até o consentimento. -->
   <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-FZ9NB6E8KP');
+    window.gtag = function () {};
+
+    (function () {
+      const STORAGE_KEY = "drapp_privacy_v1";
+      let googleCarregado = false;
+      let openaiCarregado = false;
+
+      function lerPreferencias() {
+        try {
+          const valor = JSON.parse(localStorage.getItem(STORAGE_KEY));
+          if (valor && typeof valor.analytics === "boolean" && typeof valor.ads === "boolean") return valor;
+        } catch (_) {}
+        return null;
+      }
+
+      function carregarGoogleAnalytics() {
+        if (googleCarregado) return;
+        googleCarregado = true;
+        window.dataLayer = [];
+        window.gtag = function () { window.dataLayer.push(arguments); };
+        gtag("consent", "default", {
+          analytics_storage: "granted",
+          ad_storage: "denied",
+          ad_user_data: "denied",
+          ad_personalization: "denied"
+        });
+        gtag("js", new Date());
+        gtag("config", "G-FZ9NB6E8KP");
+        const script = document.createElement("script");
+        script.async = true;
+        script.src = "https://www.googletagmanager.com/gtag/js?id=G-FZ9NB6E8KP";
+        document.head.appendChild(script);
+      }
+
+      function carregarOpenAIAds() {
+        if (openaiCarregado) return;
+        openaiCarregado = true;
+        !function(w,d,s,u){if(w.oaiq)return;var q=function(){q.q.push(arguments)};q.q=[];w.oaiq=q;var j=d.createElement(s);j.async=1;j.src=u;var f=d.getElementsByTagName(s)[0];f.parentNode.insertBefore(j,f)}(window,document,"script","https://bzrcdn.openai.com/sdk/oaiq.min.js");
+        oaiq("consent", true);
+        oaiq("init", { pixelId: "UDzcZbGKRcQru9fmdby6Hw" });
+      }
+
+      function aplicarPreferencias(preferencias) {
+        if (preferencias.analytics) carregarGoogleAnalytics();
+        if (preferencias.ads) carregarOpenAIAds();
+      }
+
+      function salvarPreferencias(preferencias) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+          analytics: !!preferencias.analytics,
+          ads: !!preferencias.ads,
+          updatedAt: new Date().toISOString()
+        }));
+      }
+
+      window.DrAppPrivacy = { lerPreferencias, aplicarPreferencias, salvarPreferencias };
+      const preferenciasSalvas = lerPreferencias();
+      if (preferenciasSalvas) aplicarPreferencias(preferenciasSalvas);
+    })();
   </script>
 </head>
 
@@ -2145,11 +2251,73 @@
       <a href="politica.html" style="color:rgba(255,255,255,0.45);text-decoration:none;">Política de Privacidade</a>
       <span style="color:rgba(255,255,255,0.2);margin:0 8px;">·</span>
       <a href="politica.html#termos" style="color:rgba(255,255,255,0.45);text-decoration:none;">Termos de Uso</a>
+      <span style="color:rgba(255,255,255,0.2);margin:0 8px;">·</span>
+      <button type="button" class="privacy-settings-link" id="privacySettingsLink">Configurações de privacidade</button>
     </div>
     <div style="margin-top:10px;">
       <a href="admin.html" style="font-size:12px;color:rgba(255,255,255,0.25);text-decoration:none;" title="Área restrita">· Operação DrApp ·</a>
     </div>
   </footer>
+
+  <section class="privacy-banner" id="privacyBanner" role="dialog" aria-modal="true" aria-labelledby="privacyBannerTitle" aria-describedby="privacyBannerText">
+    <div class="privacy-banner-copy">
+      <strong id="privacyBannerTitle">Sua privacidade é importante</strong>
+      <span id="privacyBannerText">Utilizamos tecnologias opcionais para entender o uso do site e medir campanhas. Elas só serão ativadas com sua autorização. Sua escolha não interfere no envio de pedidos.</span>
+      <a href="politica.html#cookies">Saiba mais</a>
+    </div>
+    <div class="privacy-actions">
+      <button type="button" class="privacy-btn primary" id="privacyAcceptAll">Aceitar opcionais</button>
+      <button type="button" class="privacy-btn" id="privacyRejectAll">Recusar opcionais</button>
+      <button type="button" class="privacy-btn" id="privacyConfigure">Configurar</button>
+    </div>
+  </section>
+
+  <div class="privacy-modal-backdrop" id="privacyModalBackdrop" aria-hidden="true">
+    <section class="privacy-modal" role="dialog" aria-modal="true" aria-labelledby="privacyModalTitle">
+      <div class="privacy-modal-head">
+        <div>
+          <h2 id="privacyModalTitle">Configurações de privacidade</h2>
+          <p class="privacy-modal-intro">Escolha quais tecnologias opcionais podem ser utilizadas. Você poderá alterar esta decisão a qualquer momento pelo rodapé.</p>
+        </div>
+        <button type="button" class="privacy-close" id="privacyModalClose" aria-label="Fechar configurações">×</button>
+      </div>
+
+      <div class="privacy-option">
+        <div class="privacy-option-row">
+          <div>
+            <div class="privacy-option-title">Tecnologias necessárias</div>
+            <p>Permitem o funcionamento, a segurança e a continuidade dos serviços solicitados.</p>
+          </div>
+          <span class="privacy-required">Sempre ativas</span>
+        </div>
+      </div>
+
+      <div class="privacy-option">
+        <div class="privacy-option-row">
+          <label for="privacyAnalytics">
+            <span class="privacy-option-title">Medição de uso</span>
+            <p>Ativa o Google Analytics para compreender como o site é utilizado e identificar melhorias.</p>
+          </label>
+          <input class="privacy-toggle" type="checkbox" id="privacyAnalytics" />
+        </div>
+      </div>
+
+      <div class="privacy-option">
+        <div class="privacy-option-row">
+          <label for="privacyAds">
+            <span class="privacy-option-title">Medição de campanhas</span>
+            <p>Ativa o OpenAI Ads para identificar quando uma campanha resulta no envio de um pedido.</p>
+          </label>
+          <input class="privacy-toggle" type="checkbox" id="privacyAds" />
+        </div>
+      </div>
+
+      <div class="privacy-modal-actions">
+        <button type="button" class="privacy-btn" id="privacyModalReject">Recusar opcionais</button>
+        <button type="button" class="privacy-btn primary" id="privacySave">Salvar preferências</button>
+      </div>
+    </section>
+  </div>
 
   <a
     class="wa-float"
@@ -2228,6 +2396,78 @@
     </button>
   </div>
 
+
+  <script>
+    (function () {
+      const banner = document.getElementById("privacyBanner");
+      const backdrop = document.getElementById("privacyModalBackdrop");
+      const analytics = document.getElementById("privacyAnalytics");
+      const ads = document.getElementById("privacyAds");
+      let focoAnterior = null;
+
+      function finalizarEscolha(preferencias) {
+        const anterior = DrAppPrivacy.lerPreferencias();
+        DrAppPrivacy.salvarPreferencias(preferencias);
+        banner.classList.remove("is-visible");
+        fecharModal();
+
+        const exigeRecarregar = anterior && (
+          (anterior.analytics && !preferencias.analytics) ||
+          (anterior.ads && !preferencias.ads)
+        );
+        if (exigeRecarregar) {
+          location.reload();
+          return;
+        }
+        DrAppPrivacy.aplicarPreferencias(preferencias);
+      }
+
+      function abrirModal() {
+        const preferencias = DrAppPrivacy.lerPreferencias() || { analytics: false, ads: false };
+        analytics.checked = preferencias.analytics;
+        ads.checked = preferencias.ads;
+        focoAnterior = document.activeElement;
+        backdrop.classList.add("is-visible");
+        backdrop.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+        document.getElementById("privacyModalClose").focus();
+      }
+
+      function fecharModal() {
+        backdrop.classList.remove("is-visible");
+        backdrop.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+        if (focoAnterior && document.contains(focoAnterior)) focoAnterior.focus();
+      }
+
+      document.getElementById("privacyAcceptAll").addEventListener("click", function () {
+        finalizarEscolha({ analytics: true, ads: true });
+      });
+      document.getElementById("privacyRejectAll").addEventListener("click", function () {
+        finalizarEscolha({ analytics: false, ads: false });
+      });
+      document.getElementById("privacyConfigure").addEventListener("click", abrirModal);
+      document.getElementById("privacySettingsLink").addEventListener("click", abrirModal);
+      document.getElementById("privacyModalClose").addEventListener("click", fecharModal);
+      document.getElementById("privacyModalReject").addEventListener("click", function () {
+        finalizarEscolha({ analytics: false, ads: false });
+      });
+      document.getElementById("privacySave").addEventListener("click", function () {
+        finalizarEscolha({ analytics: analytics.checked, ads: ads.checked });
+      });
+      backdrop.addEventListener("click", function (event) {
+        if (event.target === backdrop) fecharModal();
+      });
+      document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape" && backdrop.classList.contains("is-visible")) fecharModal();
+      });
+
+      if (!DrAppPrivacy.lerPreferencias()) {
+        banner.classList.add("is-visible");
+        setTimeout(function () { document.getElementById("privacyAcceptAll").focus(); }, 0);
+      }
+    })();
+  </script>
 
   <!-- ═══ SCRIPTS (lógica original preservada) ══════════════ -->
   <script>
@@ -3625,7 +3865,7 @@
       return idempotencyKeyPedido;
     }
 
-    function mostrarTelaPedidoEnviado(subtitulo) {
+    function mostrarTelaPedidoEnviado(subtitulo, medirConversao = true) {
       pedidoJaEnviado = true;
       envioEmAndamento = false;
       gtag('event', 'lead_generated', {
@@ -3633,13 +3873,15 @@
         labs: [...new Set(selecionados.map(e => e.laboratorio))].join(','),
         value: selecionados.reduce((s, i) => s + (parseFloat(i.precoDrapp) || 0), 0)
       });
-      try {
-        oaiq("measure", "lead_created", {
-          type: "customer_action",
-          amount: Math.round(selecionados.reduce((s, i) => s + (parseFloat(i.precoDrapp) || 0), 0) * 100),
-          currency: "BRL"
-        });
-      } catch (_) {}
+      if (medirConversao) {
+        try {
+          oaiq("measure", "lead_created", {
+            type: "customer_action",
+            amount: Math.round(selecionados.reduce((s, i) => s + (parseFloat(i.precoDrapp) || 0), 0) * 100),
+            currency: "BRL"
+          });
+        } catch (_) {}
+      }
       checkoutCard.innerHTML = `
         <div style="text-align:center;padding:40px 20px;">
           <div style="font-size:48px;margin-bottom:16px;">✅</div>
@@ -3785,7 +4027,7 @@
         } else if (postDisparado) {
           // Rede caiu DEPOIS do POST: o admin pode já ter o pedido.
           pedidoJaEnviado = true;
-          mostrarTelaPedidoEnviado("Se o pedido já tiver sido recebido, nossa equipe confirma pelo WhatsApp. Não envie de novo.");
+          mostrarTelaPedidoEnviado("Se o pedido já tiver sido recebido, nossa equipe confirma pelo WhatsApp. Não envie de novo.", false);
         } else {
           mostrarStatusCheckout("Erro ao enviar pedido: " + err.message, "error");
           liberarBotaoFinalizar();
