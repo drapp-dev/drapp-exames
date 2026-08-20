@@ -1607,6 +1607,10 @@
         !function(w,d,s,u){if(w.oaiq)return;var q=function(){q.q.push(arguments)};q.q=[];w.oaiq=q;var j=d.createElement(s);j.async=1;j.src=u;var f=d.getElementsByTagName(s)[0];f.parentNode.insertBefore(j,f)}(window,document,"script","https://bzrcdn.openai.com/sdk/oaiq.min.js");
         oaiq("consent", true);
         oaiq("init", { pixelId: "UDzcZbGKRcQru9fmdby6Hw" });
+        oaiq("measure", "page_viewed", {
+          type: "contents",
+          contents: [{ id: "home", name: "DrApp Exames", content_type: "page" }]
+        });
       }
 
       function aplicarPreferencias(preferencias) {
@@ -2540,6 +2544,29 @@
     let ultimaListaBusca = []; // últimos resultados retornados pelo Apps Script
     let catalogo         = null; // { mapeamento, precos, termos } — carregado uma vez
 
+    function medirOpenAIAds_(evento, dados) {
+      try {
+        const preferencias = window.DrAppPrivacy && window.DrAppPrivacy.lerPreferencias();
+        if (!preferencias || !preferencias.ads || typeof window.oaiq !== "function") return;
+        window.oaiq("measure", evento, dados);
+      } catch (_) {}
+    }
+
+    function conteudosOpenAIAds_(itens) {
+      if (!itens.length) return [];
+      // Não envia nomes, códigos ou categorias de exames para plataformas de anúncios.
+      return [{
+        id: "exam_selection",
+        name: "Exames selecionados",
+        content_type: "product",
+        quantity: itens.length
+      }];
+    }
+
+    function totalCentavosOpenAIAds_(itens) {
+      return Math.round(itens.reduce((total, item) => total + Number(item.precoDrapp || 0), 0) * 100);
+    }
+
     // ── Busca client-side ──────────────────────────────────────
     const STOP_CLI = new Set(["de","da","do","das","dos","em","no","na","nos","nas","por","para","e","ou","a","o","as","os","com","sem","ao","aos","que","um","uma","uns","umas","se","apos","via","ate","sob","sobre"]);
 
@@ -3370,6 +3397,15 @@
       adicionados.forEach(registrarEscolha_);
       const contrasteAdicionado = adicionarContrasteAuto(adicionados);
       contrasteAdicionado.forEach(registrarEscolha_);
+      const todosAdicionados = adicionados.concat(contrasteAdicionado);
+      if (todosAdicionados.length) {
+        medirOpenAIAds_("items_added", {
+          type: "contents",
+          amount: totalCentavosOpenAIAds_(todosAdicionados),
+          currency: "BRL",
+          contents: conteudosOpenAIAds_(todosAdicionados)
+        });
+      }
       buscaExame.value = "";
       suggestions.style.display = "none";
       suggestions.innerHTML = "";
@@ -3710,6 +3746,12 @@
     btnContinuar.addEventListener("click", function () {
       if (!temExamesOuFotos()) return;
       gtag('event', 'checkout_opened', { exam_count: selecionados.length });
+      medirOpenAIAds_("checkout_started", {
+        type: "contents",
+        amount: totalCentavosOpenAIAds_(selecionados),
+        currency: "BRL",
+        contents: conteudosOpenAIAds_(selecionados)
+      });
       checkoutCard.classList.add("active");
       checkoutCard.scrollIntoView({ behavior: "smooth", block: "start" });
     });
@@ -3874,13 +3916,11 @@
         value: selecionados.reduce((s, i) => s + (parseFloat(i.precoDrapp) || 0), 0)
       });
       if (medirConversao) {
-        try {
-          oaiq("measure", "lead_created", {
-            type: "customer_action",
-            amount: Math.round(selecionados.reduce((s, i) => s + (parseFloat(i.precoDrapp) || 0), 0) * 100),
-            currency: "BRL"
-          });
-        } catch (_) {}
+        medirOpenAIAds_("lead_created", {
+          type: "customer_action",
+          amount: totalCentavosOpenAIAds_(selecionados),
+          currency: "BRL"
+        });
       }
       checkoutCard.innerHTML = `
         <div style="text-align:center;padding:40px 20px;">
