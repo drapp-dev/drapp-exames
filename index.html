@@ -3,6 +3,8 @@
 
 <head>
   <meta charset="UTF-8" />
+  <!-- OpenAI Measurement Pixel -->
+  <script>!function(w,d,s,u){if(w.oaiq)return;var q=function(){q.q.push(arguments)};q.q=[];w.oaiq=q;var j=d.createElement(s);j.async=1;j.src=u;var f=d.getElementsByTagName(s)[0];f.parentNode.insertBefore(j,f)}(window,document,"script","https://bzrcdn.openai.com/sdk/oaiq.min.js");oaiq("init",{pixelId:"UDzcZbGKRcQru9fmdby6Hw",debug:true});</script>
   <script>
     // Redirect drapp.com.br/p?d=DEAL_ID → página de upload
     (function () {
@@ -3631,6 +3633,13 @@
         labs: [...new Set(selecionados.map(e => e.laboratorio))].join(','),
         value: selecionados.reduce((s, i) => s + (parseFloat(i.precoDrapp) || 0), 0)
       });
+      try {
+        oaiq("measure", "lead_created", {
+          type: "customer_action",
+          amount: Math.round(selecionados.reduce((s, i) => s + (parseFloat(i.precoDrapp) || 0), 0) * 100),
+          currency: "BRL"
+        });
+      } catch (_) {}
       checkoutCard.innerHTML = `
         <div style="text-align:center;padding:40px 20px;">
           <div style="font-size:48px;margin-bottom:16px;">✅</div>
