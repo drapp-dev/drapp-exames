@@ -1567,6 +1567,47 @@
       .privacy-actions .privacy-btn { flex: 1 1 100%; }
       .privacy-modal-actions .privacy-btn { flex: 1 1 100%; }
     }
+
+    /* ─── Baixar o App ──────────────────────────────── */
+    .btn-install-app {
+      background: rgba(255,255,255,0.10); color: #fff; font-weight: 700; font-size: 14px;
+      padding: 11px 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.28);
+      cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
+      font-family: inherit; transition: background 0.18s;
+    }
+    .btn-install-app:hover { background: rgba(255,255,255,0.18); }
+    .install-modal-backdrop {
+      position: fixed; inset: 0; z-index: 10030; padding: 20px;
+      background: rgba(5, 24, 42, 0.62); display: none;
+      align-items: center; justify-content: center;
+    }
+    .install-modal-backdrop.is-visible { display: flex; }
+    .install-modal {
+      width: min(420px, 100%); max-height: min(760px, calc(100vh - 40px)); overflow: auto;
+      background: #fff; border-radius: 20px; box-shadow: 0 24px 70px rgba(0,0,0,0.3);
+      padding: 26px;
+    }
+    .install-modal-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 6px; }
+    .install-modal h2 { margin: 0; color: var(--blue-deep); font-size: 21px; }
+    .install-close { border: 0; background: none; color: var(--muted); font-size: 26px; cursor: pointer; line-height: 1; }
+    .install-step {
+      display: flex; gap: 12px; align-items: flex-start; padding: 12px 0;
+      border-top: 1px solid #e5edf4; font-size: 14px; color: var(--text); line-height: 1.5;
+    }
+    .install-step:first-of-type { border-top: none; padding-top: 16px; }
+    .install-step-n {
+      flex: 0 0 auto; width: 26px; height: 26px; border-radius: 50%;
+      background: var(--soft-blue); color: var(--blue-deep); font-weight: 800; font-size: 13px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .install-icon { font-size: 20px; }
+    .install-cta {
+      display: block; text-align: center; margin-top: 18px; padding: 13px 20px;
+      background: var(--orange); color: #fff; font-weight: 800; border-radius: 12px;
+      border: none; font-size: 15px; cursor: pointer; width: 100%; font-family: inherit;
+    }
+    .install-cta:hover { background: var(--orange-dark); }
+    .install-link-prefs { display: block; text-align: center; margin-top: 14px; color: var(--blue); font-weight: 700; font-size: 14px; text-decoration: none; }
   </style>
   <!-- Analytics e publicidade permanecem bloqueados até o consentimento. -->
   <script>
@@ -1676,7 +1717,12 @@
           🔎 Já sou cliente — ver meus pedidos
         </a>
       </div>
-      <p style="color:rgba(255,255,255,0.65);font-size:14px;margin:-28px 0 44px;max-width:420px;">Acompanhe o status, veja o orçamento completo e baixe o PDF.</p>
+      <p style="color:rgba(255,255,255,0.65);font-size:14px;margin:-28px 0 20px;max-width:420px;">Acompanhe o status, veja o orçamento completo e baixe o PDF.</p>
+
+      <button type="button" id="btnBaixarApp" class="btn-install-app">
+        📲 Baixar o App e receber notificações
+      </button>
+      <p style="color:rgba(255,255,255,0.55);font-size:13px;margin:8px 0 44px;max-width:420px;">Avisos do seu exame e novidades de saúde — você escolhe o que recebe.</p>
 
       <div class="stats-strip">
         <div class="stat-item">
@@ -2327,6 +2373,16 @@
         <button type="button" class="privacy-btn" id="privacyModalReject">Recusar opcionais</button>
         <button type="button" class="privacy-btn primary" id="privacySave">Salvar preferências</button>
       </div>
+    </section>
+  </div>
+
+  <div class="install-modal-backdrop" id="installModalBackdrop" aria-hidden="true">
+    <section class="install-modal" role="dialog" aria-modal="true" aria-labelledby="installModalTitle">
+      <div class="install-modal-head">
+        <h2 id="installModalTitle">Baixar o App DrApp</h2>
+        <button type="button" class="install-close" id="installModalClose" aria-label="Fechar">×</button>
+      </div>
+      <div id="installModalBody"><!-- preenchido pelo script conforme o celular --></div>
     </section>
   </div>
 
@@ -4496,6 +4552,98 @@
       document.getElementById("fbSkip").addEventListener("click", function () {
         enviarFeedback(true);
       });
+    })();
+  </script>
+
+  <!-- ═══ BAIXAR O APP ═══════════════════════════════════════
+       Android/Chrome: instala de verdade com 1 toque (beforeinstallprompt).
+       iPhone/Safari: a Apple não deixa nenhum site instalar sozinho — o único
+       caminho é Compartilhar → Adicionar à Tela de Início, então mostramos
+       o passo a passo certo em vez de fingir que dá pra pular essa etapa. -->
+  <script>
+    (function () {
+      var btn = document.getElementById("btnBaixarApp");
+      var backdrop = document.getElementById("installModalBackdrop");
+      var body = document.getElementById("installModalBody");
+      var closeBtn = document.getElementById("installModalClose");
+      var deferredPrompt = null;
+      var PREFS_URL = "https://app.drapp.com.br/notificacoes";
+
+      window.addEventListener("beforeinstallprompt", function (e) {
+        e.preventDefault();
+        deferredPrompt = e;
+      });
+
+      function jaInstalado() {
+        return window.matchMedia && window.matchMedia("(display-mode: standalone)").matches;
+      }
+      function ehIOS() {
+        return /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;
+      }
+
+      function linkPreferencias() {
+        return '<a class="install-link-prefs" href="' + PREFS_URL + '">Escolher o que quero receber →</a>';
+      }
+
+      function abrirModal(html) {
+        body.innerHTML = html;
+        backdrop.classList.add("is-visible");
+        backdrop.setAttribute("aria-hidden", "false");
+      }
+      function fecharModal() {
+        backdrop.classList.remove("is-visible");
+        backdrop.setAttribute("aria-hidden", "true");
+      }
+
+      function telaJaInstalado() {
+        abrirModal(
+          '<div class="install-step"><span class="install-icon">✅</span><span>O DrApp já está instalado nesse celular. Toque no ícone na sua tela de início pra abrir.</span></div>' +
+          linkPreferencias()
+        );
+      }
+
+      function telaAndroid() {
+        abrirModal(
+          '<p style="color:var(--muted);font-size:14px;margin:0 0 4px;">Um toque e o ícone aparece na sua tela.</p>' +
+          '<button type="button" class="install-cta" id="installAgoraBtn">📲 Instalar agora</button>' +
+          linkPreferencias()
+        );
+        document.getElementById("installAgoraBtn").addEventListener("click", function () {
+          if (!deferredPrompt) { telaGenerica(); return; }
+          deferredPrompt.prompt();
+          deferredPrompt.userChoice.finally(function () { deferredPrompt = null; });
+          fecharModal();
+        });
+      }
+
+      function telaIOS() {
+        abrirModal(
+          '<div class="install-step"><span class="install-step-n">1</span><span>Toque no ícone <strong>Compartilhar</strong> (o quadrado com a seta ↑) na barra do Safari.</span></div>' +
+          '<div class="install-step"><span class="install-step-n">2</span><span>Role e toque em <strong>"Adicionar à Tela de Início"</strong>.</span></div>' +
+          '<div class="install-step"><span class="install-step-n">3</span><span>Toque em <strong>"Adicionar"</strong> — pronto, o ícone do DrApp aparece na sua tela.</span></div>' +
+          '<p style="color:var(--muted);font-size:12.5px;margin:14px 0 0;">⚠️ Esse passo só funciona pelo Safari — não pelo Chrome ou outro navegador no iPhone.</p>' +
+          linkPreferencias()
+        );
+      }
+
+      function telaGenerica() {
+        abrirModal(
+          '<div class="install-step"><span class="install-icon">💡</span><span>Abra este link no navegador do seu <strong>celular</strong> (Chrome no Android, ou Safari no iPhone) pra instalar o app.</span></div>' +
+          linkPreferencias()
+        );
+      }
+
+      if (btn) {
+        btn.addEventListener("click", function () {
+          if (jaInstalado()) { telaJaInstalado(); return; }
+          if (ehIOS()) { telaIOS(); return; }
+          if (deferredPrompt) { telaAndroid(); return; }
+          if (/android/i.test(navigator.userAgent)) { telaAndroid(); return; }
+          telaGenerica();
+        });
+      }
+      if (closeBtn) closeBtn.addEventListener("click", fecharModal);
+      if (backdrop) backdrop.addEventListener("click", function (e) { if (e.target === backdrop) fecharModal(); });
     })();
   </script>
 </body>
