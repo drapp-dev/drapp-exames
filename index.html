@@ -1607,7 +1607,12 @@
       border: none; font-size: 15px; cursor: pointer; width: 100%; font-family: inherit;
     }
     .install-cta:hover { background: var(--orange-dark); }
-    .install-link-prefs { display: block; text-align: center; margin-top: 14px; color: var(--blue); font-weight: 700; font-size: 14px; text-decoration: none; }
+    .install-link-prefs {
+      display: block; text-align: center; margin-top: 14px; padding: 13px 20px;
+      background: var(--blue); color: #fff; font-weight: 800; border-radius: 12px;
+      font-size: 15px; text-decoration: none;
+    }
+    .install-link-prefs:hover { background: var(--blue-dark); }
   </style>
   <!-- Analytics e publicidade permanecem bloqueados até o consentimento. -->
   <script>
@@ -4611,7 +4616,13 @@
         document.getElementById("installAgoraBtn").addEventListener("click", function () {
           if (!deferredPrompt) { telaGenerica(); return; }
           deferredPrompt.prompt();
-          deferredPrompt.userChoice.finally(function () { deferredPrompt = null; });
+          deferredPrompt.userChoice.then(function (escolha) {
+            // Só manda pra tela de notificação se ela realmente instalou —
+            // se cancelou, não faz sentido empurrar pra outra tela.
+            if (escolha && escolha.outcome === "accepted") {
+              window.location.href = PREFS_URL;
+            }
+          }).finally(function () { deferredPrompt = null; });
           fecharModal();
         });
       }
