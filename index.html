@@ -2067,9 +2067,14 @@
             <p class="section-subtitle">Preencha seus dados para concluir a solicitação dos exames escolhidos.</p>
 
             <form autocomplete="on" novalidate>
-            <div class="quem-tabs" role="group" aria-label="Quem vai fazer o exame">
-              <button type="button" id="quemEu" class="quem-tab is-on">Os exames são para mim</button>
-              <button type="button" id="quemOutro" class="quem-tab">Para um familiar</button>
+            <p class="section-subtitle" style="margin-bottom:10px;">Para quem é o orçamento?</p>
+            <div class="quem-tabs" role="group" aria-label="Para quem é o orçamento?" id="quemTabs">
+              <button type="button" id="quemEu" class="quem-tab is-on">Eu mesma(o)</button>
+              <button type="button" id="quemOutro" class="quem-tab">Outra pessoa</button>
+            </div>
+            <div id="paraLogadoWrap" style="display:none;margin-bottom:16px;">
+              <label for="paraQuem" style="display:block;font-size:13px;font-weight:600;color:#16324a;margin-bottom:6px;">Quem vai realizar</label>
+              <select id="paraQuem" style="width:100%;height:48px;border:1.5px solid #e2e8f0;border-radius:12px;padding:0 12px;font-size:15px;font-family:inherit;background:#fff;color:#16324a;"></select>
             </div>
             <div class="grid-2">
               <div class="field">
@@ -2180,7 +2185,27 @@
               <div style="font-weight:700;font-size:15px;margin-bottom:10px;color:var(--blue);">Quem vai fazer o exame</div>
               <div class="field">
                 <label for="cpfPaciente">CPF do paciente</label>
-                <input type="text" id="cpfPaciente" placeholder="000.000.000-00" maxlength="14" />
+                <div class="cpf-row">
+                  <input type="text" id="cpfPaciente" placeholder="000.000.000-00" maxlength="14" />
+                  <button id="btnValidarCpfPaciente" class="inline-btn" type="button">Validar CPF</button>
+                </div>
+                <div id="cpfPacienteStatus" class="cpf-status"></div>
+              </div>
+              <div id="cpfPacienteResult" class="cpf-result" style="margin-top:10px;">
+                <div class="cpf-result-title">Confira os dados de quem vai realizar</div>
+                <div class="cpf-result-grid">
+                  <div class="cpf-result-item">
+                    <div class="cpf-result-label">Nome Completo</div>
+                    <div id="cpfPacienteNome" class="cpf-result-value">-</div>
+                  </div>
+                  <div class="cpf-result-item">
+                    <div class="cpf-result-label">Data de Nascimento</div>
+                    <div id="cpfPacienteNascTxt" class="cpf-result-value">-</div>
+                  </div>
+                </div>
+                <div class="cpf-confirm-actions">
+                  <button id="btnCpfPacienteOk" class="cpf-confirm-btn cpf-ok" type="button">✓ correto!</button>
+                </div>
               </div>
               <div class="field" style="margin-top:10px;">
                 <label for="nomePaciente">Nome completo</label>
@@ -2587,6 +2612,9 @@
     // entra só no admin (https://admin.drapp.com.br).
     const PEDIDOS_API_URL = "https://pedidos.drapp.com.br";
     let quemExame = "eu";
+    let contaLogada = null; // { cpf, nome, dependentes[] }
+    let cpfPacienteValidado = false;
+    let dadosCpfPaciente = null;
 
     // Identificador aleatório por navegador (não é segredo, só ajuda o backend a limitar
     // o número de consultas de CPF por origem e dificultar varredura automatizada).
@@ -2641,8 +2669,90 @@
     const cpfNascimento = document.getElementById("cpfNascimento");
     const quemEuBtn = document.getElementById("quemEu");
     const quemOutroBtn = document.getElementById("quemOutro");
+    const quemTabs = document.getElementById("quemTabs");
     const familiarWrap = document.getElementById("familiarWrap");
+    const paraLogadoWrap = document.getElementById("paraLogadoWrap");
+    const paraQuemSel = document.getElementById("paraQuem");
     const cpfLabel = document.getElementById("cpfLabel");
+
+    function cookieDrapp(nome) {
+      const m = document.cookie.match(new RegExp("(?:^|; )" + nome.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "=([^;]*)"));
+      return m ? decodeURIComponent(m[1]) : "";
+    }
+
+    function paraIsoData(valor) {
+      if (!valor) return "";
+      const t = String(valor).trim();
+      if (/^\d{4}-\d{2}-\d{2}/.test(t)) return t.slice(0, 10);
+      const br = t.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
+      if (br) return br[3] + "-" + br[2].padStart(2, "0") + "-" + br[1].padStart(2, "0");
+      return "";
+    }
+
+    function preencherPaciente(cpf, nome, nasc, parentesco) {
+      const cpfEl = document.getElementById("cpfPaciente");
+      const nomeEl = document.getElementById("nomePaciente");
+      const nascEl = document.getElementById("nascPaciente");
+      const parEl = document.getElementById("parentesco");
+      if (cpfEl) cpfEl.value = mascaraCPF(cpf || "");
+      if (nomeEl) nomeEl.value = nome || "";
+      if (nascEl) nascEl.value = paraIsoData(nasc);
+      if (parEl) parEl.value = parentesco || "";
+      cpfPacienteValidado = !!(cpf && nome);
+      dadosCpfPaciente = nome ? { nome: nome, nascimento: nasc || "" } : null;
+    }
+
+    function montarDropdownConta() {
+      if (!paraQuemSel || !contaLogada) return;
+      const deps = contaLogada.dependentes || [];
+      const escolhido = cookieDrapp("drapp_para") || "eu";
+      paraQuemSel.innerHTML = "";
+      const optEu = document.createElement("option");
+      optEu.value = "eu";
+      optEu.textContent = "Eu mesma(o)" + (contaLogada.nome ? " — " + contaLogada.nome : "");
+      paraQuemSel.appendChild(optEu);
+      deps.forEach(function (d) {
+        const o = document.createElement("option");
+        o.value = d.cpf;
+        o.textContent = d.nome + (d.parentesco ? " (" + d.parentesco + ")" : "");
+        o.setAttribute("data-nome", d.nome || "");
+        o.setAttribute("data-nasc", d.nascimento || "");
+        o.setAttribute("data-par", d.parentesco || "");
+        paraQuemSel.appendChild(o);
+      });
+      const optOutro = document.createElement("option");
+      optOutro.value = "outro";
+      optOutro.textContent = "Outra pessoa";
+      paraQuemSel.appendChild(optOutro);
+      const existe = [...paraQuemSel.options].some(function (o) { return o.value === escolhido; });
+      paraQuemSel.value = existe ? escolhido : "eu";
+      aplicarParaQuem(paraQuemSel.value);
+    }
+
+    function aplicarParaQuem(valor) {
+      if (valor === "eu") {
+        marcarQuem("eu");
+        preencherPaciente("", "", "", "");
+        cpfPacienteValidado = true;
+        return;
+      }
+      marcarQuem("outro");
+      if (valor === "outro") {
+        preencherPaciente("", "", "", "");
+        cpfPacienteValidado = false;
+        dadosCpfPaciente = null;
+        const res = document.getElementById("cpfPacienteResult");
+        if (res) res.classList.remove("active");
+        return;
+      }
+      const opt = paraQuemSel && paraQuemSel.selectedOptions[0];
+      preencherPaciente(
+        valor,
+        opt ? opt.getAttribute("data-nome") : "",
+        opt ? opt.getAttribute("data-nasc") : "",
+        opt ? opt.getAttribute("data-par") : ""
+      );
+    }
 
     function marcarQuem(quem) {
       quemExame = quem;
@@ -2653,6 +2763,42 @@
     }
     if (quemEuBtn) quemEuBtn.addEventListener("click", function () { marcarQuem("eu"); });
     if (quemOutroBtn) quemOutroBtn.addEventListener("click", function () { marcarQuem("outro"); });
+    if (paraQuemSel) paraQuemSel.addEventListener("change", function () {
+      aplicarParaQuem(paraQuemSel.value);
+    });
+
+    async function carregarContaLogada() {
+      const token = cookieDrapp("drapp_sessao");
+      if (!token) return;
+      try {
+        const resp = await fetch(PEDIDOS_API_URL + "/api/familia/conta", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token: token })
+        });
+        const data = await resp.json();
+        if (!resp.ok || !data.ok) return;
+        contaLogada = data;
+        if (quemTabs) quemTabs.style.display = "none";
+        if (paraLogadoWrap) paraLogadoWrap.style.display = "block";
+        if (cpfInput && data.cpf) cpfInput.value = mascaraCPF(data.cpf);
+        montarDropdownConta();
+        try {
+          const dados = await consultarCpf(data.cpf);
+          if (dados && dados.nome) {
+            dadosCpfValidados = dados;
+            cpfValidado = true;
+            cpfConfirmado = true;
+            cpfNome.textContent = dados.nome || "-";
+            cpfNascimento.textContent = dados.nascimento || "-";
+            cpfResult.classList.add("active");
+            mostrarStatusCpf("Conta conectada. Confira se os dados estão certos.", "success");
+            atualizarBotoes();
+          }
+        } catch (_) {}
+      } catch (_) {}
+    }
+    carregarContaLogada();
 
     let selecionados = [];
     let debounceTimer;
@@ -3834,6 +3980,75 @@
     if (cpfPacienteInput) {
       cpfPacienteInput.addEventListener("input", function () {
         this.value = mascaraCPF(this.value);
+        cpfPacienteValidado = false;
+        dadosCpfPaciente = null;
+        const res = document.getElementById("cpfPacienteResult");
+        if (res) res.classList.remove("active");
+      });
+    }
+    const btnValidarCpfPaciente = document.getElementById("btnValidarCpfPaciente");
+    const cpfPacienteStatus = document.getElementById("cpfPacienteStatus");
+    const cpfPacienteResult = document.getElementById("cpfPacienteResult");
+    if (btnValidarCpfPaciente) {
+      btnValidarCpfPaciente.addEventListener("click", async function () {
+        const cpfLimpo = (cpfPacienteInput && cpfPacienteInput.value || "").replace(/\D/g, "");
+        if (cpfLimpo.length !== 11) {
+          if (cpfPacienteStatus) {
+            cpfPacienteStatus.textContent = "Informe um CPF válido.";
+            cpfPacienteStatus.className = "cpf-status active error";
+          }
+          return;
+        }
+        if (contaLogada && cpfLimpo === String(contaLogada.cpf || "").replace(/\D/g, "")) {
+          if (cpfPacienteStatus) {
+            cpfPacienteStatus.textContent = "Esse é o seu CPF. Escolha “Eu mesma(o)” se o exame é seu.";
+            cpfPacienteStatus.className = "cpf-status active error";
+          }
+          return;
+        }
+        btnValidarCpfPaciente.disabled = true;
+        btnValidarCpfPaciente.textContent = "Validando...";
+        try {
+          if (cpfPacienteStatus) {
+            cpfPacienteStatus.textContent = "Consultando dados do CPF...";
+            cpfPacienteStatus.className = "cpf-status active success";
+          }
+          const dados = await consultarCpf(cpfLimpo);
+          if (!dados || !dados.nome) throw new Error("Não encontrado");
+          dadosCpfPaciente = dados;
+          document.getElementById("cpfPacienteNome").textContent = dados.nome || "-";
+          document.getElementById("cpfPacienteNascTxt").textContent = dados.nascimento || "-";
+          document.getElementById("nomePaciente").value = dados.nome || "";
+          document.getElementById("nascPaciente").value = paraIsoData(dados.nascimento);
+          if (cpfPacienteResult) cpfPacienteResult.classList.add("active");
+          if (cpfPacienteStatus) {
+            cpfPacienteStatus.textContent = dados.origem === "hub"
+              ? "✔ Dados encontrados em base externa"
+              : "✔ Dados encontrados em nosso sistema";
+            cpfPacienteStatus.className = "cpf-status active success";
+          }
+        } catch (erro) {
+          cpfPacienteValidado = false;
+          dadosCpfPaciente = null;
+          if (cpfPacienteResult) cpfPacienteResult.classList.remove("active");
+          if (cpfPacienteStatus) {
+            cpfPacienteStatus.textContent = "Não localizamos os dados deste CPF. Confira o número ou preencha o nome.";
+            cpfPacienteStatus.className = "cpf-status active error";
+          }
+        } finally {
+          btnValidarCpfPaciente.disabled = false;
+          btnValidarCpfPaciente.textContent = "Validar CPF";
+        }
+      });
+    }
+    const btnCpfPacienteOk = document.getElementById("btnCpfPacienteOk");
+    if (btnCpfPacienteOk) {
+      btnCpfPacienteOk.addEventListener("click", function () {
+        cpfPacienteValidado = true;
+        if (cpfPacienteStatus) {
+          cpfPacienteStatus.textContent = "Dados confirmados.";
+          cpfPacienteStatus.className = "cpf-status active success";
+        }
       });
     }
 
@@ -4099,6 +4314,10 @@
         const nomePac = (document.getElementById("nomePaciente").value || "").trim();
         if (cpfPac.length !== 11) {
           mostrarStatusCheckout("Informe o CPF de quem vai fazer o exame.");
+          return;
+        }
+        if (!cpfPacienteValidado) {
+          mostrarStatusCheckout("Valide o CPF de quem vai fazer o exame.");
           return;
         }
         if (!nomePac || nomePac.split(" ").filter(Boolean).length < 2) {
