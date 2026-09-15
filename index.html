@@ -961,6 +961,13 @@
     .inline-btn:not(:disabled):hover { background: var(--orange-dark); transform: translateY(-1px); }
     .inline-btn:disabled { background: #b8c3cf; cursor: not-allowed; box-shadow: none; }
 
+    .quem-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+    .quem-tab {
+      border: 2px solid #e2e8f0; background: #f8fafc; border-radius: 12px;
+      padding: 12px 8px; font-weight: 700; font-size: 14px; cursor: pointer; font-family: inherit; color: #16324a;
+    }
+    .quem-tab.is-on { border-color: var(--blue); background: rgba(12,119,203,.08); color: var(--blue); }
+
     /* ─── CHECKOUT ───────────────────────────────────── */
     .checkout-card { display: none; border: 2px solid rgba(81,201,210,0.4); background: #f5fcfd; }
     .checkout-card.active { display: block; }
@@ -1693,7 +1700,10 @@
       <div class="navbar-logo-box" style="display:none;">Dr<span>App</span></div>
       <span class="navbar-tagline">Sua Saúde é Nossa Vida</span>
     </a>
-    <a href="#orcamento" class="navbar-cta">Fazer Orçamento Grátis →</a>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end;">
+      <a href="/conta/" style="font-weight:700;color:var(--blue);text-decoration:none;font-size:14px;">Minha conta</a>
+      <a href="#orcamento" class="navbar-cta">Fazer Orçamento Grátis →</a>
+    </div>
   </nav>
 
   <main id="main">
@@ -2057,9 +2067,13 @@
             <p class="section-subtitle">Preencha seus dados para concluir a solicitação dos exames escolhidos.</p>
 
             <form autocomplete="on" novalidate>
+            <div class="quem-tabs" role="group" aria-label="Quem vai fazer o exame">
+              <button type="button" id="quemEu" class="quem-tab is-on">Os exames são para mim</button>
+              <button type="button" id="quemOutro" class="quem-tab">Para um familiar</button>
+            </div>
             <div class="grid-2">
               <div class="field">
-                <label for="cpf">CPF</label>
+                <label for="cpf" id="cpfLabel">CPF</label>
                 <div class="cpf-row">
                   <input type="text" id="cpf" placeholder="000.000.000-00" maxlength="14" autocomplete="off" />
                   <button id="btnValidarCpf" class="inline-btn" type="button">Validar CPF</button>
@@ -2161,6 +2175,26 @@
                 <div id="emailError" class="field-error">Informe um e-mail válido.</div>
               </div>
             </div><!-- /campos telefone+email -->
+
+            <div id="familiarWrap" style="display:none;margin-top:16px;background:#fff;border:1.5px solid #dbeafe;border-radius:14px;padding:16px;">
+              <div style="font-weight:700;font-size:15px;margin-bottom:10px;color:var(--blue);">Quem vai fazer o exame</div>
+              <div class="field">
+                <label for="cpfPaciente">CPF do paciente</label>
+                <input type="text" id="cpfPaciente" placeholder="000.000.000-00" maxlength="14" />
+              </div>
+              <div class="field" style="margin-top:10px;">
+                <label for="nomePaciente">Nome completo</label>
+                <input type="text" id="nomePaciente" placeholder="Nome de quem vai realizar" />
+              </div>
+              <div class="field" style="margin-top:10px;">
+                <label for="nascPaciente">Nascimento</label>
+                <input type="date" id="nascPaciente" />
+              </div>
+              <div class="field" style="margin-top:10px;">
+                <label for="parentesco">Parentesco</label>
+                <input type="text" id="parentesco" placeholder="filho, cônjuge, mãe…" />
+              </div>
+            </div>
 
             <div id="contatoConfirmWrap" style="display:none;margin-top:10px;padding:14px 16px;border:1.5px solid #f5a623;background:#fffaf0;border-radius:12px;">
               <div id="contatoConfirmMsg" style="font-size:14px;color:#7a4d00;margin-bottom:12px;line-height:1.5;"></div>
@@ -2313,6 +2347,8 @@
       <a href="politica.html" style="color:rgba(255,255,255,0.45);text-decoration:none;">Política de Privacidade</a>
       <span style="color:rgba(255,255,255,0.2);margin:0 8px;">·</span>
       <a href="politica.html#termos" style="color:rgba(255,255,255,0.45);text-decoration:none;">Termos de Uso</a>
+      <span style="color:rgba(255,255,255,0.2);margin:0 8px;">·</span>
+      <a href="/conta/" style="color:rgba(255,255,255,0.45);text-decoration:none;">Minha conta</a>
       <span style="color:rgba(255,255,255,0.2);margin:0 8px;">·</span>
       <button type="button" class="privacy-settings-link" id="privacySettingsLink">Configurações de privacidade</button>
     </div>
@@ -2550,6 +2586,7 @@
     // Fotos ainda sobem pelo Apps Script (S3). Bitrix está fora — o pedido
     // entra só no admin (https://admin.drapp.com.br).
     const PEDIDOS_API_URL = "https://pedidos.drapp.com.br";
+    let quemExame = "eu";
 
     // Identificador aleatório por navegador (não é segredo, só ajuda o backend a limitar
     // o número de consultas de CPF por origem e dificultar varredura automatizada).
@@ -2602,6 +2639,20 @@
     const cpfResult     = document.getElementById("cpfResult");
     const cpfNome       = document.getElementById("cpfNome");
     const cpfNascimento = document.getElementById("cpfNascimento");
+    const quemEuBtn = document.getElementById("quemEu");
+    const quemOutroBtn = document.getElementById("quemOutro");
+    const familiarWrap = document.getElementById("familiarWrap");
+    const cpfLabel = document.getElementById("cpfLabel");
+
+    function marcarQuem(quem) {
+      quemExame = quem;
+      if (quemEuBtn) quemEuBtn.classList.toggle("is-on", quem === "eu");
+      if (quemOutroBtn) quemOutroBtn.classList.toggle("is-on", quem === "outro");
+      if (familiarWrap) familiarWrap.style.display = quem === "outro" ? "block" : "none";
+      if (cpfLabel) cpfLabel.textContent = quem === "outro" ? "Seu CPF (quem solicita)" : "CPF";
+    }
+    if (quemEuBtn) quemEuBtn.addEventListener("click", function () { marcarQuem("eu"); });
+    if (quemOutroBtn) quemOutroBtn.addEventListener("click", function () { marcarQuem("outro"); });
 
     let selecionados = [];
     let debounceTimer;
@@ -3779,6 +3830,12 @@
       cpfError.style.display = "none";
       limparValidacaoCpf();
     });
+    const cpfPacienteInput = document.getElementById("cpfPaciente");
+    if (cpfPacienteInput) {
+      cpfPacienteInput.addEventListener("input", function () {
+        this.value = mascaraCPF(this.value);
+      });
+    }
 
     let _phoneFired = false;
     telefoneInput.addEventListener("input", function () {
@@ -4013,6 +4070,7 @@
           registrarSemBitrix: true,
           labsSelecionados: payload.labsSelecionados,
           paciente: payload.paciente,
+          titularCpf: payload.titularCpf,
           fotosUrls: imagensPedido.map(img => img.url).filter(Boolean)
         })
       });
@@ -4035,6 +4093,19 @@
       if (envioEmAndamento || pedidoJaEnviado) return;
       if (!validarFormularioBase()) return;
       if (!cpfValidado || !cpfConfirmado) return;
+
+      if (quemExame === "outro") {
+        const cpfPac = (document.getElementById("cpfPaciente").value || "").replace(/\D/g, "");
+        const nomePac = (document.getElementById("nomePaciente").value || "").trim();
+        if (cpfPac.length !== 11) {
+          mostrarStatusCheckout("Informe o CPF de quem vai fazer o exame.");
+          return;
+        }
+        if (!nomePac || nomePac.split(" ").filter(Boolean).length < 2) {
+          mostrarStatusCheckout("Informe o nome completo de quem vai fazer o exame.");
+          return;
+        }
+      }
 
       // Trava NA HORA — antes da confirmação de telefone/e-mail e antes do
       // POST. Sem isto, um segundo clique (ou o atualizarBotoes do upload)
@@ -4083,19 +4154,38 @@
 
       btnFinalizar.textContent = "Enviando pedido...";
 
+      const titularCpfLimpo = (cpfInput.value || "").replace(/\D/g, "");
+      let cpfPedido = cpfInput.value.trim();
+      let nomePedido = dadosCpfValidados ? dadosCpfValidados.nome : "";
+      let nascPedido = dadosCpfValidados ? dadosCpfValidados.nascimento : "";
+      let titularCpf = "";
+      let parentesco = "";
+      if (quemExame === "outro") {
+        const cpfPac = (document.getElementById("cpfPaciente").value || "").replace(/\D/g, "");
+        const nomePac = (document.getElementById("nomePaciente").value || "").trim();
+        const nascPac = (document.getElementById("nascPaciente").value || "").trim();
+        parentesco = (document.getElementById("parentesco").value || "").trim() || "familiar";
+        titularCpf = titularCpfLimpo;
+        cpfPedido = cpfPac;
+        nomePedido = nomePac;
+        nascPedido = nascPac;
+      }
+
       const payload = {
         action: "criarPedido",
         idempotencyKey: getIdempotencyKeyPedido_(),
         contactId: dadosCpfValidados ? dadosCpfValidados.contactId : "",
+        titularCpf: titularCpf || undefined,
         labsSelecionados: obterLabsSelecionados(),
         paciente: {
-          cpf: cpfInput.value.trim(),
+          cpf: cpfPedido,
           telefone: "+" + document.getElementById("paisTelefone").value + " " + telefoneInput.value.trim(),
           email: emailInput.value.trim(),
-          nome_completo_validado: dadosCpfValidados ? dadosCpfValidados.nome : "",
-          data_nascimento_validada: dadosCpfValidados ? dadosCpfValidados.nascimento : "",
+          nome_completo_validado: nomePedido,
+          data_nascimento_validada: nascPedido,
           origem_validacao: dadosCpfValidados ? dadosCpfValidados.origem : "",
           negocio_id_bitrix: dadosCpfValidados ? dadosCpfValidados.negocioId : "",
+          parentesco: parentesco || undefined,
           obs: (document.getElementById("obsTexto").value || "").trim()
         },
         exames: selecionados.map(item => ({
