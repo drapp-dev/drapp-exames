@@ -4810,23 +4810,41 @@
           return null;
         case 2:
           return null; // sempre tem laboratório marcado por padrão
-        case 3:
+        case 3: {
           if (!cpfValidado) return "Valide seu CPF antes de continuar.";
           if (!cpfConfirmado) return "Confirme se os dados encontrados estão certos.";
+          // Mesmo achado do passo 6, espelhado aqui: quando "Eu mesma(o)" é
+          // quem vai fazer o exame, o nascimento dela(e) é que vai na
+          // planilha do laboratório — se a fonte (cache/Hub) achou o nome
+          // mas não a data, isso passava batido. Só exige aqui quando ainda
+          // está como titular (o passo 6 cobre o caminho do dependente).
+          const nascVazio = !dadosCpfValidados || !dadosCpfValidados.nascimento || dadosCpfValidados.nascimento === "-";
+          if (quemExame === "eu" && nascVazio) {
+            if (nascEditorWrap && nascEditorWrap.style.display === "none") btnEditarNasc.click();
+            return "Não encontramos sua data de nascimento — preencha abaixo.";
+          }
           return null;
+        }
         case 4:
           return null; // "Eu mesma(o)" já vem marcado por padrão
         case 5:
           if (!validarTelefone(telefoneInput.value)) return "Informe um telefone válido.";
           if (!validarEmail(emailInput.value)) return "Informe um e-mail válido.";
           return null;
-        case 6:
+        case 6: {
+          // O nascimento é obrigatório mesmo quando o CPF já foi achado —
+          // achado real (18/set): CPF confirmado com nome mas sem data (fonte
+          // externa incompleta) passava batido e a planilha do laboratório
+          // ia com "—" no lugar da data. O campo abaixo fica preenchido pela
+          // busca OU digitado à mão, mas sempre tem que ter valor.
+          const nascM = (document.getElementById("nascPaciente").value || "").trim();
+          if (!nascM) return "Informe a data de nascimento de quem vai fazer o exame.";
           if (!cpfPacienteValidado) {
             const nomeM = (document.getElementById("nomePaciente").value || "").trim();
-            const nascM = (document.getElementById("nascPaciente").value || "").trim();
-            if (!nomeM || !nascM) return "Confirme o CPF (ou preencha nome e nascimento) de quem vai fazer o exame.";
+            if (!nomeM) return "Confirme o CPF (ou preencha nome e nascimento) de quem vai fazer o exame.";
           }
           return null;
+        }
         case 7:
           if (!document.getElementById("envioTitular").checked && !document.getElementById("envioDependente").checked) {
             return "Marque pra onde enviar o orçamento.";
