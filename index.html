@@ -2085,27 +2085,38 @@
 
           <!-- Observações -->
           <div class="card" data-wizstep="1" style="padding:20px 24px;">
-            <label for="obsTexto" style="font-weight:800;font-size:19px;color:var(--dark);display:block;margin-bottom:4px;">Ainda não tem o pedido em mãos?</label>
-            <div style="font-size:14px;color:var(--muted);line-height:1.45;margin-bottom:12px;">
-              Digite os exames, te enviaremos uma prévia de preço.
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+              <label for="obsTexto" style="font-weight:800;font-size:19px;color:var(--dark);margin:0;">Ainda não tem o pedido em mãos?</label>
+              <button type="button" id="btnAbrirDigitarExames" style="background:var(--orange);color:#fff;border:none;border-radius:999px;padding:10px 20px;font-size:15px;font-weight:800;cursor:pointer;white-space:nowrap;flex:none;">😄 NÃO</button>
             </div>
-            <textarea id="obsTexto" rows="4" maxlength="600"
-              placeholder="✍️ Escreva aqui — ex.: hemograma completo, glicemia, TSH..."
-              style="width:100%;box-sizing:border-box;resize:vertical;border:2px solid #94a3b8;border-radius:10px;padding:12px 14px;font-size:15px;font-family:inherit;color:var(--dark);background:#f8fafc;outline:none;box-shadow:inset 0 1px 3px rgba(15,23,42,.07);transition:border-color .2s, background .2s;"
-              onfocus="this.style.borderColor='var(--cyan)';this.style.background='#fff';"
-              onblur="this.style.borderColor='#94a3b8';this.style.background='#f8fafc';"
-              oninput="atualizarBotaoContinuar()"></textarea>
-            <div style="display:inline-flex;align-items:center;gap:6px;background:#dcfce7;border:1px solid #86efac;border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:700;color:#166534;margin-top:12px;line-height:1.3;">
-              <span style="flex:none;">✅</span><span>Exames de Imagem: <span style="color:#EC3636;">Obrigatório</span> Pedido Médico para gerar desconto</span>
-            </div>
-            <div style="margin-top:12px;background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:9px 12px;font-size:13px;font-weight:700;color:#b45309;line-height:1.4;display:flex;gap:7px;align-items:center;">
-              <span style="flex:none;">⚠️</span><span>Enviaremos só uma prévia de preço</span>
+            <div id="digitarExamesWrap" hidden>
+              <div style="font-size:14px;color:var(--muted);line-height:1.45;margin:12px 0;">
+                Digite os exames, te enviaremos uma prévia de preço.
+              </div>
+              <textarea id="obsTexto" rows="4" maxlength="600"
+                placeholder="✍️ Escreva aqui — ex.: hemograma completo, glicemia, TSH..."
+                style="width:100%;box-sizing:border-box;resize:vertical;border:2px solid #94a3b8;border-radius:10px;padding:12px 14px;font-size:15px;font-family:inherit;color:var(--dark);background:#f8fafc;outline:none;box-shadow:inset 0 1px 3px rgba(15,23,42,.07);transition:border-color .2s, background .2s;"
+                onfocus="this.style.borderColor='var(--cyan)';this.style.background='#fff';"
+                onblur="this.style.borderColor='#94a3b8';this.style.background='#f8fafc';"
+                oninput="atualizarBotaoContinuar()"></textarea>
+              <div style="display:inline-flex;align-items:center;gap:6px;background:#dcfce7;border:1px solid #86efac;border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:700;color:#166534;margin-top:12px;line-height:1.3;">
+                <span style="flex:none;">✅</span><span>Exames de Imagem: <span style="color:#EC3636;">Obrigatório</span> Pedido Médico para gerar desconto</span>
+              </div>
+              <div style="margin-top:12px;background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:9px 12px;font-size:13px;font-weight:700;color:#b45309;line-height:1.4;display:flex;gap:7px;align-items:center;">
+                <span style="flex:none;">⚠️</span><span>Enviaremos só uma prévia de preço</span>
+              </div>
             </div>
           </div>
 
-          <!-- Caixa de atenção — pedido médico físico no dia (todos os exames) -->
-          <div data-wizstep="1" style="background:#fffbeb;border:1px solid #fde68a;border-radius:12px;padding:12px 14px;margin-bottom:20px;font-size:13px;color:#78350f;line-height:1.5;display:flex;gap:9px;align-items:flex-start;">
-            <span style="flex:none;">🩻</span><span><strong>Atenção:</strong> todos os exames precisam do pedido médico físico no dia do atendimento — não só os de imagem.</span>
+          <!-- Caixa de atenção — pedido médico físico no dia (todos os exames).
+               O data-wizstep vai no wrapper de fora (o assistente só mexe em
+               display); o "hidden" de dentro é quem decide, junto com o botão
+               NÃO, se aparece já no passo 1 ou só depois que o cliente pede
+               pra escrever os exames. -->
+          <div data-wizstep="1">
+            <div id="atencaoPedidoFisico" style="background:#fffbeb;border:1px solid #fde68a;border-radius:12px;padding:12px 14px;margin-bottom:20px;font-size:13px;color:#78350f;line-height:1.5;gap:9px;align-items:flex-start;display:none;">
+              <span style="flex:none;">🩻</span><span><strong>Atenção:</strong> todos os exames precisam do pedido médico físico no dia do atendimento — não só os de imagem.</span>
+            </div>
           </div>
 
           <!-- Resumo — só existia pro modo "escolher exames" (desativado). No
@@ -2247,7 +2258,7 @@
             </div><!-- /data-wizstep="3" -->
 
             <div data-wizstep="5" style="margin-top:16px;display:flex;flex-direction:column;gap:14px;">
-              <div style="display:flex;align-items:center;gap:7px;background:#e0f2fe;border-radius:10px;padding:9px 12px;font-size:12.5px;color:#075985;font-weight:600;" id="wizContatoAuto" hidden>
+              <div style="align-items:center;gap:7px;background:#e0f2fe;border-radius:10px;padding:9px 12px;font-size:12.5px;color:#075985;font-weight:600;display:none;" id="wizContatoAuto">
                 🔎 Encontramos seu telefone e e-mail — confira abaixo.
               </div>
               <div class="field">
@@ -2809,6 +2820,18 @@
     const totalDrapp        = document.getElementById("totalDrapp");
     const totalEconomia     = document.getElementById("totalEconomia");
     const btnContinuar      = document.getElementById("btnContinuar");
+    const btnAbrirDigitarExames = document.getElementById("btnAbrirDigitarExames");
+    const digitarExamesWrap = document.getElementById("digitarExamesWrap");
+    const atencaoPedidoFisico = document.getElementById("atencaoPedidoFisico");
+    if (btnAbrirDigitarExames) {
+      btnAbrirDigitarExames.addEventListener("click", function () {
+        digitarExamesWrap.hidden = false;
+        if (atencaoPedidoFisico) atencaoPedidoFisico.style.display = "flex";
+        btnAbrirDigitarExames.hidden = true;
+        const obsEl = document.getElementById("obsTexto");
+        if (obsEl) obsEl.focus();
+      });
+    }
     const btnVoltarOrçamento= document.getElementById("btnVoltarOrçamento");
     const btnFinalizar      = document.getElementById("btnFinalizar");
     const btnValidarCpf     = document.getElementById("btnValidarCpf");
@@ -2958,6 +2981,15 @@
         if (quemTabs) quemTabs.style.display = "none";
         if (paraLogadoWrap) paraLogadoWrap.style.display = "block";
         if (cpfInput && data.cpf) cpfInput.value = mascaraCPF(data.cpf);
+        // Conta logada já tem telefone/e-mail salvos (POST /api/familia/conta
+        // devolve direto da tabela `clientes`) — pré-preenche o passo de
+        // contato sem depender da consulta de CPF que vem a seguir.
+        const telJaTinha = !!(data.telefone && telefoneInput);
+        const emailJaTinha = !!(data.email && emailInput);
+        if (telJaTinha) telefoneInput.value = mascaraTelefone(data.telefone.replace(/^\+?55/, ""));
+        if (emailJaTinha) emailInput.value = data.email;
+        const bannerAutoLogado = document.getElementById("wizContatoAuto");
+        if (bannerAutoLogado) bannerAutoLogado.style.display = (telJaTinha || emailJaTinha) ? "flex" : "none";
         montarDropdownConta();
         try {
           const dados = await consultarCpf(data.cpf);
@@ -3310,7 +3342,16 @@
       return selecionados.length > 0 || imagensPedido.length > 0 || obsPreenchida;
     }
 
-    function atualizarBotaoContinuar() { btnContinuar.disabled = !temExamesOuFotos(); }
+    function atualizarBotaoContinuar() {
+      const tem = temExamesOuFotos();
+      btnContinuar.disabled = !tem;
+      // No passo 1 o "Continuar" nem existe até o cliente anexar algo ou
+      // escrever os exames — nos outros passos ele sempre aparece (clicar
+      // sem preencher mostra o aviso de erro, via validarPassoAtual()).
+      if (wizContinuarBtn && passoAtual === 1) {
+        wizContinuarBtn.style.display = tem ? "" : "none";
+      }
+    }
 
     function atualizarBotoes() {
       atualizarBotaoContinuar();
@@ -4440,7 +4481,7 @@
         // Banner só aparece quando o campo abaixo realmente foi preenchido —
         // não basta o dado existir na resposta, precisa ter ido pro input.
         const bannerAuto = document.getElementById("wizContatoAuto");
-        if (bannerAuto) bannerAuto.hidden = !(telFoiPreenchido || emailFoiPreenchido);
+        if (bannerAuto) bannerAuto.style.display = (telFoiPreenchido || emailFoiPreenchido) ? "flex" : "none";
         if (dados.origem === "bitrix") mostrarStatusCpf("✔ Dados encontrados em nosso sistema", "success");
         else if (dados.origem === "hub") mostrarStatusCpf("✔ Dados encontrados em base externa", "success");
         else mostrarStatusCpf("Confira os dados encontrados e confirme se estão corretos.", "success");
