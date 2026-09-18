@@ -3444,7 +3444,13 @@
       return true;
     }
 
-    function validarEmail(email) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()); }
+    function validarEmail(email) {
+      const v = String(email || "").trim();
+      // Bloqueia ponto duplo e ponto colado no @ — passavam pelo regex antigo
+      // (ex.: "cliente@uol..com.br") e o e-mail simplesmente não entrega.
+      if (!v || v.includes("..") || v.startsWith(".") || v.includes("@.") || v.includes(".@")) return false;
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+    }
     function validarTelefone(telefone) {
       const opt = paisTelSelecionado();
       const min = opt ? parseInt(opt.dataset.min) : 10;
@@ -5421,7 +5427,9 @@
       });
 
       function validarEmailFb(email) {
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email || "").trim());
+        const v = String(email || "").trim();
+        if (!v || v.includes("..") || v.startsWith(".") || v.includes("@.") || v.includes(".@")) return false;
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
       }
 
       function mostrarErro(msg) {
