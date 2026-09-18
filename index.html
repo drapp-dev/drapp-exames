@@ -571,10 +571,9 @@
     }
 
     .main-grid {
-      display: grid;
-      grid-template-columns: 1.55fr 0.8fr;
-      gap: 24px;
-      align-items: flex-start;
+      display: block;
+      max-width: 560px;
+      margin: 0 auto;
       min-width: 0;
     }
 
@@ -586,6 +585,103 @@
       min-width: 0;
       overflow: hidden;
     }
+
+    /* ── Assistente em passos ─────────────────────────────── */
+    .wiz-progresso {
+      max-width: 560px;
+      margin: 0 auto 20px;
+    }
+    .wiz-progresso-topo {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .wiz-progresso-label {
+      font-weight: 800;
+      font-size: 12.5px;
+      letter-spacing: .04em;
+      color: rgba(255,255,255,.75);
+      text-transform: uppercase;
+    }
+    .wiz-progresso-barra {
+      display: flex;
+      gap: 4px;
+    }
+    .wiz-progresso-barra span {
+      flex: 1;
+      height: 4px;
+      border-radius: 2px;
+      background: rgba(255,255,255,.25);
+      transition: background .2s;
+    }
+    .wiz-progresso-barra span.on { background: var(--orange); }
+    .wiz-ou-divisor {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin: 20px 0;
+      color: var(--orange);
+      font-size: 12.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+    .wiz-ou-divisor::before, .wiz-ou-divisor::after {
+      content: "";
+      flex: 1;
+      height: 2px;
+      background: var(--orange);
+      opacity: .55;
+      border-radius: 1px;
+    }
+    [data-wizstep] { display: none; }
+    .wiz-nav {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+    }
+    .wiz-nav .secondary-btn { margin-top: 0; flex: 0 0 auto; width: auto; padding: 0 22px; }
+    .wiz-nav .primary-btn { margin-top: 0; flex: 1; }
+    .wiz-selo {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #dcfce7;
+      border: 1px solid #86efac;
+      border-radius: 999px;
+      padding: 5px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #166534;
+      margin-bottom: 14px;
+    }
+    .wiz-selo.info { background: #e0f2fe; border-color: #7dd3fc; color: #075985; }
+    .wiz-parentesco {
+      width: 100%;
+      box-sizing: border-box;
+      height: 48px;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 0 12px;
+      font-size: 15px;
+      font-family: inherit;
+      background: #fff;
+      color: var(--dark);
+    }
+    .wiz-envio-opcao {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border: 2px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 14px 16px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .wiz-envio-opcao.on { border-color: var(--blue); background: #eef6ff; }
+    .wiz-envio-opcao input { width: 18px; height: 18px; accent-color: var(--blue); flex: none; }
 
     .card {
       background: var(--white);
@@ -969,8 +1065,9 @@
     .quem-tab.is-on { border-color: var(--blue); background: rgba(12,119,203,.08); color: var(--blue); }
 
     /* ─── CHECKOUT ───────────────────────────────────── */
-    .checkout-card { display: none; border: 2px solid rgba(81,201,210,0.4); background: #f5fcfd; }
-    .checkout-card.active { display: block; }
+    /* No assistente em passos, a visibilidade é dos data-wizstep internos —
+       o card em si fica sempre "ativo" (visível), sem depender de .active. */
+    .checkout-card { display: block; border: 2px solid rgba(81,201,210,0.4); background: #f5fcfd; }
 
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 
@@ -1851,7 +1948,16 @@
     <div class="tool-section-header">
       <div class="section-label">Rápido e gratuito</div>
       <h2 class="section-heading">Monte seu orçamento agora</h2>
-      <p class="section-sub" style="color:rgba(255,255,255,0.7);">Selecione o laboratório, busque seus exames e veja quanto você vai economizar — em segundos.</p>
+      <p class="section-sub" style="color:rgba(255,255,255,0.7);">Em poucos passos você já sabe quanto vai economizar.</p>
+    </div>
+
+    <div class="wiz-progresso">
+      <div class="wiz-progresso-topo">
+        <span class="wiz-progresso-label" id="wizLabel">Passo 1 de 5</span>
+      </div>
+      <div class="wiz-progresso-barra" id="wizBarra"></div>
+      <h2 class="section-title" id="wizTitulo" style="margin-top:20px;color:#fff;">Fechar orçamento</h2>
+      <p class="section-subtitle" id="wizSubtitulo" style="color:rgba(255,255,255,0.75);">Preencha seus dados para concluir a solicitação dos exames escolhidos.</p>
     </div>
 
     <div class="page">
@@ -1859,7 +1965,7 @@
 
         <!-- ─── LEFT: SEARCH ─────────────────────────── -->
         <div class="left-column">
-          <div class="card">
+          <div class="card" data-wizstep="1,2">
 
             <!-- Modo: só "enviar foto" por enquanto — modo "digitar exames" desativado
                  (busca por texto tinha lacunas de dados em exames combo entre labs).
@@ -1874,7 +1980,7 @@
             </div>
 
             <!-- Lab selector — no modo foto fica visível desde o início (escolher A+/Hermes/ambos). -->
-            <div id="labSelectorSection" style="margin-bottom:20px;">
+            <div id="labSelectorSection" data-wizstep="2" style="margin-bottom:20px;">
               <div class="lab-selector-title" style="margin-bottom:10px;">Em qual laboratório deseja orçar?</div>
               <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
                 <button type="button" class="lab-tab is-on" id="tabAplus" data-lab="A+ Medicina Diagnóstica"
@@ -1912,11 +2018,8 @@
             </div>
 
             <!-- Seção foto -->
-            <div id="secaoFoto">
-              <p style="font-size:19px;font-weight:800;color:var(--dark);margin-bottom:10px;margin-top:4px;">Anexe uma ou mais fotos ou arquivos de pedido médico</p>
-              <div style="display:inline-flex;align-items:center;gap:6px;background:#dcfce7;border:1px solid #86efac;border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:700;color:#166534;margin-bottom:16px;line-height:1.3;">
-                <span style="flex:none;">✅</span><span>Obrigatório para gerar seu token de desconto</span>
-              </div>
+            <div id="secaoFoto" data-wizstep="1">
+              <p style="font-size:19px;font-weight:800;color:var(--dark);margin-bottom:10px;margin-top:4px;">Anexe uma ou mais pedidos médicos</p>
               <div class="upload-acoes">
                 <label class="upload-botao">
                   📎 Anexar ou fotografar
@@ -1972,14 +2075,19 @@
 
         </div>
 
+        <!-- Divisor entre "anexar foto" e "digitar exames" — são caminhos
+             alternativos pro mesmo passo 1, não dois passos separados. Fica
+             FORA dos dois cards, pra eles ficarem visualmente separados. -->
+        <div data-wizstep="1" class="wiz-ou-divisor" style="display:flex;"><span>ou</span></div>
+
         <!-- ─── RIGHT: SUMMARY + CHECKOUT ────────────── -->
         <div class="right-column">
 
           <!-- Observações -->
-          <div class="card" style="padding:20px 24px;">
+          <div class="card" data-wizstep="1" style="padding:20px 24px;">
             <label for="obsTexto" style="font-weight:800;font-size:19px;color:var(--dark);display:block;margin-bottom:4px;">Ainda não tem o pedido em mãos?</label>
             <div style="font-size:14px;color:var(--muted);line-height:1.45;margin-bottom:12px;">
-              Digite os exames, te informaremos os preços.
+              Digite os exames, te enviaremos uma prévia de preço.
             </div>
             <textarea id="obsTexto" rows="4" maxlength="600"
               placeholder="✍️ Escreva aqui — ex.: hemograma completo, glicemia, TSH..."
@@ -1987,32 +2095,23 @@
               onfocus="this.style.borderColor='var(--cyan)';this.style.background='#fff';"
               onblur="this.style.borderColor='#94a3b8';this.style.background='#f8fafc';"
               oninput="atualizarBotaoContinuar()"></textarea>
+            <div style="display:inline-flex;align-items:center;gap:6px;background:#dcfce7;border:1px solid #86efac;border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:700;color:#166534;margin-top:12px;line-height:1.3;">
+              <span style="flex:none;">✅</span><span>Exames de Imagem: <span style="color:#EC3636;">Obrigatório</span> Pedido Médico para gerar desconto</span>
+            </div>
             <div style="margin-top:12px;background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:9px 12px;font-size:13px;font-weight:700;color:#b45309;line-height:1.4;display:flex;gap:7px;align-items:center;">
               <span style="flex:none;">⚠️</span><span>Enviaremos só uma prévia de preço</span>
             </div>
-            <div style="margin-top:12px;font-size:13.5px;color:var(--text);line-height:1.5;">
-              <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:8px;">
-                <span style="flex:none;">📋</span><span>Pedido médico = <strong>obrigatório</strong> para receber token e orçamento validado</span>
-              </div>
-              <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:8px;">
-                <span style="flex:none;">❌</span><span>Se não tem foto, <strong>não recebe token</strong></span>
-              </div>
-              <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:8px;">
-                <span style="flex:none;">❌</span><span>Se não tem token, <strong>não pode realizar</strong></span>
-              </div>
-              <div style="display:flex;gap:8px;align-items:flex-start;">
-                <span style="flex:none;">📲</span><span>Sem pedido em mãos? Envie a foto assim que tiver</span>
-              </div>
-            </div>
           </div>
 
-          <!-- Caixa de atenção — exames de imagem -->
-          <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:12px;padding:12px 14px;margin-bottom:20px;font-size:13px;color:#78350f;line-height:1.5;display:flex;gap:9px;align-items:flex-start;">
-            <span style="flex:none;">🩻</span><span><strong>Atenção:</strong> exames de imagem (US, RX, TC, RM, mamografia) <strong>precisam do pedido físico no dia</strong>.</span>
+          <!-- Caixa de atenção — pedido médico físico no dia (todos os exames) -->
+          <div data-wizstep="1" style="background:#fffbeb;border:1px solid #fde68a;border-radius:12px;padding:12px 14px;margin-bottom:20px;font-size:13px;color:#78350f;line-height:1.5;display:flex;gap:9px;align-items:flex-start;">
+            <span style="flex:none;">🩻</span><span><strong>Atenção:</strong> todos os exames precisam do pedido médico físico no dia do atendimento — não só os de imagem.</span>
           </div>
 
-          <!-- Resumo -->
-          <div class="card">
+          <!-- Resumo — só existia pro modo "escolher exames" (desativado). No
+               assistente em passos o "Continuar" de cada passo é quem manda;
+               btnContinuar segue no DOM só pra não quebrar atualizarBotaoContinuar(). -->
+          <div class="card" style="display:none;">
             <h2 class="section-title" id="resumoTitulo">Resumo da solicitação</h2>
             <div class="summary-box" id="resumoPrecos">
               <!-- Modo: um lab só -->
@@ -2061,21 +2160,24 @@
             <button id="btnContinuar" class="primary-btn" disabled>Continuar para Pedir Orçamento →</button>
           </div>
 
-          <!-- Fechar orçamento (checkout) -->
-          <div id="checkoutCard" class="card checkout-card">
-            <h2 class="section-title">Fechar orçamento</h2>
-            <p class="section-subtitle">Preencha seus dados para concluir a solicitação dos exames escolhidos.</p>
+          <!-- Fechar orçamento (checkout) — título/subtítulo do passo agora ficam
+               no topo da página (acima do main-grid), não aqui dentro. -->
+          <div id="checkoutCard" class="card checkout-card" data-wizstep="3,4,5,6,7,8,final">
 
             <form autocomplete="on" novalidate>
-            <p class="section-subtitle" style="margin-bottom:10px;">Para quem é o orçamento?</p>
-            <div class="quem-tabs" role="group" aria-label="Para quem é o orçamento?" id="quemTabs">
-              <button type="button" id="quemEu" class="quem-tab is-on">Eu mesma(o)</button>
-              <button type="button" id="quemOutro" class="quem-tab">Outra pessoa</button>
+            <div data-wizstep="4">
+              <p class="section-subtitle" style="margin-bottom:10px;">Para quem é o orçamento?</p>
+              <div class="quem-tabs" role="group" aria-label="Para quem é o orçamento?" id="quemTabs">
+                <button type="button" id="quemEu" class="quem-tab is-on">Eu mesma(o)</button>
+                <button type="button" id="quemOutro" class="quem-tab">Outra pessoa</button>
+              </div>
+              <div id="paraLogadoWrap" style="display:none;margin-bottom:16px;">
+                <label for="paraQuem" style="display:block;font-size:13px;font-weight:600;color:#16324a;margin-bottom:6px;">Quem vai realizar</label>
+                <select id="paraQuem" style="width:100%;height:48px;border:1.5px solid #e2e8f0;border-radius:12px;padding:0 12px;font-size:15px;font-family:inherit;background:#fff;color:#16324a;"></select>
+              </div>
             </div>
-            <div id="paraLogadoWrap" style="display:none;margin-bottom:16px;">
-              <label for="paraQuem" style="display:block;font-size:13px;font-weight:600;color:#16324a;margin-bottom:6px;">Quem vai realizar</label>
-              <select id="paraQuem" style="width:100%;height:48px;border:1.5px solid #e2e8f0;border-radius:12px;padding:0 12px;font-size:15px;font-family:inherit;background:#fff;color:#16324a;"></select>
-            </div>
+
+            <div data-wizstep="3">
             <div class="grid-2">
               <div class="field">
                 <label for="cpf" id="cpfLabel">CPF</label>
@@ -2084,6 +2186,10 @@
                   <button id="btnValidarCpf" class="inline-btn" type="button">Validar CPF</button>
                 </div>
                 <div id="cpfError" class="field-error">Informe um CPF válido.</div>
+                <label style="display:flex;align-items:center;gap:7px;margin-top:8px;font-size:12.5px;color:var(--muted);cursor:pointer;">
+                  <input type="checkbox" id="cpfEhPassaporte" style="width:16px;height:16px;accent-color:var(--blue);">
+                  É passaporte? <span style="color:#8291a8;">(tira a máscara de CPF)</span>
+                </label>
               </div>
             </div>
 
@@ -2091,22 +2197,25 @@
 
             <div id="cpfResult" class="cpf-result">
               <div class="cpf-result-title">Confira os dados encontrados</div>
-              <div style="font-size:12.5px;color:#78350f;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:8px 10px;margin-bottom:10px;line-height:1.45;">
-                Não é você? Confira se o <strong>CPF foi digitado corretamente</strong> antes de continuar.
-              </div>
               <div class="cpf-result-grid">
                 <div class="cpf-result-item">
                   <div class="cpf-result-label">Nome Completo</div>
                   <div id="cpfNome" class="cpf-result-value">-</div>
+                  <div id="nomeEditorWrap" style="display:none;margin-top:8px;">
+                    <input type="text" id="nomeEditorInput" placeholder="Nome completo" style="height:40px;border-radius:10px;border:1.5px solid var(--cyan);padding:0 10px;font-size:15px;font-family:inherit;outline:none;width:100%;box-sizing:border-box;">
+                  </div>
                 </div>
                 <div class="cpf-result-item">
                   <div class="cpf-result-label">Data de Nascimento</div>
                   <div id="cpfNascimento" class="cpf-result-value">-</div>
                   <div id="nascEditorWrap" style="display:none;margin-top:8px;">
-                    <input type="date" id="nascInput" style="height:40px;border-radius:10px;border:1.5px solid var(--cyan);padding:0 10px;font-size:15px;font-family:inherit;outline:none;width:100%;">
-                    <button type="button" id="btnNascOk" style="margin-top:8px;width:100%;height:38px;background:var(--blue);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;">✔ Confirmar data</button>
+                    <input type="date" id="nascInput" style="height:40px;border-radius:10px;border:1.5px solid var(--cyan);padding:0 10px;font-size:15px;font-family:inherit;outline:none;width:100%;box-sizing:border-box;">
                   </div>
                 </div>
+                <button type="button" id="btnNascOk" style="display:none;height:38px;background:var(--blue);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;">✔ Confirmar alteração</button>
+              </div>
+              <div style="font-size:12.5px;color:#78350f;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:8px 10px;margin-bottom:10px;line-height:1.45;">
+                Não é você? Confira se o <strong>CPF foi digitado corretamente</strong> antes de continuar.
               </div>
               <div class="cpf-confirm-actions">
                 <button id="btnCpfOk"    class="cpf-confirm-btn cpf-ok"     type="button">✓ correto!</button>
@@ -2135,8 +2244,12 @@
                 <button type="button" id="btnConfirmarManual" style="height:44px; background:var(--blue,#1565c0); color:#fff; border:none; border-radius:10px; font-size:15px; font-weight:700; cursor:pointer; font-family:inherit; margin-top:4px;">✓ Confirmar dados</button>
               </div>
             </div>
+            </div><!-- /data-wizstep="3" -->
 
-            <div style="margin-top:16px;display:flex;flex-direction:column;gap:14px;">
+            <div data-wizstep="5" style="margin-top:16px;display:flex;flex-direction:column;gap:14px;">
+              <div style="display:flex;align-items:center;gap:7px;background:#e0f2fe;border-radius:10px;padding:9px 12px;font-size:12.5px;color:#075985;font-weight:600;" id="wizContatoAuto" hidden>
+                🔎 Encontramos seu telefone e e-mail — confira abaixo.
+              </div>
               <div class="field">
                 <label for="telefone">Telefone / WhatsApp</label>
                 <div style="display:flex;gap:4px;align-items:center;">
@@ -2181,7 +2294,7 @@
               </div>
             </div><!-- /campos telefone+email -->
 
-            <div id="familiarWrap" style="display:none;margin-top:16px;background:#fff;border:1.5px solid #dbeafe;border-radius:14px;padding:16px;">
+            <div id="familiarWrap" data-wizstep="6" style="margin-top:16px;background:#fff;border:1.5px solid #dbeafe;border-radius:14px;padding:16px;">
               <div style="font-weight:700;font-size:15px;margin-bottom:10px;color:var(--blue);">Quem vai fazer o exame</div>
               <div class="field">
                 <label for="cpfPaciente">CPF do paciente</label>
@@ -2190,6 +2303,10 @@
                   <button id="btnValidarCpfPaciente" class="inline-btn" type="button">Validar CPF</button>
                 </div>
                 <div id="cpfPacienteStatus" class="cpf-status"></div>
+                <label style="display:flex;align-items:center;gap:7px;margin-top:8px;font-size:12.5px;color:var(--muted);cursor:pointer;">
+                  <input type="checkbox" id="cpfPacienteEhPassaporte" style="width:16px;height:16px;accent-color:var(--blue);">
+                  É passaporte? <span style="color:#8291a8;">(tira a máscara de CPF)</span>
+                </label>
               </div>
               <div id="cpfPacienteResult" class="cpf-result" style="margin-top:10px;">
                 <div class="cpf-result-title">Confira os dados de quem vai realizar</div>
@@ -2203,12 +2320,16 @@
                     <div id="cpfPacienteNascTxt" class="cpf-result-value">-</div>
                   </div>
                 </div>
+                <div style="font-size:12.5px;color:#78350f;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:8px 10px;margin-bottom:10px;line-height:1.45;">
+                  Não é essa pessoa? Ajuste o CPF acima, ou corrija nome/nascimento logo abaixo.
+                </div>
                 <div class="cpf-confirm-actions">
                   <button id="btnCpfPacienteOk" class="cpf-confirm-btn cpf-ok" type="button">✓ correto!</button>
+                  <button id="btnCpfPacienteWrong" class="cpf-confirm-btn cpf-wrong" type="button">✗ não é essa pessoa</button>
                 </div>
               </div>
               <div class="field" style="margin-top:10px;">
-                <label for="nomePaciente">Nome completo</label>
+                <label for="nomePaciente">Nome completo <span style="font-weight:400;color:var(--muted);">(editável, se precisar corrigir)</span></label>
                 <input type="text" id="nomePaciente" placeholder="Nome de quem vai realizar" />
               </div>
               <div class="field" style="margin-top:10px;">
@@ -2217,7 +2338,50 @@
               </div>
               <div class="field" style="margin-top:10px;">
                 <label for="parentesco">Parentesco</label>
-                <input type="text" id="parentesco" placeholder="filho, cônjuge, mãe…" />
+                <select id="parentesco" class="wiz-parentesco">
+                  <option value="">Selecione o parentesco</option>
+                  <option value="filho">Filho</option>
+                  <option value="filha">Filha</option>
+                  <option value="mae">Mãe</option>
+                  <option value="pai">Pai</option>
+                  <option value="conjuge">Cônjuge</option>
+                  <option value="tio">Tio</option>
+                  <option value="tia">Tia</option>
+                  <option value="amigo">Amigo</option>
+                  <option value="amiga">Amiga</option>
+                  <option value="funcionario">Funcionário(a)</option>
+                  <option value="outros">Outros</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Passo 7 — pra onde enviar o orçamento (titular, dependente ou os dois) -->
+            <div id="enviarParaWrap" data-wizstep="7" style="margin-top:16px;">
+              <p class="section-subtitle" style="margin-bottom:12px;">Para onde enviamos o orçamento? Pode marcar os dois.</p>
+              <label class="wiz-envio-opcao" id="envioOpcaoTitular">
+                <input type="checkbox" id="envioTitular" checked>
+                <span><strong id="envioTitularNome">Você</strong><br><span style="font-size:12.5px;color:var(--muted);" id="envioTitularTel">—</span></span>
+              </label>
+              <label class="wiz-envio-opcao" id="envioOpcaoDependente">
+                <input type="checkbox" id="envioDependente">
+                <span><strong id="envioDependenteNome">Paciente</strong><br><span style="font-size:12.5px;color:var(--muted);">quem irá realizar os exames</span></span>
+              </label>
+              <div id="envioLembrado" style="display:none;margin-top:6px;background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:9px 12px;font-size:12.5px;color:#78350f;">
+                Da próxima vez que pedir pra essa pessoa, já vem marcado assim de novo.
+              </div>
+            </div>
+
+            <!-- Passo 8 — contato do dependente, só obrigatório se ele foi marcado no passo 7 -->
+            <div id="contatoDependenteWrap" data-wizstep="8" style="margin-top:16px;display:flex;flex-direction:column;gap:14px;">
+              <div class="field">
+                <label for="telefoneDependente">Telefone / WhatsApp <span id="telDependenteObrig" style="color:#c53d3d;font-weight:700;font-size:11px;"></span></label>
+                <input type="tel" id="telefoneDependente" placeholder="(11) 99999-9999" maxlength="20" />
+                <div id="telefoneDependenteError" class="field-error">Informe um telefone válido.</div>
+              </div>
+              <div class="field">
+                <label for="emailDependente">E-mail <span id="emailDependenteObrig" style="color:#c53d3d;font-weight:700;font-size:11px;"></span></label>
+                <input type="email" id="emailDependente" placeholder="voce@exemplo.com.br">
+                <div id="emailDependenteError" class="field-error">Informe um e-mail válido.</div>
               </div>
             </div>
 
@@ -2229,6 +2393,7 @@
               </div>
             </div>
 
+            <div id="wizFinalWrap" data-wizstep="final">
             <div class="checkout-actions">
               <button id="btnVoltarOrçamento" class="secondary-btn" type="button" style="margin-top:0;">← Voltar</button>
               <button id="btnFinalizar" class="primary-btn btn-finalizar" type="button" disabled>Finalizar →</button>
@@ -2243,8 +2408,17 @@
             <div style="margin-top:8px;font-size:13px;color:var(--muted);text-align:center;">
               🔒 Seus dados são usados apenas para enviar seu orçamento via WhatsApp
             </div>
+            </div><!-- /data-wizstep="final" -->
             </form>
           </div>
+
+          <!-- Navegação do assistente — sempre por último, depois de todo o
+               conteúdo do passo (esteja ele na coluna da esquerda ou aqui). -->
+          <div class="wiz-nav">
+            <button type="button" id="wizVoltarBtn" class="secondary-btn" style="display:none;">← Voltar</button>
+            <button type="button" id="wizContinuarBtn" class="primary-btn">Continuar →</button>
+          </div>
+          <div id="wizAvisoErro" class="field-error" style="display:none;text-align:center;margin-top:10px;"></div>
         </div><!-- /right-column -->
       </div><!-- /main-grid -->
     </div><!-- /page -->
@@ -2758,8 +2932,10 @@
       quemExame = quem;
       if (quemEuBtn) quemEuBtn.classList.toggle("is-on", quem === "eu");
       if (quemOutroBtn) quemOutroBtn.classList.toggle("is-on", quem === "outro");
-      if (familiarWrap) familiarWrap.style.display = quem === "outro" ? "block" : "none";
       if (cpfLabel) cpfLabel.textContent = quem === "outro" ? "Seu CPF (quem solicita)" : "CPF";
+      // familiarWrap não é mais escondido por CSS direto — quem manda a visibilidade
+      // agora é o passo do assistente (data-wizstep="6"); só atualiza a barra.
+      if (typeof pintarBarraProgresso === "function") pintarBarraProgresso();
     }
     if (quemEuBtn) quemEuBtn.addEventListener("click", function () { marcarQuem("eu"); });
     if (quemOutroBtn) quemOutroBtn.addEventListener("click", function () { marcarQuem("outro"); });
@@ -3857,8 +4033,20 @@
       return valido;
     }
 
+    function ehPassaporteMarcado(checkboxEl) {
+      return !!(checkboxEl && checkboxEl.checked);
+    }
+    function formatarComoDocumento(valor, ehPassaporte) {
+      if (ehPassaporte) return "PASS:" + String(valor || "").replace(/[^A-Za-z0-9]/g, "").toUpperCase();
+      return String(valor || "").replace(/\D/g, "");
+    }
+
     function validarSomenteCpf() {
       cpfError.style.display = "none";
+      if (ehPassaporteMarcado(document.getElementById("cpfEhPassaporte"))) {
+        if (!cpfInput.value.trim()) { cpfError.style.display = "block"; return false; }
+        return true;
+      }
       if (!validarCPF(cpfInput.value)) { cpfError.style.display = "block"; return false; }
       return true;
     }
@@ -3904,7 +4092,8 @@
     const MODO_INATIVO = "border-color:#e2e8f0;background:#f8fafc;color:var(--text);";
 
     function setModo(modo) {
-      const labSection    = document.getElementById("labSelectorSection");
+      // labSelectorSection NÃO entra mais aqui — é o assistente (data-wizstep="2")
+      // quem decide quando ela aparece.
       const resumoPrecos  = document.getElementById("resumoPrecos");
       const resumoInfoBox = document.getElementById("resumoInfoBox");
       const resumoTitulo  = document.getElementById("resumoTitulo");
@@ -3914,7 +4103,6 @@
       if (modo === "foto") {
         secaoFoto.style.display    = "block";
         secaoDigitar.style.display = "none";
-        if (labSection)    labSection.style.display    = "block";
         if (resumoPrecos)  resumoPrecos.style.display  = "none";
         if (resumoInfoBox) resumoInfoBox.style.display = "none";
         if (resumoTitulo)  resumoTitulo.style.display  = "none";
@@ -3926,7 +4114,6 @@
       } else {
         secaoFoto.style.display    = "none";
         secaoDigitar.style.display = "block";
-        if (labSection)    labSection.style.display    = "block";
         if (resumoPrecos)  resumoPrecos.style.display  = "block";
         if (resumoInfoBox) resumoInfoBox.style.display = "block";
         if (resumoTitulo)  resumoTitulo.style.display  = "";
@@ -3972,29 +4159,60 @@
     });
 
     cpfInput.addEventListener("input", function () {
-      this.value = mascaraCPF(this.value);
+      if (!ehPassaporteMarcado(document.getElementById("cpfEhPassaporte"))) this.value = mascaraCPF(this.value);
       cpfError.style.display = "none";
+      limparValidacaoCpf();
+    });
+    document.getElementById("cpfEhPassaporte").addEventListener("change", function () {
+      cpfInput.value = "";
+      cpfInput.maxLength = this.checked ? 20 : 14;
+      cpfInput.placeholder = this.checked ? "Número do passaporte" : "000.000.000-00";
       limparValidacaoCpf();
     });
     const cpfPacienteInput = document.getElementById("cpfPaciente");
     if (cpfPacienteInput) {
       cpfPacienteInput.addEventListener("input", function () {
-        this.value = mascaraCPF(this.value);
+        if (!ehPassaporteMarcado(document.getElementById("cpfPacienteEhPassaporte"))) this.value = mascaraCPF(this.value);
         cpfPacienteValidado = false;
         dadosCpfPaciente = null;
         const res = document.getElementById("cpfPacienteResult");
         if (res) res.classList.remove("active");
       });
     }
+    const cpfPacienteEhPassaporteEl = document.getElementById("cpfPacienteEhPassaporte");
+    if (cpfPacienteEhPassaporteEl) {
+      cpfPacienteEhPassaporteEl.addEventListener("change", function () {
+        cpfPacienteInput.value = "";
+        cpfPacienteInput.maxLength = this.checked ? 20 : 14;
+        cpfPacienteInput.placeholder = this.checked ? "Número do passaporte" : "000.000.000-00";
+      });
+    }
     const btnValidarCpfPaciente = document.getElementById("btnValidarCpfPaciente");
     const cpfPacienteStatus = document.getElementById("cpfPacienteStatus");
     const cpfPacienteResult = document.getElementById("cpfPacienteResult");
+    let vinculoDependenteSalvo = null; // resposta de GET /api/familia/dependente
+    async function consultarVinculoDependente(cpfDep) {
+      const titularCpf = formatarComoDocumento(cpfInput.value, ehPassaporteMarcado(document.getElementById("cpfEhPassaporte")));
+      try {
+        const resp = await fetch(PEDIDOS_API_URL + "/api/familia/dependente?titularCpf=" + encodeURIComponent(titularCpf) + "&cpf=" + encodeURIComponent(cpfDep));
+        const data = await resp.json();
+        vinculoDependenteSalvo = data && data.existe ? data : null;
+      } catch (_) { vinculoDependenteSalvo = null; }
+    }
     if (btnValidarCpfPaciente) {
       btnValidarCpfPaciente.addEventListener("click", async function () {
-        const cpfLimpo = (cpfPacienteInput && cpfPacienteInput.value || "").replace(/\D/g, "");
-        if (cpfLimpo.length !== 11) {
+        const ehPass = ehPassaporteMarcado(document.getElementById("cpfPacienteEhPassaporte"));
+        const cpfLimpo = formatarComoDocumento(cpfPacienteInput && cpfPacienteInput.value, ehPass);
+        if (!ehPass && cpfLimpo.length !== 11) {
           if (cpfPacienteStatus) {
             cpfPacienteStatus.textContent = "Informe um CPF válido.";
+            cpfPacienteStatus.className = "cpf-status active error";
+          }
+          return;
+        }
+        if (ehPass && cpfLimpo === "PASS:") {
+          if (cpfPacienteStatus) {
+            cpfPacienteStatus.textContent = "Informe o número do passaporte.";
             cpfPacienteStatus.className = "cpf-status active error";
           }
           return;
@@ -4004,6 +4222,24 @@
             cpfPacienteStatus.textContent = "Esse é o seu CPF. Escolha “Eu mesma(o)” se o exame é seu.";
             cpfPacienteStatus.className = "cpf-status active error";
           }
+          return;
+        }
+        await consultarVinculoDependente(cpfLimpo);
+        if (ehPass) {
+          // Passaporte não tem Hub — vai direto pro preenchimento manual (nome/nascimento
+          // ficam nos campos "Nome completo"/"Nascimento" logo abaixo, já sempre visíveis).
+          dadosCpfPaciente = null;
+          cpfPacienteValidado = false;
+          if (cpfPacienteResult) cpfPacienteResult.classList.remove("active");
+          if (vinculoDependenteSalvo) {
+            document.getElementById("nomePaciente").value = vinculoDependenteSalvo.nome || "";
+            document.getElementById("nascPaciente").value = paraIsoData(vinculoDependenteSalvo.nascimento || "");
+          }
+          if (cpfPacienteStatus) {
+            cpfPacienteStatus.textContent = "Preencha nome e nascimento abaixo.";
+            cpfPacienteStatus.className = "cpf-status active success";
+          }
+          aplicarVinculoDependenteNaTela();
           return;
         }
         btnValidarCpfPaciente.disabled = true;
@@ -4027,6 +4263,7 @@
               : "✔ Dados encontrados em nosso sistema";
             cpfPacienteStatus.className = "cpf-status active success";
           }
+          aplicarVinculoDependenteNaTela();
         } catch (erro) {
           cpfPacienteValidado = false;
           dadosCpfPaciente = null;
@@ -4050,6 +4287,49 @@
           cpfPacienteStatus.className = "cpf-status active success";
         }
       });
+    }
+    const btnCpfPacienteWrong = document.getElementById("btnCpfPacienteWrong");
+    if (btnCpfPacienteWrong) {
+      btnCpfPacienteWrong.addEventListener("click", function () {
+        cpfPacienteValidado = false;
+        dadosCpfPaciente = null;
+        if (cpfPacienteResult) cpfPacienteResult.classList.remove("active");
+        cpfPacienteInput.value = "";
+        cpfPacienteInput.focus();
+        if (cpfPacienteStatus) {
+          cpfPacienteStatus.textContent = "Confira o CPF e valide de novo.";
+          cpfPacienteStatus.className = "cpf-status active error";
+        }
+      });
+    }
+
+    // Pré-marca o passo 7 (pra onde enviar) com a última escolha salva pra
+    // esse titular+dependente, e pré-preenche telefone/e-mail se já tinha.
+    function aplicarVinculoDependenteNaTela() {
+      const nomeDep = (document.getElementById("nomePaciente").value || "quem vai realizar").trim();
+      const nomeSpan = document.getElementById("envioDependenteNome");
+      if (nomeSpan) nomeSpan.textContent = nomeDep;
+      const lembrado = document.getElementById("envioLembrado");
+      const cbDependente = document.getElementById("envioDependente");
+      const telDep = document.getElementById("telefoneDependente");
+      const emailDep = document.getElementById("emailDependente");
+      if (vinculoDependenteSalvo) {
+        if (vinculoDependenteSalvo.parentesco) {
+          const selParentesco = document.getElementById("parentesco");
+          if (selParentesco && [...selParentesco.options].some(o => o.value === vinculoDependenteSalvo.parentesco)) {
+            selParentesco.value = vinculoDependenteSalvo.parentesco;
+          }
+        }
+        if (cbDependente) cbDependente.checked = vinculoDependenteSalvo.enviarPara === "dependente" || vinculoDependenteSalvo.enviarPara === "ambos";
+        const cbTitular = document.getElementById("envioTitular");
+        if (cbTitular) cbTitular.checked = vinculoDependenteSalvo.enviarPara !== "dependente";
+        if (telDep && vinculoDependenteSalvo.telefone) telDep.value = mascaraTelefone(vinculoDependenteSalvo.telefone.replace(/^\+?55/, ""));
+        if (emailDep && vinculoDependenteSalvo.email) emailDep.value = vinculoDependenteSalvo.email;
+        if (lembrado) lembrado.style.display = "block";
+      } else if (lembrado) {
+        lembrado.style.display = "none";
+      }
+      atualizarEnvioOpcoesVisual();
     }
 
     let _phoneFired = false;
@@ -4097,9 +4377,7 @@
     });
 
     btnVoltarOrçamento.addEventListener("click", function () {
-      checkoutCard.classList.remove("active");
-      buscaExame.focus();
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      mostrarPasso(passoAnterior(passoAtual));
     });
 
     // Abre o preenchimento manual sempre carimbando o CPF digitado, pra ninguém
@@ -4124,6 +4402,16 @@
 
     btnValidarCpf.addEventListener("click", async function () {
       if (!validarSomenteCpf()) return;
+      if (ehPassaporteMarcado(document.getElementById("cpfEhPassaporte"))) {
+        // Passaporte não tem Hub pra consultar — vai direto pro preenchimento manual.
+        cpfValidado = cpfConfirmado = false;
+        dadosCpfValidados = null;
+        cpfResult.classList.remove("active");
+        mostrarStatusCpf("Preencha nome e nascimento abaixo.", "success");
+        abrirPreenchimentoManual();
+        atualizarBotoes();
+        return;
+      }
       const cpfLimpo = cpfInput.value.replace(/\D/g,"");
       try {
         btnValidarCpf.disabled = true;
@@ -4144,6 +4432,15 @@
         cpfNome.textContent = dados.nome || "-";
         cpfNascimento.textContent = dados.nascimento || "-";
         cpfResult.classList.add("active");
+        // Passo 5 (telefone/e-mail) já vem preenchido se a gente já conhece a pessoa.
+        const telFoiPreenchido = !!(dados.telefone && telefoneInput);
+        const emailFoiPreenchido = !!(dados.email && emailInput);
+        if (telFoiPreenchido) telefoneInput.value = mascaraTelefone(dados.telefone.replace(/^\+?55/, ""));
+        if (emailFoiPreenchido) emailInput.value = dados.email;
+        // Banner só aparece quando o campo abaixo realmente foi preenchido —
+        // não basta o dado existir na resposta, precisa ter ido pro input.
+        const bannerAuto = document.getElementById("wizContatoAuto");
+        if (bannerAuto) bannerAuto.hidden = !(telFoiPreenchido || emailFoiPreenchido);
         if (dados.origem === "bitrix") mostrarStatusCpf("✔ Dados encontrados em nosso sistema", "success");
         else if (dados.origem === "hub") mostrarStatusCpf("✔ Dados encontrados em base externa", "success");
         else mostrarStatusCpf("Confira os dados encontrados e confirme se estão corretos.", "success");
@@ -4171,22 +4468,38 @@
     // ── Editar data de nascimento ─────────────────────────────
     const nascEditorWrap = document.getElementById("nascEditorWrap");
     const nascInput      = document.getElementById("nascInput");
+    const nomeEditorWrap = document.getElementById("nomeEditorWrap");
+    const nomeEditorInput = document.getElementById("nomeEditorInput");
     const btnNascOk      = document.getElementById("btnNascOk");
     const btnEditarNasc  = document.getElementById("btnEditarNasc");
 
+    // "✏️ alterar" abre nome E nascimento juntos — corrigir só a data não
+    // bastava quando o dado errado era o nome.
     btnEditarNasc.addEventListener("click", function () {
-      nascEditorWrap.style.display = nascEditorWrap.style.display === "none" ? "block" : "none";
+      const abrir = nascEditorWrap.style.display === "none";
+      nascEditorWrap.style.display = abrir ? "block" : "none";
+      nomeEditorWrap.style.display = abrir ? "block" : "none";
+      btnNascOk.style.display = abrir ? "block" : "none";
+      if (abrir) nomeEditorInput.value = cpfNome.textContent === "-" ? "" : cpfNome.textContent;
     });
 
     btnNascOk.addEventListener("click", function () {
+      const nomeVal = nomeEditorInput.value.trim();
+      if (nomeVal) {
+        cpfNome.textContent = nomeVal;
+        if (dadosCpfValidados) dadosCpfValidados.nome = nomeVal;
+      }
       const val = nascInput.value; // "YYYY-MM-DD"
-      if (!val) return;
-      const [ano, mes, dia] = val.split("-");
-      const MESES = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
-      const nascFormatado = dia + "/" + MESES[parseInt(mes,10)-1] + "/" + ano;
-      cpfNascimento.textContent = nascFormatado;
-      if (dadosCpfValidados) dadosCpfValidados.nascimento = nascFormatado;
+      if (val) {
+        const [ano, mes, dia] = val.split("-");
+        const MESES = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
+        const nascFormatado = dia + "/" + MESES[parseInt(mes,10)-1] + "/" + ano;
+        cpfNascimento.textContent = nascFormatado;
+        if (dadosCpfValidados) dadosCpfValidados.nascimento = nascFormatado;
+      }
       nascEditorWrap.style.display = "none";
+      nomeEditorWrap.style.display = "none";
+      btnNascOk.style.display = "none";
     });
 
     btnCpfWrong.addEventListener("click", function () {
@@ -4250,6 +4563,16 @@
     function mostrarTelaPedidoEnviado(subtitulo, medirConversao = true) {
       pedidoJaEnviado = true;
       envioEmAndamento = false;
+      // URL virtual pro GA4 marcar como página de conversão, sem navegar de
+      // verdade (evita erro 404 se a pessoa atualizar a tela) — pushState só
+      // muda a barra de endereço, e o page_view abaixo é o que o GA4 registra.
+      try {
+        history.pushState({ orcamentoEnviado: true }, '', '/solicitacao/enviada');
+        gtag('event', 'page_view', {
+          page_path: '/solicitacao/enviada',
+          page_title: 'Solicitação enviada'
+        });
+      } catch (_) {}
       gtag('event', 'lead_generated', {
         exam_count: selecionados.length,
         labs: [...new Set(selecionados.map(e => e.laboratorio))].join(','),
@@ -4267,7 +4590,7 @@
           <div style="font-size:48px;margin-bottom:16px;">✅</div>
           <h3 style="color:var(--success);margin-bottom:8px;">Pedido enviado com sucesso!</h3>
           <p style="color:var(--muted);margin-bottom:28px;">${subtitulo || "Nossa equipe entrará em contato em breve pelo WhatsApp ou e-mail informado."}</p>
-          <button onclick="location.reload()" style="background:var(--blue);color:#fff;border:none;border-radius:14px;font-size:16px;font-weight:700;padding:0 28px;height:50px;cursor:pointer;font-family:inherit;">+ Fazer outro pedido</button>
+          <button onclick="location.href = location.pathname.replace('/solicitacao/enviada', '') || '/'" style="background:var(--blue);color:#fff;border:none;border-radius:14px;font-size:16px;font-weight:700;padding:0 28px;height:50px;cursor:pointer;font-family:inherit;">+ Fazer outro pedido</button>
         </div>`;
     }
 
@@ -4286,6 +4609,10 @@
           labsSelecionados: payload.labsSelecionados,
           paciente: payload.paciente,
           titularCpf: payload.titularCpf,
+          titularTelefone: payload.titularTelefone,
+          titularEmail: payload.titularEmail,
+          enviarPara: payload.enviarPara,
+          contatoDependente: payload.contatoDependente,
           fotosUrls: imagensPedido.map(img => img.url).filter(Boolean)
         })
       });
@@ -4304,24 +4631,224 @@
       return true;
     }
 
+    // ═══ ASSISTENTE EM PASSOS ══════════════════════════════════════
+    const WIZ_TITULOS = {
+      1: ["Vamos montar seu orçamento", "Anexe o pedido médico ou digite os exames — o que for mais fácil."],
+      2: ["Onde você quer orçar?", "Escolha um laboratório, ou compare os dois."],
+      3: ["Confirme seus dados", "CPF de quem está pedindo o orçamento."],
+      4: ["Para quem é esse orçamento?", "Essa resposta decide os próximos passos."],
+      5: ["Precisamos do seu contato", "Pois você será o titular deste orçamento."],
+      6: ["Quem vai fazer o exame?", "CPF (ou passaporte) da pessoa."],
+      7: ["Para onde enviamos?", "Pode marcar os dois."],
+      8: ["Preencha os dados do paciente!", "quem irá realizar os exames."],
+    };
+    let passoAtual = 1;
+    function totalPassos() { return quemExame === "outro" ? 8 : 5; }
+    // Passos 6,7,8 só existem no caminho "outro"; passo 5 é sempre o 5º passo
+    // exibido nesse caminho também (a barra usa a POSIÇÃO na sequência visível,
+    // não o número interno do data-wizstep).
+    function sequenciaPassos() {
+      return quemExame === "outro" ? [1, 2, 3, 4, 5, 6, 7, 8] : [1, 2, 3, 4, 5];
+    }
+    function indiceNaSequencia(passo) { return sequenciaPassos().indexOf(passo) + 1; }
+
+    function pintarBarraProgresso() {
+      const total = totalPassos();
+      const posicaoAtual = indiceNaSequencia(passoAtual);
+      const label = document.getElementById("wizLabel");
+      const barra = document.getElementById("wizBarra");
+      if (label) label.textContent = "Passo " + posicaoAtual + " de " + total;
+      if (barra) {
+        barra.innerHTML = "";
+        for (let i = 1; i <= total; i++) {
+          const seg = document.createElement("span");
+          if (i <= posicaoAtual) seg.className = "on";
+          barra.appendChild(seg);
+        }
+      }
+    }
+
+    // Setar style.display = "" NÃO basta pra reaparecer: a regra de folha de
+    // estilo [data-wizstep]{display:none} continua valendo enquanto o inline
+    // style não tiver um valor concreto. Por isso guarda o display ORIGINAL
+    // de cada elemento numa passada única, ANTES de esconder qualquer um —
+    // se a captura fosse "no primeiro mostrar", o esconder do passo 1 já
+    // teria sujado esse valor pra "none" antes de ele nunca ter sido mostrado.
+    document.querySelectorAll("[data-wizstep]").forEach(function (el) {
+      el.dataset.wizDisplay = el.style.display || "block";
+    });
+    function mostrarEl(el) { el.style.display = el.dataset.wizDisplay || "block"; }
+    function esconderEl(el) { el.style.display = "none"; }
+
+    function mostrarPasso(n) {
+      passoAtual = n;
+      document.querySelectorAll("[data-wizstep]").forEach(function (el) {
+        // Um elemento pode pertencer a mais de um passo: data-wizstep="3,4,5,6,7,8,final".
+        // "final" e os números são condições INDEPENDENTES — um elemento cujo
+        // conjunto inclui "final" ainda deve mostrar nos passos numerados
+        // dessa mesma lista (bug corrigido: antes "final" no meio da lista
+        // fazia ignorar todos os outros números).
+        const alvos = el.getAttribute("data-wizstep").split(",").map(function (s) { return s.trim(); });
+        const mostrar = alvos.includes(String(n)) || (alvos.includes("final") && n === totalPassos());
+        if (mostrar) mostrarEl(el); else esconderEl(el);
+      });
+      const navWrap = document.querySelector(".wiz-nav");
+      const ehUltimo = n === totalPassos();
+      if (navWrap) navWrap.style.display = ehUltimo ? "none" : "flex";
+      const titulo = WIZ_TITULOS[n];
+      if (titulo) {
+        const h = document.getElementById("wizTitulo");
+        const p = document.getElementById("wizSubtitulo");
+        // Cada passo já tem seu próprio título em WIZ_TITULOS — inclusive o
+        // último (5 no caminho "eu mesmo", 8 no "outra pessoa"). Não existe
+        // mais um texto genérico de "revisão" sobrescrevendo isso.
+        if (h) h.textContent = titulo[0];
+        if (p) p.textContent = titulo[1];
+      }
+      const voltarBtn = document.getElementById("wizVoltarBtn");
+      if (voltarBtn) voltarBtn.style.display = (n === 1) ? "none" : "";
+      const avisoErro = document.getElementById("wizAvisoErro");
+      if (avisoErro) avisoErro.style.display = "none";
+      if (n === 7 && typeof atualizarEnvioTitularTexto === "function") atualizarEnvioTitularTexto();
+      pintarBarraProgresso();
+      atualizarBotoes();
+      window.scrollTo({ top: document.getElementById("orcamento").offsetTop - 20, behavior: "smooth" });
+    }
+
+    function proximoPasso(n) {
+      const seq = sequenciaPassos();
+      const i = seq.indexOf(n);
+      return i >= 0 && i < seq.length - 1 ? seq[i + 1] : n;
+    }
+    function passoAnterior(n) {
+      const seq = sequenciaPassos();
+      const i = seq.indexOf(n);
+      return i > 0 ? seq[i - 1] : n;
+    }
+
+    function mostrarErroWizard(msg) {
+      const el = document.getElementById("wizAvisoErro");
+      if (!el) return;
+      el.textContent = msg;
+      el.style.display = "block";
+    }
+
+    // Cada passo tem sua própria regra do que precisa estar pronto antes de avançar.
+    function validarPassoAtual() {
+      switch (passoAtual) {
+        case 1:
+          if (!temExamesOuFotos()) return "Anexe o pedido médico ou digite os exames.";
+          return null;
+        case 2:
+          return null; // sempre tem laboratório marcado por padrão
+        case 3:
+          if (!cpfValidado) return "Valide seu CPF antes de continuar.";
+          if (!cpfConfirmado) return "Confirme se os dados encontrados estão certos.";
+          return null;
+        case 4:
+          return null; // "Eu mesma(o)" já vem marcado por padrão
+        case 5:
+          if (!validarTelefone(telefoneInput.value)) return "Informe um telefone válido.";
+          if (!validarEmail(emailInput.value)) return "Informe um e-mail válido.";
+          return null;
+        case 6:
+          if (!cpfPacienteValidado) {
+            const nomeM = (document.getElementById("nomePaciente").value || "").trim();
+            const nascM = (document.getElementById("nascPaciente").value || "").trim();
+            if (!nomeM || !nascM) return "Confirme o CPF (ou preencha nome e nascimento) de quem vai fazer o exame.";
+          }
+          return null;
+        case 7:
+          if (!document.getElementById("envioTitular").checked && !document.getElementById("envioDependente").checked) {
+            return "Marque pra onde enviar o orçamento.";
+          }
+          return null;
+        case 8:
+          if (document.getElementById("envioDependente").checked) {
+            if (!validarTelefone(document.getElementById("telefoneDependente").value) && !validarEmail(document.getElementById("emailDependente").value)) {
+              return "Informe telefone ou e-mail de quem vai realizar.";
+            }
+          }
+          return null;
+        default:
+          return null;
+      }
+    }
+
+    const wizContinuarBtn = document.getElementById("wizContinuarBtn");
+    const wizVoltarBtn = document.getElementById("wizVoltarBtn");
+    if (wizContinuarBtn) {
+      wizContinuarBtn.addEventListener("click", function () {
+        const erro = validarPassoAtual();
+        if (erro) { mostrarErroWizard(erro); return; }
+        // Pulando pro passo 6 (dependente), zera o vínculo salvo do CPF anterior.
+        mostrarPasso(proximoPasso(passoAtual));
+      });
+    }
+    if (wizVoltarBtn) {
+      wizVoltarBtn.addEventListener("click", function () {
+        mostrarPasso(passoAnterior(passoAtual));
+      });
+    }
+
+    // ── Passo 7: quem recebe o orçamento (checkboxes, pode marcar os dois) ──
+    function atualizarEnvioOpcoesVisual() {
+      const opT = document.getElementById("envioOpcaoTitular");
+      const opD = document.getElementById("envioOpcaoDependente");
+      const cbT = document.getElementById("envioTitular");
+      const cbD = document.getElementById("envioDependente");
+      if (opT && cbT) opT.classList.toggle("on", cbT.checked);
+      if (opD && cbD) opD.classList.toggle("on", cbD.checked);
+      const obrigTel = document.getElementById("telDependenteObrig");
+      const obrigEmail = document.getElementById("emailDependenteObrig");
+      const marcado = cbD && cbD.checked;
+      if (obrigTel) obrigTel.textContent = marcado ? "OBRIGATÓRIO" : "";
+      if (obrigEmail) obrigEmail.textContent = marcado ? "OBRIGATÓRIO" : "";
+    }
+    ["envioTitular", "envioDependente"].forEach(function (id) {
+      const cb = document.getElementById(id);
+      if (cb) cb.addEventListener("change", function () {
+        // Nunca deixa os dois desmarcados.
+        const cbT = document.getElementById("envioTitular");
+        const cbD = document.getElementById("envioDependente");
+        if (!cbT.checked && !cbD.checked) this.checked = true;
+        atualizarEnvioOpcoesVisual();
+      });
+    });
+    // Preenche o nome/telefone do titular exibidos no passo 7, assim que se conhece.
+    function atualizarEnvioTitularTexto() {
+      const nomeEl = document.getElementById("envioTitularNome");
+      const telEl = document.getElementById("envioTitularTel");
+      const nome = (dadosCpfValidados && dadosCpfValidados.nome) || (contaLogada && contaLogada.nome) || "Você";
+      if (nomeEl) nomeEl.textContent = nome;
+      if (telEl) telEl.textContent = telefoneInput.value || "—";
+    }
+
     btnFinalizar.addEventListener("click", async function () {
       if (envioEmAndamento || pedidoJaEnviado) return;
       if (!validarFormularioBase()) return;
       if (!cpfValidado || !cpfConfirmado) return;
 
       if (quemExame === "outro") {
-        const cpfPac = (document.getElementById("cpfPaciente").value || "").replace(/\D/g, "");
+        const cpfPacEhPass = ehPassaporteMarcado(document.getElementById("cpfPacienteEhPassaporte"));
+        const cpfPac = formatarComoDocumento(document.getElementById("cpfPaciente").value, cpfPacEhPass);
         const nomePac = (document.getElementById("nomePaciente").value || "").trim();
-        if (cpfPac.length !== 11) {
+        if (!cpfPacEhPass && cpfPac.length !== 11) {
           mostrarStatusCheckout("Informe o CPF de quem vai fazer o exame.");
-          return;
-        }
-        if (!cpfPacienteValidado) {
-          mostrarStatusCheckout("Valide o CPF de quem vai fazer o exame.");
           return;
         }
         if (!nomePac || nomePac.split(" ").filter(Boolean).length < 2) {
           mostrarStatusCheckout("Informe o nome completo de quem vai fazer o exame.");
+          return;
+        }
+        if (!document.getElementById("envioTitular").checked && !document.getElementById("envioDependente").checked) {
+          mostrarStatusCheckout("Marque pra onde enviar o orçamento.");
+          return;
+        }
+        if (document.getElementById("envioDependente").checked
+            && !validarTelefone(document.getElementById("telefoneDependente").value)
+            && !validarEmail(document.getElementById("emailDependente").value)) {
+          mostrarStatusCheckout("Informe telefone ou e-mail de quem vai realizar.");
           return;
         }
       }
@@ -4373,14 +4900,22 @@
 
       btnFinalizar.textContent = "Enviando pedido...";
 
-      const titularCpfLimpo = (cpfInput.value || "").replace(/\D/g, "");
-      let cpfPedido = cpfInput.value.trim();
+      const titularEhPass = ehPassaporteMarcado(document.getElementById("cpfEhPassaporte"));
+      const titularCpfLimpo = formatarComoDocumento(cpfInput.value, titularEhPass);
+      const titularTelefoneCompleto = "+" + document.getElementById("paisTelefone").value + " " + telefoneInput.value.trim();
+      const titularEmailValor = emailInput.value.trim();
+      let cpfPedido = titularCpfLimpo;
       let nomePedido = dadosCpfValidados ? dadosCpfValidados.nome : "";
       let nascPedido = dadosCpfValidados ? dadosCpfValidados.nascimento : "";
       let titularCpf = "";
       let parentesco = "";
+      let enviarPara = "titular";
+      let telefonePrincipal = titularTelefoneCompleto;
+      let emailPrincipal = titularEmailValor;
+      let contatoDependente;
       if (quemExame === "outro") {
-        const cpfPac = (document.getElementById("cpfPaciente").value || "").replace(/\D/g, "");
+        const cpfPacEhPass = ehPassaporteMarcado(document.getElementById("cpfPacienteEhPassaporte"));
+        const cpfPac = formatarComoDocumento(document.getElementById("cpfPaciente").value, cpfPacEhPass);
         const nomePac = (document.getElementById("nomePaciente").value || "").trim();
         const nascPac = (document.getElementById("nascPaciente").value || "").trim();
         parentesco = (document.getElementById("parentesco").value || "").trim() || "familiar";
@@ -4388,6 +4923,24 @@
         cpfPedido = cpfPac;
         nomePedido = nomePac;
         nascPedido = nascPac;
+
+        const envioTitularMarcado = document.getElementById("envioTitular").checked;
+        const envioDependenteMarcado = document.getElementById("envioDependente").checked;
+        enviarPara = envioTitularMarcado && envioDependenteMarcado ? "ambos" : (envioDependenteMarcado ? "dependente" : "titular");
+        const telDep = document.getElementById("telefoneDependente").value.trim();
+        const emailDep = document.getElementById("emailDependente").value.trim();
+        if (telDep || emailDep) {
+          contatoDependente = {
+            telefone: telDep ? ("+" + document.getElementById("paisTelefone").value + " " + telDep) : undefined,
+            email: emailDep || undefined,
+          };
+        }
+        // paciente.telefone/email = destinatário PRINCIPAL do aviso — o backend
+        // dispara um segundo WhatsApp pro outro número quando enviarPara="ambos".
+        if (enviarPara === "dependente" && contatoDependente) {
+          telefonePrincipal = contatoDependente.telefone || titularTelefoneCompleto;
+          emailPrincipal = contatoDependente.email || titularEmailValor;
+        }
       }
 
       const payload = {
@@ -4395,11 +4948,15 @@
         idempotencyKey: getIdempotencyKeyPedido_(),
         contactId: dadosCpfValidados ? dadosCpfValidados.contactId : "",
         titularCpf: titularCpf || undefined,
+        titularTelefone: titularTelefoneCompleto,
+        titularEmail: titularEmailValor,
+        enviarPara: enviarPara,
+        contatoDependente: contatoDependente,
         labsSelecionados: obterLabsSelecionados(),
         paciente: {
           cpf: cpfPedido,
-          telefone: "+" + document.getElementById("paisTelefone").value + " " + telefoneInput.value.trim(),
-          email: emailInput.value.trim(),
+          telefone: telefonePrincipal,
+          email: emailPrincipal,
           nome_completo_validado: nomePedido,
           data_nascimento_validada: nascPedido,
           origem_validacao: dadosCpfValidados ? dadosCpfValidados.origem : "",
@@ -4462,6 +5019,7 @@
     setModo("foto");
     window.removerExameDecode  = removerExameDecode;
     window.removerExameGrupo   = removerExameGrupo;
+    mostrarPasso(1);
 
     // ─── UPLOAD ───────────────────────────────────────────────
     const uploadInput     = document.getElementById("uploadPedido");
@@ -4573,11 +5131,9 @@
 
     function renderUploadPreview() {
       uploadPreview.innerHTML = "";
-      const labSection  = document.getElementById("labSelectorSection");
-      const emModoFoto  = secaoFoto.style.display !== "none";
-
-      // No modo foto os logos dos labs ficam sempre visíveis (escolher A+/Hermes/ambos).
-      if (labSection && emModoFoto) labSection.style.display = "block";
+      // Quem manda na visibilidade do seletor de laboratório agora é o
+      // assistente em passos (data-wizstep="2" + mostrarPasso) — não mexer
+      // aqui, senão o passo 2 aparece junto do passo 1 assim que anexa uma foto.
       imagensPedido.forEach((fileObj, index) => {
         const item = document.createElement("div");
         item.className = "upload-item" + (fileObj.status === "uploading" || fileObj.status === "pending" ? " uploading" : "");
