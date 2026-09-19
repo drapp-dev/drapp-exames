@@ -1122,14 +1122,13 @@
     .cpf-confirm-actions { display: flex; gap: 8px; flex-wrap: nowrap; margin-top: 4px; }
 
     /* Empurrão visual quando o cliente tenta continuar sem clicar em
-       "correto!" — seta vermelha apontando pro botão + selo com o aviso,
-       bem mais visível que a mensagem de erro genérica do rodapé. */
-    .cpf-confirme-nudge { margin-top: 2px; animation: cpfConfirmeAparece .25s ease-out; }
-    .cpf-confirme-nudge-seta { display: block; margin-left: 2px; }
+       "correto!" — selo vermelho com o aviso, bem mais visível que a
+       mensagem de erro genérica do rodapé. */
+    .cpf-confirme-nudge { margin-top: 10px; animation: cpfConfirmeAparece .25s ease-out; }
     .cpf-confirme-nudge-texto {
       display: inline-block; background: #dc2626; color: #fff;
       font-weight: 700; font-size: 12.5px; border-radius: 999px;
-      padding: 7px 14px; margin-top: -6px; box-shadow: 0 2px 8px rgba(220,38,38,.25);
+      padding: 7px 14px; box-shadow: 0 2px 8px rgba(220,38,38,.25);
     }
     @keyframes cpfConfirmeAparece { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -2246,7 +2245,6 @@
                 <button id="btnEditarNasc" class="cpf-confirm-btn cpf-alterar" type="button">✏️ alterar</button>
               </div>
               <div id="cpfConfirmeNudge" class="cpf-confirme-nudge" style="display:none;">
-                <svg width="54" height="40" viewBox="0 0 54 40" class="cpf-confirme-nudge-seta"><path d="M6 36 C 6 12, 32 4, 46 8" stroke="#dc2626" stroke-width="2.5" fill="none" stroke-linecap="round" marker-end="url(#cpfConfirmeSetaPonta)"/><defs><marker id="cpfConfirmeSetaPonta" markerWidth="9" markerHeight="9" refX="4" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#dc2626"/></marker></defs></svg>
                 <div class="cpf-confirme-nudge-texto">Confirme se os dados encontrados estão certos.</div>
               </div>
             </div>
