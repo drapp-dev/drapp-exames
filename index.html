@@ -1998,7 +1998,7 @@
                   <button type="button" class="lab-tab is-on" id="tabAplus" data-lab="A+ Medicina Diagnóstica"
                     onclick="drappToggleLab('aplus')"
                     style="display:flex;align-items:center;justify-content:center;width:100%;padding:16px 8px;border-radius:12px;border:2px solid #e2e8f0;background:#f8fafc;cursor:pointer;transition:all .2s;box-sizing:border-box;">
-                    <img src="logo-aplus.png" alt="A+ Medicina Diagnóstica" style="height:48px;object-fit:contain;display:block;">
+                    <img src="logo-aplus.png" alt="A+ Medicina Diagnóstica" style="height:64px;object-fit:contain;display:block;">
                   </button>
                   <span style="font-size:12px;font-weight:600;color:var(--text);">A+ Medicina</span>
                 </div>
@@ -2006,7 +2006,7 @@
                   <button type="button" class="lab-tab is-on" id="tabHermes" data-lab="Hermes Pardini"
                     onclick="drappToggleLab('hermes')"
                     style="display:flex;align-items:center;justify-content:center;width:100%;padding:16px 8px;border-radius:12px;border:2px solid #e2e8f0;background:#f8fafc;cursor:pointer;transition:all .2s;box-sizing:border-box;">
-                    <img src="logo-hermes.png" alt="Hermes Pardini" style="height:48px;object-fit:contain;display:block;">
+                    <img src="logo-hermes.png" alt="Hermes Pardini" style="height:64px;object-fit:contain;display:block;">
                   </button>
                   <span style="font-size:12px;font-weight:600;color:var(--text);">Hermes Pardini</span>
                 </div>
@@ -2247,7 +2247,6 @@
               </div>
               <div class="cpf-confirm-actions">
                 <button id="btnCpfOk"    class="cpf-confirm-btn cpf-ok"     type="button">✓ correto!</button>
-                <button id="btnCpfWrong" class="cpf-confirm-btn cpf-wrong"  type="button">✗ errado</button>
                 <button id="btnEditarNasc" class="cpf-confirm-btn cpf-alterar" type="button">✏️ alterar</button>
               </div>
               <div id="cpfConfirmeNudge" class="cpf-confirme-nudge" style="display:none;">
@@ -2352,20 +2351,22 @@
                   </div>
                 </div>
                 <div style="font-size:12.5px;color:#78350f;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:8px 10px;margin-bottom:10px;line-height:1.45;">
-                  Não é essa pessoa? Ajuste o CPF acima, ou corrija nome/nascimento logo abaixo.
+                  Não é essa pessoa? Ajuste o CPF acima, ou confira se o CPF foi digitado corretamente.
                 </div>
                 <div class="cpf-confirm-actions">
                   <button id="btnCpfPacienteOk" class="cpf-confirm-btn cpf-ok" type="button">✓ correto!</button>
-                  <button id="btnCpfPacienteWrong" class="cpf-confirm-btn cpf-wrong" type="button">✗ não é essa pessoa</button>
+                  <button id="btnEditarNascPaciente" class="cpf-confirm-btn cpf-alterar" type="button">✏️ alterar</button>
                 </div>
               </div>
-              <div class="field" style="margin-top:10px;">
-                <label for="nomePaciente">Nome completo <span style="font-weight:400;color:var(--muted);">(editável, se precisar corrigir)</span></label>
-                <input type="text" id="nomePaciente" placeholder="Nome de quem vai realizar" />
-              </div>
-              <div class="field" style="margin-top:10px;">
-                <label for="nascPaciente">Nascimento</label>
-                <input type="date" id="nascPaciente" />
+              <div id="pacienteCamposWrap">
+                <div class="field" style="margin-top:10px;">
+                  <label for="nomePaciente">Nome completo <span style="font-weight:400;color:var(--muted);">(editável, se precisar corrigir)</span></label>
+                  <input type="text" id="nomePaciente" placeholder="Nome de quem vai realizar" />
+                </div>
+                <div class="field" style="margin-top:10px;">
+                  <label for="nascPaciente">Nascimento</label>
+                  <input type="date" id="nascPaciente" />
+                </div>
               </div>
               <div class="field" style="margin-top:10px;">
                 <label for="parentesco">Parentesco</label>
@@ -2856,7 +2857,6 @@
     const btnFinalizar      = document.getElementById("btnFinalizar");
     const btnValidarCpf     = document.getElementById("btnValidarCpf");
     const btnCpfOk          = document.getElementById("btnCpfOk");
-    const btnCpfWrong       = document.getElementById("btnCpfWrong");
     const loadingBox        = document.getElementById("loadingBox");
     const errorBox          = document.getElementById("errorBox");
     const checkoutCard      = document.getElementById("checkoutCard");
@@ -2903,6 +2903,16 @@
       if (/^\d{4}-\d{2}-\d{2}/.test(t)) return t.slice(0, 10);
       const br = t.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
       if (br) return br[3] + "-" + br[2].padStart(2, "0") + "-" + br[1].padStart(2, "0");
+      // Formato de exibição "dd/mon/aaaa" (ex.: "03/set/2012") — é o que
+      // buscarCpfNaCache()/consultarCpf() devolvem pro paciente encontrado.
+      // Sem isso, a data existe mas não convertia — achado real (18/set):
+      // bloqueava até pedido com data já certa, depois de exigir o campo.
+      const MESES_ABREV = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
+      const comMes = t.toLowerCase().match(/^(\d{1,2})[\/\-]([a-zç]{3})[\/\-](\d{4})$/);
+      if (comMes) {
+        const idx = MESES_ABREV.indexOf(comMes[2]);
+        if (idx !== -1) return comMes[3] + "-" + String(idx + 1).padStart(2, "0") + "-" + comMes[1].padStart(2, "0");
+      }
       return "";
     }
 
@@ -4308,6 +4318,10 @@
             cpfPacienteStatus.textContent = "Preencha nome e nascimento abaixo.";
             cpfPacienteStatus.className = "cpf-status active success";
           }
+          // Passaporte não tem busca automática — o campo precisa ficar
+          // visível de cara, não tem "alterar" pra abrir.
+          const pacienteCamposWrapPass = document.getElementById("pacienteCamposWrap");
+          if (pacienteCamposWrapPass) pacienteCamposWrapPass.style.display = "";
           aplicarVinculoDependenteNaTela();
           return;
         }
@@ -4332,6 +4346,10 @@
               : "✔ Dados encontrados em nosso sistema";
             cpfPacienteStatus.className = "cpf-status active success";
           }
+          // Achou pelo CPF: os campos ficam escondidos, só abrem se a pessoa
+          // clicar em "✏️ alterar" — igual ao passo do titular.
+          const pacienteCamposWrapOk = document.getElementById("pacienteCamposWrap");
+          if (pacienteCamposWrapOk) pacienteCamposWrapOk.style.display = "none";
           aplicarVinculoDependenteNaTela();
         } catch (erro) {
           cpfPacienteValidado = false;
@@ -4341,6 +4359,9 @@
             cpfPacienteStatus.textContent = "Não localizamos os dados deste CPF. Confira o número ou preencha o nome.";
             cpfPacienteStatus.className = "cpf-status active error";
           }
+          // Não achou: precisa preencher na mão, então os campos ficam à vista.
+          const pacienteCamposWrapErro = document.getElementById("pacienteCamposWrap");
+          if (pacienteCamposWrapErro) pacienteCamposWrapErro.style.display = "";
         } finally {
           btnValidarCpfPaciente.disabled = false;
           btnValidarCpfPaciente.textContent = "Validar CPF";
@@ -4357,18 +4378,11 @@
         }
       });
     }
-    const btnCpfPacienteWrong = document.getElementById("btnCpfPacienteWrong");
-    if (btnCpfPacienteWrong) {
-      btnCpfPacienteWrong.addEventListener("click", function () {
-        cpfPacienteValidado = false;
-        dadosCpfPaciente = null;
-        if (cpfPacienteResult) cpfPacienteResult.classList.remove("active");
-        cpfPacienteInput.value = "";
-        cpfPacienteInput.focus();
-        if (cpfPacienteStatus) {
-          cpfPacienteStatus.textContent = "Confira o CPF e valide de novo.";
-          cpfPacienteStatus.className = "cpf-status active error";
-        }
+    const btnEditarNascPaciente = document.getElementById("btnEditarNascPaciente");
+    if (btnEditarNascPaciente) {
+      btnEditarNascPaciente.addEventListener("click", function () {
+        const wrap = document.getElementById("pacienteCamposWrap");
+        if (wrap) wrap.style.display = wrap.style.display === "none" ? "" : "none";
       });
     }
 
@@ -4571,20 +4585,6 @@
       nascEditorWrap.style.display = "none";
       nomeEditorWrap.style.display = "none";
       btnNascOk.style.display = "none";
-    });
-
-    btnCpfWrong.addEventListener("click", function () {
-      cpfConfirmado = false;
-      mostrarStatusCpf("Dados marcados como incorretos. Corrija abaixo.", "error");
-      const nudge = document.getElementById("cpfConfirmeNudge");
-      if (nudge) nudge.style.display = "none";
-      // Pré-preenche o manual com os dados que vieram para facilitar correção
-      const nomeAtual = cpfNome.textContent;
-      if (nomeAtual && nomeAtual !== "-") {
-        document.getElementById("cpfNomeManual").value = nomeAtual;
-      }
-      abrirPreenchimentoManual();
-      atualizarBotoes();
     });
 
     document.getElementById("btnConfirmarManual").addEventListener("click", function () {
