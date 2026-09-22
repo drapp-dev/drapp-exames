@@ -2813,9 +2813,9 @@
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxyeHFlUzJ6sQCEjFdgviwtdpTJ9zwxVipswMIWj1IPzWm00zRBgVFAHy-B0ajaIyNGQg/exec";
     // HUB_TOKEN removido do frontend — token fica SOMENTE no Config.gs (Apps Script privado)
 
-    // Backend novo (drapp-pipeline). CPF e criar pedido vão pra cá.
-    // Fotos ainda sobem pelo Apps Script (S3). Bitrix está fora — o pedido
-    // entra só no admin (https://admin.drapp.com.br).
+    // Backend novo (drapp-pipeline). CPF, fotos e criar pedido vão pra cá.
+    // Fotos caem em /var/www/pedidos-arquivos no VPS (não mais no S3).
+    // Bitrix está fora — o pedido entra só no admin (https://admin.drapp.com.br).
     const PEDIDOS_API_URL = "https://pedidos.drapp.com.br";
     let quemExame = "eu";
     let contaLogada = null; // { cpf, nome, dependentes[] }
@@ -5126,8 +5126,8 @@
     const uploadInputMais = document.getElementById("uploadPedidoMais");
     const uploadPreview   = document.getElementById("uploadPreview");
 
-    // Id único por sessão de formulário — agrupa os arquivos deste pedido no S3.
-    // Não precisa ser secreto, só evita colisão de nomes entre pedidos diferentes.
+    // Id único por sessão de formulário — agrupa os arquivos deste pedido na
+    // mesma pasta do VPS. Não precisa ser secreto, só evita colisão de nomes.
     let uploadSessionId = null;
     function getUploadSessionId_() {
       if (!uploadSessionId) uploadSessionId = Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
@@ -5159,10 +5159,8 @@
       throw new Error("Arquivo sem conteúdo para enviar");
     }
 
-    // Envia UM arquivo por vez pro Apps Script (payload pequeno) em vez de
-    // acumular tudo em base64 dentro do POST de criarPedido — pedidos com
-    // vários PDFs grandes estouravam o limite de tamanho/tempo do Apps Script
-    // e voltavam com uma página de erro do Google em vez de JSON.
+    // Envia UM arquivo por vez pra API do VPS (payload pequeno) em vez de
+    // acumular tudo em base64 dentro do POST de criarPedido.
     function atualizarAvisoUpload_() {
       const comErro = imagensPedido.filter(f => f.status === "error");
       if (!comErro.length) {
@@ -5194,14 +5192,15 @@
       }
       for (let tentativa = 1; tentativa <= maxTentativas; tentativa++) {
         try {
-          const resp = await fetch(APPS_SCRIPT_URL, {
+          const resp = await fetch(PEDIDOS_API_URL + "/api/arquivo/formulario", {
             method: "POST",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              action:   "uploadFoto",
               uploadId: getUploadSessionId_(),
               seq:      seq,
               nome:     fileObj.nome,
-              base64:   base64
+              base64:   base64,
+              ct:       getClientToken_()
             })
           });
           const data = await resp.json();
