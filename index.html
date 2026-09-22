@@ -5200,6 +5200,7 @@
               seq:      seq,
               nome:     fileObj.nome,
               base64:   base64,
+              mimetype: (fileObj.file && fileObj.file.type) || (/\.pdf$/i.test(fileObj.nome || "") ? "application/pdf" : "image/jpeg"),
               ct:       getClientToken_()
             })
           });
@@ -5346,8 +5347,8 @@
 
     function processarArquivos(files) {
       files.forEach(file => {
-        const ehImagem = file.type.startsWith("image/");
-        const ehPdf    = file.type === "application/pdf";
+        const ehPdf    = file.type === "application/pdf" || /\.pdf$/i.test(file.name || "");
+        const ehImagem = !ehPdf && file.type.startsWith("image/");
         if (!ehImagem && !ehPdf) return;
         if (ehPdf && file.size > MAX_PDF_MB * 1024 * 1024) {
           mostrarStatusUpload("O PDF \"" + file.name + "\" tem mais de " + MAX_PDF_MB + " MB. Tire uma foto do pedido ou envie um arquivo menor.", "error", { scroll: true });
