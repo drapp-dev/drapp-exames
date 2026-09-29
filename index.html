@@ -2194,10 +2194,10 @@
 
             <form autocomplete="on" novalidate>
             <div data-wizstep="4">
-              <p class="section-subtitle" style="margin-bottom:10px;">Para quem é o orçamento?</p>
-              <div class="quem-tabs" role="group" aria-label="Para quem é o orçamento?" id="quemTabs">
-                <button type="button" id="quemEu" class="quem-tab is-on">Eu mesma(o)</button>
-                <button type="button" id="quemOutro" class="quem-tab">Outra pessoa</button>
+              <p class="section-subtitle" style="margin-bottom:10px;">Os exames são para você mesmo ou para outra pessoa?</p>
+              <div class="quem-tabs" role="group" aria-label="Os exames são para você mesmo ou para outra pessoa?" id="quemTabs">
+                <button type="button" id="quemEu" class="quem-tab is-on">Para mim</button>
+                <button type="button" id="quemOutro" class="quem-tab">Para outra pessoa</button>
               </div>
               <div id="paraLogadoWrap" style="display:none;margin-bottom:16px;">
                 <label for="paraQuem" style="display:block;font-size:13px;font-weight:600;color:#16324a;margin-bottom:6px;">Quem vai realizar</label>
@@ -2208,7 +2208,7 @@
             <div data-wizstep="3">
             <div class="grid-2">
               <div class="field">
-                <label for="cpf" id="cpfLabel">CPF</label>
+                <label for="cpf" id="cpfLabel" style="font-size:18px;line-height:1.35;">CPF de quem está pedindo o orçamento</label>
                 <div class="cpf-row">
                   <input type="text" id="cpf" placeholder="000.000.000-00" maxlength="14" autocomplete="off" />
                   <button id="btnValidarCpf" class="inline-btn" type="button">Validar CPF</button>
@@ -2216,7 +2216,7 @@
                 <div id="cpfError" class="field-error">Informe um CPF válido.</div>
                 <label style="display:flex;align-items:center;gap:7px;margin-top:8px;font-size:12.5px;color:var(--muted);cursor:pointer;">
                   <input type="checkbox" id="cpfEhPassaporte" style="width:16px;height:16px;accent-color:var(--blue);">
-                  É passaporte? <span style="color:#8291a8;">(tira a máscara de CPF)</span>
+                  É passaporte?
                 </label>
               </div>
             </div>
@@ -2325,7 +2325,7 @@
             </div><!-- /campos telefone+email -->
 
             <div id="familiarWrap" data-wizstep="6" style="margin-top:16px;background:#fff;border:1.5px solid #dbeafe;border-radius:14px;padding:16px;">
-              <div style="font-weight:700;font-size:15px;margin-bottom:10px;color:var(--blue);">Quem vai fazer o exame</div>
+              <div style="font-weight:700;font-size:17px;margin-bottom:10px;color:var(--blue);">CPF de quem vai fazer o exame</div>
               <div class="field">
                 <label for="cpfPaciente">CPF do paciente</label>
                 <div class="cpf-row">
@@ -2335,7 +2335,7 @@
                 <div id="cpfPacienteStatus" class="cpf-status"></div>
                 <label style="display:flex;align-items:center;gap:7px;margin-top:8px;font-size:12.5px;color:var(--muted);cursor:pointer;">
                   <input type="checkbox" id="cpfPacienteEhPassaporte" style="width:16px;height:16px;accent-color:var(--blue);">
-                  É passaporte? <span style="color:#8291a8;">(tira a máscara de CPF)</span>
+                  É passaporte?
                 </label>
               </div>
               <div id="cpfPacienteResult" class="cpf-result" style="margin-top:10px;">
@@ -2982,13 +2982,20 @@
     }
 
     function marcarQuem(quem) {
+      const antes = quemExame;
       quemExame = quem;
       if (quemEuBtn) quemEuBtn.classList.toggle("is-on", quem === "eu");
       if (quemOutroBtn) quemOutroBtn.classList.toggle("is-on", quem === "outro");
-      if (cpfLabel) cpfLabel.textContent = quem === "outro" ? "Seu CPF (quem solicita)" : "CPF";
+      if (cpfLabel) cpfLabel.textContent = "CPF de quem está pedindo o orçamento";
       // familiarWrap não é mais escondido por CSS direto — quem manda a visibilidade
       // agora é o passo do assistente (data-wizstep="6"); só atualiza a barra.
-      if (typeof pintarBarraProgresso === "function") pintarBarraProgresso();
+      // No passo "para quem", "para mim" é o último passo e "outra pessoa" abre
+      // o CPF do paciente — o botão Finalizar/Continuar precisa trocar na hora.
+      if (antes !== quem && passoAtual === 4 && typeof mostrarPasso === "function") {
+        mostrarPasso(4, { semScroll: true });
+      } else if (typeof pintarBarraProgresso === "function") {
+        pintarBarraProgresso();
+      }
     }
     if (quemEuBtn) quemEuBtn.addEventListener("click", function () { marcarQuem("eu"); });
     if (quemOutroBtn) quemOutroBtn.addEventListener("click", function () { marcarQuem("outro"); });
@@ -3811,8 +3818,8 @@
           origem:     "hub",
           negocioId:  jaCadastrado.negocioId || "",
           contactId:  jaCadastrado.contactId || "",
-          telefone:   jaCadastrado.telefone  || "",
-          email:      jaCadastrado.email     || ""
+          telefone:   hub.telefone || jaCadastrado.telefone || "",
+          email:      hub.email || jaCadastrado.email || ""
         };
 
         // Salva no cache pra consultas futuras
@@ -4708,20 +4715,25 @@
     const WIZ_TITULOS = {
       1: ["Vamos montar seu orçamento", "Anexe o pedido médico ou digite os exames — o que for mais fácil."],
       2: ["Onde você quer orçar?", "Escolha um laboratório, ou compare os dois."],
-      3: ["Confirme seus dados", "CPF de quem está pedindo o orçamento."],
-      4: ["Para quem é esse orçamento?", "Essa resposta decide os próximos passos."],
-      5: ["Precisamos do seu contato", "Pois você será o titular deste orçamento."],
-      6: ["Quem vai fazer o exame?", "CPF (ou passaporte) da pessoa."],
+      3: ["CPF de quem está pedindo o orçamento", "É o CPF de quem solicita. Se os exames forem de outra pessoa, o CPF dela vem depois."],
+      4: ["Os exames são para quem?", "Para você mesmo ou para outra pessoa."],
+      5: ["Contato de quem está pedindo", "Telefone e e-mail de quem solicita o orçamento."],
+      6: ["CPF do paciente", "De quem vai fazer o exame."],
       7: ["Para onde enviamos?", "Pode marcar os dois."],
       8: ["Preencha os dados do paciente!", "quem irá realizar os exames."],
     };
     let passoAtual = 1;
-    function totalPassos() { return quemExame === "outro" ? 8 : 5; }
-    // Passos 6,7,8 só existem no caminho "outro"; passo 5 é sempre o 5º passo
-    // exibido nesse caminho também (a barra usa a POSIÇÃO na sequência visível,
-    // não o número interno do data-wizstep).
+    function totalPassos() { return sequenciaPassos().length; }
+    // Ordem visível: exames → lab → CPF de quem pede → contato de quem pede →
+    // exames para si ou outra pessoa. 6, 7 e 8 só no caminho "outra pessoa"
+    // (CPF do paciente, para onde enviar, contato do paciente).
+    // A barra usa a POSIÇÃO na sequência, não o número interno do data-wizstep.
     function sequenciaPassos() {
-      return quemExame === "outro" ? [1, 2, 3, 4, 5, 6, 7, 8] : [1, 2, 3, 4, 5];
+      return quemExame === "outro" ? [1, 2, 3, 5, 4, 6, 7, 8] : [1, 2, 3, 5, 4];
+    }
+    function ultimoPassoId() {
+      const seq = sequenciaPassos();
+      return seq[seq.length - 1];
     }
     function indiceNaSequencia(passo) { return sequenciaPassos().indexOf(passo) + 1; }
 
@@ -4753,7 +4765,7 @@
     function mostrarEl(el) { el.style.display = el.dataset.wizDisplay || "block"; }
     function esconderEl(el) { el.style.display = "none"; }
 
-    function mostrarPasso(n) {
+    function mostrarPasso(n, opcoes) {
       passoAtual = n;
       document.querySelectorAll("[data-wizstep]").forEach(function (el) {
         // Um elemento pode pertencer a mais de um passo: data-wizstep="3,4,5,6,7,8,final".
@@ -4762,18 +4774,18 @@
         // dessa mesma lista (bug corrigido: antes "final" no meio da lista
         // fazia ignorar todos os outros números).
         const alvos = el.getAttribute("data-wizstep").split(",").map(function (s) { return s.trim(); });
-        const mostrar = alvos.includes(String(n)) || (alvos.includes("final") && n === totalPassos());
+        const mostrar = alvos.includes(String(n)) || (alvos.includes("final") && n === ultimoPassoId());
         if (mostrar) mostrarEl(el); else esconderEl(el);
       });
       const navWrap = document.querySelector(".wiz-nav");
-      const ehUltimo = n === totalPassos();
+      const ehUltimo = n === ultimoPassoId();
       if (navWrap) navWrap.style.display = ehUltimo ? "none" : "flex";
       const titulo = WIZ_TITULOS[n];
       if (titulo) {
         const h = document.getElementById("wizTitulo");
         const p = document.getElementById("wizSubtitulo");
         // Cada passo já tem seu próprio título em WIZ_TITULOS — inclusive o
-        // último (5 no caminho "eu mesmo", 8 no "outra pessoa"). Não existe
+        // último (4 no caminho "para mim", 8 no "outra pessoa"). Não existe
         // mais um texto genérico de "revisão" sobrescrevendo isso.
         if (h) h.textContent = titulo[0];
         if (p) p.textContent = titulo[1];
@@ -4785,7 +4797,9 @@
       if (n === 7 && typeof atualizarEnvioTitularTexto === "function") atualizarEnvioTitularTexto();
       pintarBarraProgresso();
       atualizarBotoes();
-      window.scrollTo({ top: document.getElementById("orcamento").offsetTop - 20, behavior: "smooth" });
+      if (!opcoes || !opcoes.semScroll) {
+        window.scrollTo({ top: document.getElementById("orcamento").offsetTop - 20, behavior: "smooth" });
+      }
     }
 
     function proximoPasso(n) {
@@ -5048,6 +5062,7 @@
         idempotencyKey: getIdempotencyKeyPedido_(),
         contactId: dadosCpfValidados ? dadosCpfValidados.contactId : "",
         titularCpf: titularCpf || undefined,
+        titularNome: dadosCpfValidados ? dadosCpfValidados.nome : "",
         titularTelefone: titularTelefoneCompleto,
         titularEmail: titularEmailValor,
         enviarPara: enviarPara,
