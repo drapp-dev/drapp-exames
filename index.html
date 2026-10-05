@@ -4,12 +4,12 @@
 <head>
   <meta charset="UTF-8" />
   <script>
-    // Redirect drapp.com.br/p?d=DEAL_ID → página de upload
+    // drapp.com.br/?d=DEAL_ID → upload na VPS (substitui Apps Script / AWS)
     (function () {
       var d = new URLSearchParams(window.location.search).get('d');
       if (d && /^\d+$/.test(d)) {
         window.location.replace(
-          'https://script.google.com/macros/s/AKfycbxyeHFlUzJ6sQCEjFdgviwtdpTJ9zwxVipswMIWj1IPzWm00zRBgVFAHy-B0ajaIyNGQg/exec?action=upload&deal=' + d
+          'https://pedidos.drapp.com.br/upload?d=' + encodeURIComponent(d)
         );
       }
     })();
