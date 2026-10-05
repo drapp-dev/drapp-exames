@@ -2810,12 +2810,9 @@
 
   <!-- ═══ SCRIPTS (lógica original preservada) ══════════════ -->
   <script>
-    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxyeHFlUzJ6sQCEjFdgviwtdpTJ9zwxVipswMIWj1IPzWm00zRBgVFAHy-B0ajaIyNGQg/exec";
-    // HUB_TOKEN removido do frontend — token fica SOMENTE no Config.gs (Apps Script privado)
+    // Catálogo, CPF, pedido e feedback → pipeline (sem Apps Script).
 
-    // Backend novo (drapp-pipeline). CPF, fotos e criar pedido vão pra cá.
-    // Fotos caem em /var/www/pedidos-arquivos no VPS (não mais no S3).
-    // Bitrix está fora — o pedido entra só no admin (https://admin.drapp.com.br).
+    // Backend (drapp-pipeline). CPF, fotos, criar pedido, catálogo e feedback.
     const PEDIDOS_API_URL = "https://pedidos.drapp.com.br";
     let quemExame = "eu";
     let contaLogada = null; // { cpf, nome, dependentes[] }
@@ -3207,9 +3204,7 @@
           selecionados.push(i); adicionados.push(i);
         }
       }
-      adicionados.forEach(registrarEscolha_);
-      const contraste = adicionarContrasteAuto(adicionados);
-      contraste.forEach(registrarEscolha_);
+      adicionarContrasteAuto(adicionados);
       renderTabela();
       atualizarResumo();
       atualizarBotaoContinuar();
@@ -3268,10 +3263,10 @@
       }
     }
 
-    // Carrega catálogo uma vez ao abrir a página
+    // Carrega catálogo uma vez ao abrir a página (pipeline / Postgres — sem Apps Script)
     (async function carregarCatalogo() {
       try {
-        const r = await fetch(APPS_SCRIPT_URL + "?action=catalogo");
+        const r = await fetch(PEDIDOS_API_URL + "/api/catalogo");
         catalogo = await r.json();
         // Mantém mapeamentoLabs atualizado
         mapeamentoLabs = {};
@@ -3728,36 +3723,10 @@
     }
 
     async function buscarExamesRemotos(termo) {
-      // Busca local (catálogo já carregado)
-      if (catalogo) {
-        return buscarExamesLocal(termo) || [];
-      }
-
-      // Fallback remoto (catálogo ainda não carregou)
-      const labsSelecionados = obterLabsSelecionados();
-      const url = APPS_SCRIPT_URL + "?q=" + encodeURIComponent(termo) + "&labs=" + encodeURIComponent(labsSelecionados.join(","));
-      const response = await fetch(url);
-      if (!response.ok) throw new Error("Falha na resposta da consulta");
-      const produtos = await response.json();
-      if (produtos && produtos.erro) throw new Error(produtos.mensagem || produtos.erro || "Erro retornado pelo Apps Script");
-
-      return (Array.isArray(produtos) ? produtos : [])
-        .map(item => {
-          if (item.tipo === "grupo") {
-            return {
-              tipo:   "grupo",
-              grupo:  textoSeguro(item.grupo),
-              itensA: (item.itensA || []).map(sanitizarItem_),
-              hermes: item.hermes ? sanitizarItem_(item.hermes) : null
-            };
-          }
-          return sanitizarItem_(item);
-        })
-        .filter(item => item.tipo === "grupo" ? (item.itensA && item.itensA.length > 0) : item.nome)
-        .filter(item => {
-          if (item.tipo === "grupo") return true;
-          return !selecionados.some(sel => sel.id === item.id && sel.laboratorio === item.laboratorio);
-        });
+      // Busca só no catálogo já carregado do pipeline (sem Apps Script).
+      // Se o catálogo ainda não veio, devolve vazio — a busca roda de novo depois.
+      if (!catalogo) return [];
+      return buscarExamesLocal(termo) || [];
     }
 
     async function consultarCpf(cpfLimpo) {
@@ -3893,14 +3862,6 @@
       return novoContraste;
     }
 
-    function registrarEscolha_(item) {
-      fetch(APPS_SCRIPT_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "registrarEscolha", sigla: item.id, lab: item.laboratorio, descricao: item.nome })
-      }).catch(() => {});
-    }
-
     function adicionarExame(exame) {
       const labsSelecionados = obterLabsSelecionados();
       const adicionados = [];
@@ -3921,9 +3882,7 @@
         }
       }
       adicionados.forEach(item => gtag('event', 'exam_added', { exam_name: item.nome, lab: item.laboratorio }));
-      adicionados.forEach(registrarEscolha_);
       const contrasteAdicionado = adicionarContrasteAuto(adicionados);
-      contrasteAdicionado.forEach(registrarEscolha_);
       const todosAdicionados = adicionados.concat(contrasteAdicionado);
       if (todosAdicionados.length) {
         medirOpenAIAds_("items_added", {
@@ -5508,8 +5467,9 @@
         };
 
         try {
-          const resp = await fetch(APPS_SCRIPT_URL, {
+          const resp = await fetch(PEDIDOS_API_URL + "/api/feedback", {
             method: "POST",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload)
           });
           const data = await resp.json();
