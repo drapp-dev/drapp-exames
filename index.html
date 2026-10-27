@@ -4,13 +4,20 @@
 <head>
   <meta charset="UTF-8" />
   <script>
-    // drapp.com.br/?d=DEAL_ID → upload na VPS (substitui Apps Script / AWS)
+    // drapp.com.br/?c=CODIGO → página para enviar outra foto.
+    // O número do pedido (?d=123) não abre mais essa página.
     (function () {
-      var d = new URLSearchParams(window.location.search).get('d');
-      if (d && /^\d+$/.test(d)) {
+      var q = new URLSearchParams(window.location.search);
+      var c = q.get('c') || q.get('token') || '';
+      if (/^[a-f0-9]{32}$/i.test(c)) {
         window.location.replace(
-          'https://pedidos.drapp.com.br/upload?d=' + encodeURIComponent(d)
+          'https://pedidos.drapp.com.br/upload?token=' + encodeURIComponent(c)
         );
+        return;
+      }
+      var d = q.get('d');
+      if (d && /^\d+$/.test(d)) {
+        window.location.replace('https://pedidos.drapp.com.br/upload?antigo=1');
       }
     })();
   </script>
@@ -2036,7 +2043,7 @@
 
             <!-- Seção foto -->
             <div id="secaoFoto" data-wizstep="1">
-              <p style="font-size:19px;font-weight:800;color:var(--dark);margin-bottom:10px;margin-top:4px;">Anexe uma ou mais pedidos médicos</p>
+              <p style="font-size:19px;font-weight:800;color:var(--dark);margin-bottom:10px;margin-top:4px;">Anexe um ou mais pedidos médicos</p>
               <div class="upload-acoes">
                 <label class="upload-botao">
                   📎 Anexar ou fotografar
@@ -3730,78 +3737,17 @@
     }
 
     async function consultarCpf(cpfLimpo) {
-      const ct = encodeURIComponent(getClientToken_());
-      // 1. Cache + Bitrix, via backend novo (drapp-pipeline)
-      const response = await fetch(PEDIDOS_API_URL + "/api/cpf?cpf=" + encodeURIComponent(cpfLimpo) + "&ct=" + ct);
+      const response = await fetch(PEDIDOS_API_URL + "/api/cpf?cpf=" + encodeURIComponent(cpfLimpo));
       if (!response.ok) throw new Error("Erro ao consultar CPF");
       const data = await response.json();
-
-      if (data.sucesso) {
-        const resultado = {
-          nome:       data.nome,
-          nascimento: formatarNascimento(data.nascimento),
-          origem:     data.origem || "",
-          negocioId:  data.negocioId || "",
-          contactId:  data.contactId || "",
-          telefone:   data.telefone || "",
-          email:      data.email || ""
-        };
-        // Bitrix pode retornar sem data de nascimento — suplementa pelo Hub via backend (token protegido)
-        if (!resultado.nascimento) {
-          try {
-            const hubResp2 = await fetch(PEDIDOS_API_URL + "/api/cpf/hub?cpf=" + encodeURIComponent(cpfLimpo) + "&ct=" + ct);
-            const hub2 = hubResp2.ok ? await hubResp2.json() : {};
-            if (hub2.ok && hub2.nascimento) {
-              resultado.nascimento = formatarNascimento(hub2.nascimento);
-              // Atualiza o cache com a data encontrada
-              fetch(PEDIDOS_API_URL + "/api/cpf", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ cpf: cpfLimpo, ...resultado })
-              }).catch(() => {});
-            }
-          } catch (_) {}
-        }
-        return resultado;
+      if (!data.sucesso || !data.nome) {
+        throw new Error(data.mensagem || "CPF não encontrado na base de dados.");
       }
-
-      // 2. Fallback: Hub via backend (sem CORS — servidor chama o Hub, não o browser)
-      if (data.needsHub) {
-        const hubResp = await fetch(PEDIDOS_API_URL + "/api/cpf/hub?cpf=" + encodeURIComponent(cpfLimpo) + "&ct=" + ct);
-        if (!hubResp.ok) throw new Error("CPF não encontrado na base de dados.");
-        const hub = await hubResp.json();
-
-        if (!hub.ok || !hub.nome) {
-          throw new Error("CPF não encontrado na base de dados.");
-        }
-
-        // O nome e a data vêm do Hub, mas o cadastro que já existe no Bitrix
-        // (quando existe) vem junto na resposta: aproveitamos o número do
-        // contato e o telefone/e-mail dele. Sem isso o Apps Script criava um
-        // contato NOVO por cima de um que já existia — foi assim que nasceram
-        // os duplicados de 03/08/2026.
-        const jaCadastrado = data.contatoConhecido || {};
-        const resultado = {
-          nome:       hub.nome,
-          nascimento: formatarNascimento(hub.nascimento || ""),
-          origem:     "hub",
-          negocioId:  jaCadastrado.negocioId || "",
-          contactId:  jaCadastrado.contactId || "",
-          telefone:   hub.telefone || jaCadastrado.telefone || "",
-          email:      hub.email || jaCadastrado.email || ""
-        };
-
-        // Salva no cache pra consultas futuras
-        fetch(PEDIDOS_API_URL + "/api/cpf", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ cpf: cpfLimpo, ...resultado })
-        }).catch(() => {});
-
-        return resultado;
-      }
-
-      throw new Error(data.mensagem || "CPF não encontrado na base de dados.");
+      return {
+        nome: data.nome,
+        nascimento: data.nascimento || "",
+        origem: data.origem || ""
+      };
     }
 
     function chaveCanonica(item) {
@@ -4307,9 +4253,7 @@
           document.getElementById("nascPaciente").value = paraIsoData(dados.nascimento);
           if (cpfPacienteResult) cpfPacienteResult.classList.add("active");
           if (cpfPacienteStatus) {
-            cpfPacienteStatus.textContent = dados.origem === "hub"
-              ? "✔ Dados encontrados em base externa"
-              : "✔ Dados encontrados em nosso sistema";
+            cpfPacienteStatus.textContent = "Encontramos um cadastro";
             cpfPacienteStatus.className = "cpf-status active success";
           }
           // Achou pelo CPF: os campos ficam escondidos, só abrem se a pessoa
@@ -4490,9 +4434,7 @@
         // não basta o dado existir na resposta, precisa ter ido pro input.
         const bannerAuto = document.getElementById("wizContatoAuto");
         if (bannerAuto) bannerAuto.style.display = (telFoiPreenchido || emailFoiPreenchido) ? "flex" : "none";
-        if (dados.origem === "bitrix") mostrarStatusCpf("✔ Dados encontrados em nosso sistema", "success");
-        else if (dados.origem === "hub") mostrarStatusCpf("✔ Dados encontrados em base externa", "success");
-        else mostrarStatusCpf("Confira os dados encontrados e confirme se estão corretos.", "success");
+        mostrarStatusCpf("Encontramos um cadastro", "success");
         atualizarBotoes();
       } catch (erro) {
         console.warn("[CPF] falha na consulta:", erro && erro.message); // motivo real fica só no console
