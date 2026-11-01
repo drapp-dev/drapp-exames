@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Orçamento DASA (teste) — DrApp</title>
+  <meta name="robots" content="noindex,nofollow" />
+  <link rel="icon" type="image/png" href="../FAVICON.png" />
+  <style>
+    :root {
+      --navy: #16324a;
+      --cyan: #51c9d2;
+      --line: #e2e8f0;
+      --muted: #64748b;
+      --bg: #f4f7fb;
+      --ok: #166534;
+      --bad: #b91c1c;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; font-family: "Segoe UI", system-ui, sans-serif;
+      background: var(--bg); color: var(--navy); line-height: 1.45;
+    }
+    header {
+      background: var(--navy); color: #fff; padding: 18px 20px;
+    }
+    header strong { font-size: 18px; }
+    header span { opacity: .75; font-size: 13px; margin-left: 8px; }
+    main { max-width: 720px; margin: 0 auto; padding: 24px 16px 48px; }
+    .aviso {
+      background: #fff7ed; border: 1px solid #fdba74; color: #9a3412;
+      border-radius: 12px; padding: 14px 16px; font-size: 14px; margin-bottom: 20px;
+    }
+    .card {
+      background: #fff; border-radius: 14px; padding: 20px;
+      box-shadow: 0 1px 6px rgba(22,50,74,.08); margin-bottom: 16px;
+    }
+    h1 { font-size: 22px; margin: 0 0 6px; }
+    .sub { color: var(--muted); font-size: 14px; margin: 0 0 18px; }
+    label { display: block; font-size: 12px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .04em; color: var(--muted); margin: 14px 0 6px; }
+    input[type=text], input[type=tel], input[type=email], select, textarea {
+      width: 100%; padding: 11px 12px; border: 1px solid var(--line); border-radius: 8px;
+      font-size: 15px; font-family: inherit;
+    }
+    .labs { display: flex; gap: 8px; flex-wrap: wrap; }
+    .labs button {
+      flex: 1; min-width: 120px; padding: 12px; border-radius: 10px; border: 2px solid var(--line);
+      background: #fff; font-weight: 700; font-size: 14px; cursor: pointer; color: var(--navy);
+    }
+    .labs button.on { border-color: var(--cyan); background: #eefbfd; }
+    .file-box {
+      border: 2px dashed #cbd5e1; border-radius: 12px; padding: 22px; text-align: center;
+      background: #f8fafc; cursor: pointer;
+    }
+    .file-box strong { display: block; margin-bottom: 4px; }
+    .file-box small { color: var(--muted); }
+    .file-box input { display: none; }
+    .btn {
+      display: inline-block; border: none; border-radius: 10px; padding: 12px 18px;
+      font-weight: 700; font-size: 15px; cursor: pointer; margin-top: 16px;
+    }
+    .btn-primary { background: var(--navy); color: #fff; width: 100%; }
+    .btn-primary:disabled { background: #94a3b8; cursor: wait; }
+    .btn-ghost { background: #fff; color: var(--bad); border: 1px solid #fecaca; width: 100%; margin-top: 8px; }
+    .btn-sec { background: #0f766e; color: #fff; width: 100%; }
+    .erro { background: #fef2f2; border: 1px solid #fecaca; color: var(--bad);
+      border-radius: 10px; padding: 12px; font-size: 14px; font-weight: 600; margin-top: 12px; }
+    .ok { background: #ecfdf5; border: 1px solid #a7f3d0; color: var(--ok);
+      border-radius: 10px; padding: 12px; font-size: 14px; font-weight: 600; margin-top: 12px; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th { text-align: left; font-size: 11px; text-transform: uppercase; color: var(--muted); padding: 8px 6px; }
+    td { padding: 10px 6px; border-top: 1px solid var(--line); vertical-align: top; }
+    .badge {
+      display: inline-block; font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 4px;
+    }
+    .badge.ok { background: #dcfce7; color: var(--ok); }
+    .badge.bad { background: #fee2e2; color: var(--bad); }
+    .item-edit { width: 100%; font-size: 13px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px; }
+    .hidden { display: none !important; }
+    footer { text-align: center; color: var(--muted); font-size: 12px; margin-top: 24px; }
+  </style>
+</head>
+<body>
+  <header>
+    <strong>DrApp</strong>
+    <span>Orçamento DASA · ambiente de teste</span>
+  </header>
+  <main>
+    <div id="gate" class="card hidden">
+      <h1>Acesso restrito</h1>
+      <p class="sub">Esta página é só para testes internos da parceria DASA (ainda não assinada). Use o link completo com a chave.</p>
+    </div>
+
+    <div id="app" class="hidden">
+      <div class="aviso">
+        Ambiente de teste — não envia WhatsApp nem PDF ao cliente. O pedido aparece na fila DASA do admin como <strong>TESTE-DASA</strong>.
+      </div>
+
+      <div class="card" id="passo1">
+        <h1>Peça seu orçamento</h1>
+        <p class="sub">Escolha o laboratório e anexe a foto ou o PDF do pedido médico.</p>
+
+        <label>Laboratório</label>
+        <div class="labs">
+          <button type="button" data-lab="alta" class="on">Alta Diagnósticos</button>
+          <button type="button" data-lab="lavoisier">Lavoisier</button>
+        </div>
+
+        <label>Seu nome (opcional neste teste)</label>
+        <input type="text" id="nome" placeholder="Nome para o card de teste" />
+
+        <label>Pedido médico</label>
+        <label class="file-box" for="arquivos">
+          <strong>Toque para anexar</strong>
+          <small>Imagem ou PDF · até 5 arquivos</small>
+          <input type="file" id="arquivos" accept="image/*,.pdf,application/pdf" multiple />
+        </label>
+        <div id="listaArquivos" style="font-size:13px;color:var(--muted);margin-top:8px;"></div>
+
+        <button type="button" class="btn btn-primary" id="btnOcr">Ler pedido e buscar exames</button>
+        <div id="erro1" class="erro hidden"></div>
+      </div>
+
+      <div class="card hidden" id="passo2">
+        <h1>Confira os exames</h1>
+        <p class="sub" id="resumoLinha">Revise o que lemos. Se algo estiver errado, edite o texto. Se não achar o exame, peça ajuda.</p>
+        <div id="tabelaWrap"></div>
+        <button type="button" class="btn btn-sec" id="btnEnviar">Confirmar e registrar teste</button>
+        <button type="button" class="btn btn-ghost" id="btnAjuda">Preciso de ajuda para identificar o exame</button>
+        <div id="erro2" class="erro hidden"></div>
+        <div id="ok2" class="ok hidden"></div>
+      </div>
+    </div>
+
+    <footer>DrApp · página sem link na home · noindex</footer>
+  </main>
+
+  <script>
+    const API = "https://pedidos.drapp.com.br/api/dasa-teste";
+    const params = new URLSearchParams(location.search);
+    const chave = params.get("k") || params.get("chave") || "";
+
+    const gate = document.getElementById("gate");
+    const app = document.getElementById("app");
+    if (!chave) {
+      gate.classList.remove("hidden");
+    } else {
+      app.classList.remove("hidden");
+    }
+
+    let lab = "alta";
+    let itens = [];
+    let files = [];
+
+    document.querySelectorAll(".labs button").forEach(btn => {
+      btn.addEventListener("click", () => {
+        lab = btn.getAttribute("data-lab");
+        document.querySelectorAll(".labs button").forEach(b => b.classList.toggle("on", b === btn));
+      });
+    });
+
+    const inputArq = document.getElementById("arquivos");
+    inputArq.addEventListener("change", () => {
+      files = Array.from(inputArq.files || []).slice(0, 5);
+      document.getElementById("listaArquivos").textContent =
+        files.length ? files.map(f => f.name).join(" · ") : "";
+    });
+
+    function fileToB64(file) {
+      return new Promise((resolve, reject) => {
+        const r = new FileReader();
+        r.onload = () => resolve(String(r.result || ""));
+        r.onerror = reject;
+        r.readAsDataURL(file);
+      });
+    }
+
+    function fmtPreco(n) {
+      if (n == null || !Number.isFinite(n)) return "—";
+      return n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+    }
+
+    function renderTabela() {
+      const wrap = document.getElementById("tabelaWrap");
+      if (!itens.length) {
+        wrap.innerHTML = "<p style='color:var(--muted)'>Nenhum exame lido. Você pode digitar abaixo ou pedir ajuda.</p>" +
+          "<label>Digitar exame</label><input type='text' id='manualExame' placeholder='Ex.: Hemograma completo' />" +
+          "<button type='button' class='btn btn-primary' id='btnAddManual' style='margin-top:8px'>Adicionar</button>";
+        document.getElementById("btnAddManual").onclick = () => {
+          const v = (document.getElementById("manualExame").value || "").trim();
+          if (!v) return;
+          itens.push({ texto_ocr: v, status: "sem_match", match: null });
+          renderTabela();
+        };
+        return;
+      }
+      let html = "<table><thead><tr><th>Como leu / edite</th><th>Status</th><th>Catálogo</th><th>Preço DrApp</th></tr></thead><tbody>";
+      itens.forEach((it, i) => {
+        const badge = it.status === "match"
+          ? "<span class='badge ok'>MATCH</span>"
+          : "<span class='badge bad'>SEM MATCH</span>";
+        const cat = it.match
+          ? "<div style='font-weight:700'>" + it.match.sigla + "</div><div style='font-size:12px;color:var(--muted)'>" + it.match.descricao + "</div>"
+          : "—";
+        html += "<tr>" +
+          "<td><input class='item-edit' data-i='" + i + "' value=\"" + String(it.texto_ocr).replace(/"/g, "&quot;") + "\" /></td>" +
+          "<td>" + badge + "</td>" +
+          "<td>" + cat + "</td>" +
+          "<td>" + fmtPreco(it.match && it.match.preco_drapp) + "</td>" +
+          "</tr>";
+      });
+      html += "</tbody></table>";
+      wrap.innerHTML = html;
+      wrap.querySelectorAll(".item-edit").forEach(inp => {
+        inp.addEventListener("change", () => {
+          const i = Number(inp.getAttribute("data-i"));
+          itens[i].texto_ocr = inp.value.trim();
+          itens[i].status = "sem_match";
+          itens[i].match = null;
+        });
+      });
+    }
+
+    document.getElementById("btnOcr").addEventListener("click", async () => {
+      const erro = document.getElementById("erro1");
+      erro.classList.add("hidden");
+      if (!files.length) {
+        erro.textContent = "Anexe o pedido médico.";
+        erro.classList.remove("hidden");
+        return;
+      }
+      const btn = document.getElementById("btnOcr");
+      btn.disabled = true;
+      btn.textContent = "Lendo pedido…";
+      try {
+        const fotos = [];
+        for (const f of files) {
+          const dataUrl = await fileToB64(f);
+          fotos.push({ base64: dataUrl, nome: f.name, tipo: f.type || "image/jpeg" });
+        }
+        const res = await fetch(API + "/ocr", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "x-dasa-teste-chave": chave },
+          body: JSON.stringify({ chave, lab, fotos }),
+        });
+        const j = await res.json().catch(() => ({}));
+        if (!res.ok || !j.ok) throw new Error(j.erro || ("HTTP " + res.status));
+        itens = j.itens || [];
+        document.getElementById("resumoLinha").textContent =
+          (j.resumo?.lidos || 0) + " lido(s) · " + (j.resumo?.match || 0) + " identificados · " +
+          (j.resumo?.sem_match || 0) + " para revisar";
+        document.getElementById("passo2").classList.remove("hidden");
+        renderTabela();
+        document.getElementById("passo2").scrollIntoView({ behavior: "smooth" });
+      } catch (e) {
+        erro.textContent = e.message || "Falha no OCR";
+        erro.classList.remove("hidden");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Ler pedido e buscar exames";
+      }
+    });
+
+    async function enviar(pedirAjuda) {
+      const erro = document.getElementById("erro2");
+      const ok = document.getElementById("ok2");
+      erro.classList.add("hidden");
+      ok.classList.add("hidden");
+      // sync edits
+      document.querySelectorAll(".item-edit").forEach(inp => {
+        const i = Number(inp.getAttribute("data-i"));
+        if (itens[i]) itens[i].texto_ocr = inp.value.trim();
+      });
+      const limpos = itens.filter(i => i.texto_ocr);
+      if (!limpos.length) {
+        erro.textContent = "Inclua ao menos um exame.";
+        erro.classList.remove("hidden");
+        return;
+      }
+      const btn = pedirAjuda ? document.getElementById("btnAjuda") : document.getElementById("btnEnviar");
+      const old = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = "Enviando…";
+      try {
+        const res = await fetch(API + "/pedido", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "x-dasa-teste-chave": chave },
+          body: JSON.stringify({
+            chave,
+            lab,
+            nome: document.getElementById("nome").value.trim() || undefined,
+            pedirAjuda,
+            itens: limpos.map(it => ({
+              texto_ocr: it.texto_ocr,
+              status: pedirAjuda && it.status === "sem_match" ? "ajuda" : it.status,
+              exame_id: it.match && it.match.exame_id,
+              sigla: it.match && it.match.sigla,
+              descricao_match: it.match && it.match.descricao,
+              confianca: it.match && it.match.confianca,
+            })),
+          }),
+        });
+        const j = await res.json().catch(() => ({}));
+        if (!res.ok || !j.ok) throw new Error(j.erro || ("HTTP " + res.status));
+        ok.textContent = j.mensagem + " · token " + j.token + " · card " + j.deal_id;
+        ok.classList.remove("hidden");
+        document.getElementById("btnEnviar").disabled = true;
+        document.getElementById("btnAjuda").disabled = true;
+      } catch (e) {
+        erro.textContent = e.message || "Falha ao registrar";
+        erro.classList.remove("hidden");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = old;
+      }
+    }
+
+    document.getElementById("btnEnviar").addEventListener("click", () => enviar(false));
+    document.getElementById("btnAjuda").addEventListener("click", () => enviar(true));
+  </script>
+</body>
+</html>
