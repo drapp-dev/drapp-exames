@@ -77,6 +77,12 @@
     .badge.ok { background: #dcfce7; color: var(--ok); }
     .badge.bad { background: #fee2e2; color: var(--bad); }
     .item-edit { width: 100%; font-size: 13px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px; }
+    .btn-edit {
+      font-size: 11px; font-weight: 700; padding: 5px 10px; border-radius: 6px; cursor: pointer;
+      border: 1px solid #93c5fd; background: #fff; color: #1e40af; white-space: nowrap;
+    }
+    .btn-edit:disabled { opacity: .6; cursor: wait; }
+    .row-edit td { background: #f0f9ff; }
     .hidden { display: none !important; }
     footer { text-align: center; color: var(--muted); font-size: 12px; margin-top: 24px; }
   </style>
@@ -181,21 +187,44 @@
       return n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
     }
 
+    let editando = null; // índice em modo edição
+
+    async function rematchItem(i) {
+      const texto = (itens[i].texto_ocr || "").trim();
+      if (!texto) return;
+      const res = await fetch(API + "/match", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-dasa-teste-chave": chave },
+        body: JSON.stringify({ chave, lab, textos: [texto] }),
+      });
+      const j = await res.json().catch(() => ({}));
+      if (!res.ok || !j.ok || !j.itens || !j.itens[0]) throw new Error(j.erro || "Falha ao buscar exame");
+      itens[i] = j.itens[0];
+    }
+
+    function atualizarResumo() {
+      const m = itens.filter(x => x.status === "match").length;
+      document.getElementById("resumoLinha").textContent =
+        itens.length + " exame(s) · " + m + " identificados · " + (itens.length - m) + " para revisar";
+    }
+
     function renderTabela() {
       const wrap = document.getElementById("tabelaWrap");
       if (!itens.length) {
         wrap.innerHTML = "<p style='color:var(--muted)'>Nenhum exame lido. Você pode digitar abaixo ou pedir ajuda.</p>" +
           "<label>Digitar exame</label><input type='text' id='manualExame' placeholder='Ex.: Hemograma completo' />" +
           "<button type='button' class='btn btn-primary' id='btnAddManual' style='margin-top:8px'>Adicionar</button>";
-        document.getElementById("btnAddManual").onclick = () => {
+        document.getElementById("btnAddManual").onclick = async () => {
           const v = (document.getElementById("manualExame").value || "").trim();
           if (!v) return;
           itens.push({ texto_ocr: v, status: "sem_match", match: null });
+          try { await rematchItem(itens.length - 1); } catch (_) {}
+          atualizarResumo();
           renderTabela();
         };
         return;
       }
-      let html = "<table><thead><tr><th>Como leu / edite</th><th>Status</th><th>Catálogo</th><th>Preço DrApp</th></tr></thead><tbody>";
+      let html = "<table><thead><tr><th>Exame (pedido)</th><th></th><th>Status</th><th>Catálogo</th><th>Preço DrApp</th></tr></thead><tbody>";
       itens.forEach((it, i) => {
         const badge = it.status === "match"
           ? "<span class='badge ok'>MATCH</span>"
@@ -203,8 +232,16 @@
         const cat = it.match
           ? "<div style='font-weight:700'>" + it.match.sigla + "</div><div style='font-size:12px;color:var(--muted)'>" + it.match.descricao + "</div>"
           : "—";
-        html += "<tr>" +
-          "<td><input class='item-edit' data-i='" + i + "' value=\"" + String(it.texto_ocr).replace(/"/g, "&quot;") + "\" /></td>" +
+        const emEdicao = editando === i;
+        const textoCell = emEdicao
+          ? "<input class='item-edit' id='editInp' value=\"" + String(it.texto_ocr).replace(/"/g, "&quot;") + "\" />"
+          : "<div style='font-weight:600'>" + String(it.texto_ocr).replace(/</g, "&lt;") + "</div>";
+        const acao = emEdicao
+          ? "<button type='button' class='btn-edit' data-salvar='" + i + "'>Buscar</button>"
+          : "<button type='button' class='btn-edit' data-editar='" + i + "'>Editar</button>";
+        html += "<tr class='" + (emEdicao ? "row-edit" : "") + "'>" +
+          "<td>" + textoCell + "</td>" +
+          "<td>" + acao + "</td>" +
           "<td>" + badge + "</td>" +
           "<td>" + cat + "</td>" +
           "<td>" + fmtPreco(it.match && it.match.preco_drapp) + "</td>" +
@@ -212,12 +249,34 @@
       });
       html += "</tbody></table>";
       wrap.innerHTML = html;
-      wrap.querySelectorAll(".item-edit").forEach(inp => {
-        inp.addEventListener("change", () => {
-          const i = Number(inp.getAttribute("data-i"));
-          itens[i].texto_ocr = inp.value.trim();
-          itens[i].status = "sem_match";
-          itens[i].match = null;
+
+      wrap.querySelectorAll("[data-editar]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          editando = Number(btn.getAttribute("data-editar"));
+          renderTabela();
+          const inp = document.getElementById("editInp");
+          if (inp) { inp.focus(); inp.select(); }
+        });
+      });
+      wrap.querySelectorAll("[data-salvar]").forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const i = Number(btn.getAttribute("data-salvar"));
+          const inp = document.getElementById("editInp");
+          const novo = (inp && inp.value || "").trim();
+          if (!novo) return;
+          itens[i].texto_ocr = novo;
+          btn.disabled = true;
+          btn.textContent = "…";
+          try {
+            await rematchItem(i);
+            editando = null;
+            atualizarResumo();
+            renderTabela();
+          } catch (e) {
+            alert(e.message || "Não consegui buscar o exame.");
+            btn.disabled = false;
+            btn.textContent = "Buscar";
+          }
         });
       });
     }
