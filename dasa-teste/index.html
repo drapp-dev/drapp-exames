@@ -26,7 +26,7 @@
     }
     header strong { font-size: 18px; }
     header span { opacity: .75; font-size: 13px; margin-left: 8px; }
-    main { max-width: 860px; margin: 0 auto; padding: 24px 16px 48px; }
+    main { max-width: 720px; margin: 0 auto; padding: 24px 16px 48px; }
     .aviso {
       background: #fff7ed; border: 1px solid #fdba74; color: #9a3412;
       border-radius: 12px; padding: 14px 16px; font-size: 14px; margin-bottom: 20px;
@@ -76,35 +76,13 @@
     }
     .badge.ok { background: #dcfce7; color: var(--ok); }
     .badge.bad { background: #fee2e2; color: var(--bad); }
-    .badge.sug { background: #fef3c7; color: #92400e; }
     .item-edit { width: 100%; font-size: 13px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px; }
     .btn-edit {
       font-size: 11px; font-weight: 700; padding: 5px 10px; border-radius: 6px; cursor: pointer;
       border: 1px solid #93c5fd; background: #fff; color: #1e40af; white-space: nowrap;
-      margin: 2px 0;
     }
-    .btn-ok {
-      font-size: 11px; font-weight: 700; padding: 5px 10px; border-radius: 6px; cursor: pointer;
-      border: 1px solid #86efac; background: #f0fdf4; color: #166534; white-space: nowrap;
-      margin: 2px 0;
-    }
-    .btn-edit:disabled, .btn-ok:disabled { opacity: .6; cursor: wait; }
-    .acoes { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; }
+    .btn-edit:disabled { opacity: .6; cursor: wait; }
     .row-edit td { background: #f0f9ff; }
-    .picker {
-      margin-top: 8px; padding: 10px; background: #f8fafc; border: 1px solid var(--line);
-      border-radius: 8px;
-    }
-    .picker input { margin-bottom: 8px; }
-    .picker-list { max-height: 180px; overflow: auto; }
-    .picker-item {
-      display: block; width: 100%; text-align: left; padding: 8px 10px; margin: 0 0 4px;
-      border: 1px solid var(--line); border-radius: 6px; background: #fff; cursor: pointer;
-      font-size: 13px; color: var(--navy);
-    }
-    .picker-item:hover { border-color: var(--cyan); background: #eefbfd; }
-    .picker-item strong { display: block; }
-    .picker-item span { color: var(--muted); font-size: 12px; }
     .hidden { display: none !important; }
     footer { text-align: center; color: var(--muted); font-size: 12px; margin-top: 24px; }
   </style>
@@ -123,7 +101,7 @@
     <div id="app" class="hidden">
       <div class="aviso">
         Ambiente de teste — não envia WhatsApp nem PDF ao cliente. O pedido aparece na fila DASA do admin como <strong>TESTE-DASA</strong>.
-        Matches manuais ficam salvos para as próximas leituras.
+        Você pode corrigir o texto do exame; quem grava o DE/PARA no catálogo é o time no admin.
       </div>
 
       <div class="card" id="passo1">
@@ -153,7 +131,7 @@
 
       <div class="card hidden" id="passo2">
         <h1>Confira os exames</h1>
-        <p class="sub" id="resumoLinha">Revise o que lemos. Confirme a sugestão ou escolha o exame no catálogo — o vínculo fica salvo.</p>
+        <p class="sub" id="resumoLinha">Revise o que lemos. Se o nome estiver errado, edite o texto. Se não achar, peça ajuda.</p>
         <div id="tabelaWrap"></div>
         <button type="button" class="btn btn-sec" id="btnEnviar">Confirmar e registrar teste</button>
         <button type="button" class="btn btn-ghost" id="btnAjuda">Preciso de ajuda para identificar o exame</button>
@@ -182,8 +160,6 @@
     let itens = [];
     let files = [];
     let editando = null;
-    let escolhendo = null;
-    let buscaTimer = null;
 
     document.querySelectorAll(".labs button").forEach(btn => {
       btn.addEventListener("click", () => {
@@ -230,94 +206,10 @@
       itens[i] = j.itens[0];
     }
 
-    async function salvarManual(i, exameId) {
-      const texto = (itens[i].texto_ocr || "").trim();
-      const res = await fetch(API + "/match-manual", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "x-dasa-teste-chave": chave },
-        body: JSON.stringify({ chave, lab, texto_ocr: texto, exame_id: exameId }),
-      });
-      const j = await res.json().catch(() => ({}));
-      if (!res.ok || !j.ok || !j.item) throw new Error(j.erro || "Falha ao salvar match");
-      itens[i] = j.item;
-    }
-
-    async function buscarCatalogo(q) {
-      const url = API + "/buscar-exames?lab=" + encodeURIComponent(lab) +
-        "&q=" + encodeURIComponent(q) + "&chave=" + encodeURIComponent(chave);
-      const res = await fetch(url, {
-        headers: { "x-dasa-teste-chave": chave },
-      });
-      const j = await res.json().catch(() => ({}));
-      if (!res.ok || !j.ok) throw new Error(j.erro || "Falha na busca");
-      return j.exames || [];
-    }
-
     function atualizarResumo() {
       const m = itens.filter(x => x.status === "match").length;
       document.getElementById("resumoLinha").textContent =
         itens.length + " exame(s) · " + m + " identificados · " + (itens.length - m) + " para revisar";
-    }
-
-    function renderPicker(i) {
-      const seed = (itens[i].texto_ocr || "").trim();
-      return (
-        "<div class='picker' data-picker='" + i + "'>" +
-          "<input type='text' class='item-edit' id='pickQ' placeholder='Buscar no catálogo Alta/Lavoisier…' value=\"" + esc(seed) + "\" />" +
-          "<div class='picker-list' id='pickList'><div style='color:var(--muted);font-size:12px'>Digite para buscar…</div></div>" +
-          "<button type='button' class='btn-edit' data-fechar-pick='" + i + "'>Cancelar</button>" +
-        "</div>"
-      );
-    }
-
-    function bindPicker(i) {
-      const inp = document.getElementById("pickQ");
-      const list = document.getElementById("pickList");
-      if (!inp || !list) return;
-
-      const run = async () => {
-        const q = (inp.value || "").trim();
-        if (q.length < 2) {
-          list.innerHTML = "<div style='color:var(--muted);font-size:12px'>Digite ao menos 2 caracteres.</div>";
-          return;
-        }
-        list.innerHTML = "<div style='color:var(--muted);font-size:12px'>Buscando…</div>";
-        try {
-          const exames = await buscarCatalogo(q);
-          if (!exames.length) {
-            list.innerHTML = "<div style='color:var(--muted);font-size:12px'>Nenhum exame encontrado.</div>";
-            return;
-          }
-          list.innerHTML = exames.map(e =>
-            "<button type='button' class='picker-item' data-pick-exame='" + e.exame_id + "'>" +
-              "<strong>" + esc(e.sigla) + " · " + fmtPreco(e.preco_drapp) + "</strong>" +
-              "<span>" + esc(e.descricao) + "</span>" +
-            "</button>"
-          ).join("");
-          list.querySelectorAll("[data-pick-exame]").forEach(btn => {
-            btn.addEventListener("click", async () => {
-              btn.disabled = true;
-              try {
-                await salvarManual(i, Number(btn.getAttribute("data-pick-exame")));
-                escolhendo = null;
-                atualizarResumo();
-                renderTabela();
-              } catch (e) {
-                alert(e.message || "Não consegui salvar o match.");
-                btn.disabled = false;
-              }
-            });
-          });
-        } catch (e) {
-          list.innerHTML = "<div style='color:var(--bad);font-size:12px'>" + esc(e.message) + "</div>";
-        }
-      };
-
-      inp.addEventListener("input", () => {
-        clearTimeout(buscaTimer);
-        buscaTimer = setTimeout(run, 280);
-      });
-      run();
     }
 
     function renderTabela() {
@@ -338,42 +230,22 @@
       }
       let html = "<table><thead><tr><th>Exame (pedido)</th><th></th><th>Status</th><th>Catálogo</th><th>Preço DrApp</th></tr></thead><tbody>";
       itens.forEach((it, i) => {
-        const temSugestao = it.status === "sem_match" && it.match;
         const badge = it.status === "match"
-          ? "<span class='badge ok'>MATCH" + (it.match && it.match.origem === "manual" ? " · salvo" : "") + "</span>"
-          : temSugestao
-            ? "<span class='badge sug'>SUGESTÃO</span>"
-            : "<span class='badge bad'>SEM MATCH</span>";
+          ? "<span class='badge ok'>MATCH</span>"
+          : "<span class='badge bad'>SEM MATCH</span>";
         const cat = it.match
           ? "<div style='font-weight:700'>" + esc(it.match.sigla) + "</div><div style='font-size:12px;color:var(--muted)'>" + esc(it.match.descricao) + "</div>"
           : "—";
         const emEdicao = editando === i;
-        const emEscolha = escolhendo === i;
         const textoCell = emEdicao
           ? "<input class='item-edit' id='editInp' value=\"" + esc(it.texto_ocr) + "\" />"
-          : "<div style='font-weight:600'>" + esc(it.texto_ocr) + "</div>" +
-            (emEscolha ? renderPicker(i) : "");
-
-        let acoes = "<div class='acoes'>";
-        if (emEdicao) {
-          acoes += "<button type='button' class='btn-edit' data-salvar='" + i + "'>Buscar</button>";
-        } else {
-          acoes += "<button type='button' class='btn-edit' data-editar='" + i + "'>Editar texto</button>";
-          if (temSugestao) {
-            acoes += "<button type='button' class='btn-ok' data-confirmar='" + i + "'>Confirmar e salvar</button>";
-          }
-          if (it.status !== "match" || temSugestao) {
-            acoes += "<button type='button' class='btn-edit' data-escolher='" + i + "'>" +
-              (temSugestao || it.match ? "Trocar exame" : "Escolher exame") + "</button>";
-          } else if (it.status === "match") {
-            acoes += "<button type='button' class='btn-edit' data-escolher='" + i + "'>Trocar / salvar</button>";
-          }
-        }
-        acoes += "</div>";
-
-        html += "<tr class='" + (emEdicao || emEscolha ? "row-edit" : "") + "'>" +
+          : "<div style='font-weight:600'>" + esc(it.texto_ocr) + "</div>";
+        const acao = emEdicao
+          ? "<button type='button' class='btn-edit' data-salvar='" + i + "'>Buscar de novo</button>"
+          : "<button type='button' class='btn-edit' data-editar='" + i + "'>Editar texto</button>";
+        html += "<tr class='" + (emEdicao ? "row-edit" : "") + "'>" +
           "<td>" + textoCell + "</td>" +
-          "<td>" + acoes + "</td>" +
+          "<td>" + acao + "</td>" +
           "<td>" + badge + "</td>" +
           "<td>" + cat + "</td>" +
           "<td>" + fmtPreco(it.match && it.match.preco_drapp) + "</td>" +
@@ -385,7 +257,6 @@
       wrap.querySelectorAll("[data-editar]").forEach(btn => {
         btn.addEventListener("click", () => {
           editando = Number(btn.getAttribute("data-editar"));
-          escolhendo = null;
           renderTabela();
           const inp = document.getElementById("editInp");
           if (inp) { inp.focus(); inp.select(); }
@@ -408,42 +279,10 @@
           } catch (e) {
             alert(e.message || "Não consegui buscar o exame.");
             btn.disabled = false;
-            btn.textContent = "Buscar";
+            btn.textContent = "Buscar de novo";
           }
         });
       });
-      wrap.querySelectorAll("[data-confirmar]").forEach(btn => {
-        btn.addEventListener("click", async () => {
-          const i = Number(btn.getAttribute("data-confirmar"));
-          const exameId = itens[i] && itens[i].match && itens[i].match.exame_id;
-          if (!exameId) return;
-          btn.disabled = true;
-          btn.textContent = "Salvando…";
-          try {
-            await salvarManual(i, exameId);
-            atualizarResumo();
-            renderTabela();
-          } catch (e) {
-            alert(e.message || "Não consegui salvar.");
-            btn.disabled = false;
-            btn.textContent = "Confirmar e salvar";
-          }
-        });
-      });
-      wrap.querySelectorAll("[data-escolher]").forEach(btn => {
-        btn.addEventListener("click", () => {
-          escolhendo = Number(btn.getAttribute("data-escolher"));
-          editando = null;
-          renderTabela();
-        });
-      });
-      wrap.querySelectorAll("[data-fechar-pick]").forEach(btn => {
-        btn.addEventListener("click", () => {
-          escolhendo = null;
-          renderTabela();
-        });
-      });
-      if (escolhendo != null) bindPicker(escolhendo);
     }
 
     document.getElementById("btnOcr").addEventListener("click", async () => {
@@ -472,7 +311,6 @@
         if (!res.ok || !j.ok) throw new Error(j.erro || ("HTTP " + res.status));
         itens = j.itens || [];
         editando = null;
-        escolhendo = null;
         atualizarResumo();
         document.getElementById("passo2").classList.remove("hidden");
         renderTabela();
