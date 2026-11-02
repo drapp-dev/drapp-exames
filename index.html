@@ -626,6 +626,47 @@
       transition: background .2s;
     }
     .wiz-progresso-barra span.on { background: var(--orange); }
+    .dasa-marcas {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .dasa-marca {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 16px 8px;
+      border-radius: 12px;
+      border: 2px solid #e2e8f0;
+      background: #f8fafc;
+      cursor: pointer;
+      transition: all .2s;
+      box-sizing: border-box;
+      font-family: inherit;
+    }
+    .dasa-marca img {
+      height: 48px;
+      max-width: 100%;
+      object-fit: contain;
+      display: block;
+      pointer-events: none;
+    }
+    .dasa-marca span {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .dasa-marca.is-on {
+      border-color: var(--blue);
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(0,109,199,.18);
+    }
+    @media (max-width: 520px) {
+      .dasa-marcas { grid-template-columns: 1fr; }
+      .dasa-marca { flex-direction: row; justify-content: flex-start; padding: 12px 14px; }
+      .dasa-marca img { height: 36px; width: 90px; }
+    }
     .wiz-ou-divisor {
       display: flex;
       align-items: center;
@@ -1966,15 +2007,14 @@
 
   <!-- ═══ TOOL — ORÇAMENTO ══════════════════════════════════ -->
   <section class="tool-section" id="orcamento">
-    <div id="dasaTesteBanner" style="display:none;max-width:980px;margin:0 auto 16px;padding:14px 16px;border-radius:12px;background:#fff7ed;border:1px solid #fdba74;color:#9a3412;font-size:14px;font-weight:600;">
-      Ambiente de teste DASA (Alta / Lavoisier) — sem WhatsApp/PDF. Pedidos viram card TESTE-DASA no admin.
+    <div id="dasaTesteBanner" style="display:none;max-width:560px;margin:0 auto 16px;padding:14px 16px;border-radius:12px;background:#fff7ed;border:1px solid #fdba74;color:#9a3412;font-size:14px;font-weight:600;">
+      Ambiente de teste DASA — sem WhatsApp/PDF. Pedidos viram card TESTE-DASA no admin.
     </div>
     <div class="tool-section-header">
       <div class="section-label" id="orcamentoLabel">Rápido e gratuito</div>
       <h2 class="section-heading" id="orcamentoHeading">Monte seu orçamento agora</h2>
       <p class="section-sub" id="orcamentoSub" style="color:rgba(255,255,255,0.7);">Em poucos passos você já sabe quanto vai economizar.</p>
     </div>
-    <div id="dasaTesteMount" style="display:none;max-width:760px;margin:0 auto 24px;background:#fff;border-radius:16px;padding:8px 16px 16px;box-shadow:0 8px 28px rgba(0,0,0,.12);"></div>
 
     <div class="wiz-progresso">
       <div class="wiz-progresso-topo">
@@ -1984,8 +2024,9 @@
       <h2 class="section-title" id="wizTitulo" style="margin-top:20px;color:#fff;">Fechar orçamento</h2>
       <p class="section-subtitle" id="wizSubtitulo" style="color:rgba(255,255,255,0.75);">Preencha seus dados para concluir a solicitação dos exames escolhidos.</p>
     </div>
+    <div id="dasaTesteMount" class="page" style="display:none;max-width:560px;margin:0 auto 24px;"></div>
 
-    <div class="page">
+    <div class="page" id="orcamentoFleury">
       <div class="main-grid">
 
         <!-- ─── LEFT: SEARCH ─────────────────────────── -->
@@ -2829,34 +2870,37 @@
     // Backend (drapp-pipeline). CPF, fotos, criar pedido, catálogo e feedback.
     const PEDIDOS_API_URL = "https://pedidos.drapp.com.br";
 
-    // ── Modo teste DASA na home (?k=…) ─────────────────────────
+    // ── Modo teste DASA na home (?k=…) — mesmo layout do wizard Fleury ──
     (function ativarDasaTesteNaHome() {
       const k = window.__DRAPP_DASA_TESTE_K || "";
       if (!k) return;
       const banner = document.getElementById("dasaTesteBanner");
       const mount = document.getElementById("dasaTesteMount");
-      const page = document.querySelector("#orcamento .page");
-      const progresso = document.querySelector("#orcamento .wiz-progresso");
+      const page = document.getElementById("orcamentoFleury");
       if (banner) banner.style.display = "block";
-      if (document.getElementById("orcamentoLabel")) document.getElementById("orcamentoLabel").textContent = "Teste DASA";
-      if (document.getElementById("orcamentoHeading")) document.getElementById("orcamentoHeading").textContent = "Orçamento Alta / Lavoisier";
-      if (document.getElementById("orcamentoSub")) document.getElementById("orcamentoSub").textContent = "Fluxo completo de teste: laboratório → pedido → exames → seus dados.";
-      if (progresso) progresso.style.display = "none";
+      // Mantém títulos da home (print): "Monte seu orçamento agora"
       if (page) page.style.display = "none";
-      if (mount) {
-        mount.style.display = "block";
-        const src = "dasa-teste/?k=" + encodeURIComponent(k) + "&embed=1";
-        mount.innerHTML = '<iframe title="Orçamento DASA teste" src="' + src + '" style="width:100%;min-height:920px;border:0;border-radius:12px;background:#f4f7fb;"></iframe>';
-      }
-      // CTA do hero leva ao bloco DASA
-      document.querySelectorAll('a[href="#orcamento"]').forEach(function (a) {
-        a.addEventListener("click", function () {
-          setTimeout(function () {
-            const el = document.getElementById("orcamento");
-            if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-          }, 50);
+      if (mount) mount.style.display = "block";
+
+      function boot() {
+        if (!window.DrappDasaTeste || !mount) return;
+        window.DrappDasaTeste.init({
+          root: mount,
+          chave: k,
+          logoBase: "logos/",
+          labelEl: document.getElementById("wizLabel"),
+          barraEl: document.getElementById("wizBarra"),
+          tituloEl: document.getElementById("wizTitulo"),
+          subEl: document.getElementById("wizSubtitulo"),
         });
-      });
+      }
+      const s = document.createElement("script");
+      s.src = "dasa-teste/fluxo-home.js";
+      s.onload = boot;
+      s.onerror = function () {
+        if (mount) mount.innerHTML = "<div class='card' style='color:#b91c1c;font-weight:700;'>Não carregou o fluxo DASA. Atualize a página.</div>";
+      };
+      document.head.appendChild(s);
     })();
     let quemExame = "eu";
     let contaLogada = null; // { cpf, nome, dependentes[] }
