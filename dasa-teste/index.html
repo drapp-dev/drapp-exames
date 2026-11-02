@@ -8,81 +8,63 @@
   <link rel="icon" type="image/png" href="../FAVICON.png" />
   <style>
     :root {
-      --navy: #16324a;
-      --cyan: #51c9d2;
-      --line: #e2e8f0;
-      --muted: #64748b;
-      --bg: #f4f7fb;
-      --ok: #166534;
-      --bad: #b91c1c;
+      --navy: #16324a; --cyan: #51c9d2; --line: #e2e8f0; --muted: #64748b;
+      --bg: #f4f7fb; --ok: #166534; --bad: #b91c1c; --blue: #006dc7;
     }
     * { box-sizing: border-box; }
-    body {
-      margin: 0; font-family: "Segoe UI", system-ui, sans-serif;
-      background: var(--bg); color: var(--navy); line-height: 1.45;
-    }
-    header {
-      background: var(--navy); color: #fff; padding: 18px 20px;
-    }
+    body { margin: 0; font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); color: var(--navy); line-height: 1.45; }
+    body.embed { background: transparent; }
+    body.embed header, body.embed footer { display: none; }
+    header { background: var(--navy); color: #fff; padding: 18px 20px; }
     header strong { font-size: 18px; }
     header span { opacity: .75; font-size: 13px; margin-left: 8px; }
     main { max-width: 720px; margin: 0 auto; padding: 24px 16px 48px; }
-    .aviso {
-      background: #fff7ed; border: 1px solid #fdba74; color: #9a3412;
-      border-radius: 12px; padding: 14px 16px; font-size: 14px; margin-bottom: 20px;
-    }
-    .card {
-      background: #fff; border-radius: 14px; padding: 20px;
-      box-shadow: 0 1px 6px rgba(22,50,74,.08); margin-bottom: 16px;
-    }
+    body.embed main { padding: 8px 0 24px; max-width: none; }
+    .aviso { background: #fff7ed; border: 1px solid #fdba74; color: #9a3412; border-radius: 12px; padding: 14px 16px; font-size: 14px; margin-bottom: 16px; }
+    .card { background: #fff; border-radius: 14px; padding: 20px; box-shadow: 0 1px 6px rgba(22,50,74,.08); margin-bottom: 16px; }
     h1 { font-size: 22px; margin: 0 0 6px; }
-    .sub { color: var(--muted); font-size: 14px; margin: 0 0 18px; }
-    label { display: block; font-size: 12px; font-weight: 700; text-transform: uppercase;
-      letter-spacing: .04em; color: var(--muted); margin: 14px 0 6px; }
-    input[type=text], input[type=tel], input[type=email], select, textarea {
-      width: 100%; padding: 11px 12px; border: 1px solid var(--line); border-radius: 8px;
-      font-size: 15px; font-family: inherit;
+    .sub { color: var(--muted); font-size: 14px; margin: 0 0 16px; }
+    .prog { display: flex; gap: 6px; margin-bottom: 14px; }
+    .prog span { flex: 1; height: 6px; border-radius: 99px; background: #e2e8f0; }
+    .prog span.on { background: var(--cyan); }
+    .prog-label { font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 10px; text-transform: uppercase; letter-spacing: .04em; }
+    label { display: block; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin: 14px 0 6px; }
+    input[type=text], input[type=tel], input[type=email], input[type=date] {
+      width: 100%; padding: 11px 12px; border: 1px solid var(--line); border-radius: 8px; font-size: 15px; font-family: inherit;
     }
     .labs { display: flex; gap: 8px; flex-wrap: wrap; }
     .labs button {
-      flex: 1; min-width: 120px; padding: 12px; border-radius: 10px; border: 2px solid var(--line);
+      flex: 1; min-width: 140px; padding: 14px; border-radius: 10px; border: 2px solid var(--line);
       background: #fff; font-weight: 700; font-size: 14px; cursor: pointer; color: var(--navy);
     }
     .labs button.on { border-color: var(--cyan); background: #eefbfd; }
-    .file-box {
-      border: 2px dashed #cbd5e1; border-radius: 12px; padding: 22px; text-align: center;
-      background: #f8fafc; cursor: pointer;
-    }
+    .file-box { border: 2px dashed #cbd5e1; border-radius: 12px; padding: 22px; text-align: center; background: #f8fafc; cursor: pointer; }
     .file-box strong { display: block; margin-bottom: 4px; }
     .file-box small { color: var(--muted); }
     .file-box input { display: none; }
-    .btn {
-      display: inline-block; border: none; border-radius: 10px; padding: 12px 18px;
-      font-weight: 700; font-size: 15px; cursor: pointer; margin-top: 16px;
-    }
+    .btn { display: inline-block; border: none; border-radius: 10px; padding: 12px 18px; font-weight: 700; font-size: 15px; cursor: pointer; margin-top: 12px; }
     .btn-primary { background: var(--navy); color: #fff; width: 100%; }
     .btn-primary:disabled { background: #94a3b8; cursor: wait; }
-    .btn-ghost { background: #fff; color: var(--bad); border: 1px solid #fecaca; width: 100%; margin-top: 8px; }
     .btn-sec { background: #0f766e; color: #fff; width: 100%; }
-    .erro { background: #fef2f2; border: 1px solid #fecaca; color: var(--bad);
-      border-radius: 10px; padding: 12px; font-size: 14px; font-weight: 600; margin-top: 12px; }
-    .ok { background: #ecfdf5; border: 1px solid #a7f3d0; color: var(--ok);
-      border-radius: 10px; padding: 12px; font-size: 14px; font-weight: 600; margin-top: 12px; }
+    .btn-ghost { background: #fff; color: var(--bad); border: 1px solid #fecaca; width: 100%; margin-top: 8px; }
+    .btn-row { display: flex; gap: 8px; margin-top: 12px; }
+    .btn-row .btn { flex: 1; margin-top: 0; }
+    .btn-back { background: #fff; color: var(--navy); border: 1px solid var(--line); }
+    .erro { background: #fef2f2; border: 1px solid #fecaca; color: var(--bad); border-radius: 10px; padding: 12px; font-size: 14px; font-weight: 600; margin-top: 12px; }
+    .ok { background: #ecfdf5; border: 1px solid #a7f3d0; color: var(--ok); border-radius: 10px; padding: 12px; font-size: 14px; font-weight: 600; margin-top: 12px; }
+    .hint { background: #f0f9ff; border: 1px solid #bae6fd; color: #075985; border-radius: 10px; padding: 10px 12px; font-size: 13px; margin-top: 10px; }
     table { width: 100%; border-collapse: collapse; font-size: 14px; }
     th { text-align: left; font-size: 11px; text-transform: uppercase; color: var(--muted); padding: 8px 6px; }
     td { padding: 10px 6px; border-top: 1px solid var(--line); vertical-align: top; }
-    .badge {
-      display: inline-block; font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 4px;
-    }
+    .badge { display: inline-block; font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 4px; }
     .badge.ok { background: #dcfce7; color: var(--ok); }
     .badge.bad { background: #fee2e2; color: var(--bad); }
     .item-edit { width: 100%; font-size: 13px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px; }
-    .btn-edit {
-      font-size: 11px; font-weight: 700; padding: 5px 10px; border-radius: 6px; cursor: pointer;
-      border: 1px solid #93c5fd; background: #fff; color: #1e40af; white-space: nowrap;
-    }
+    .btn-edit { font-size: 11px; font-weight: 700; padding: 5px 10px; border-radius: 6px; cursor: pointer; border: 1px solid #93c5fd; background: #fff; color: #1e40af; white-space: nowrap; }
     .btn-edit:disabled { opacity: .6; cursor: wait; }
     .row-edit td { background: #f0f9ff; }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 560px) { .grid2 { grid-template-columns: 1fr; } }
     .hidden { display: none !important; }
     footer { text-align: center; color: var(--muted); font-size: 12px; margin-top: 24px; }
   </style>
@@ -95,77 +77,140 @@
   <main>
     <div id="gate" class="card hidden">
       <h1>Acesso restrito</h1>
-      <p class="sub">Esta página é só para testes internos da parceria DASA (ainda não assinada). Use o link completo com a chave.</p>
+      <p class="sub">Use o link de teste com a chave (<code>?k=…</code>), pela home ou por esta página.</p>
     </div>
 
     <div id="app" class="hidden">
       <div class="aviso">
-        Ambiente de teste — não envia WhatsApp nem PDF ao cliente. O pedido aparece na fila DASA do admin como <strong>TESTE-DASA</strong>.
-        Você pode corrigir o texto do exame; quem grava o DE/PARA no catálogo é o time no admin.
+        Ambiente de teste — sem WhatsApp/PDF ao cliente. O pedido vira card <strong>TESTE-DASA</strong> na fila do admin.
+        Match manual (DE/PARA) só a equipe grava no admin.
       </div>
 
-      <div class="card" id="passo1">
-        <h1>Peça seu orçamento</h1>
-        <p class="sub">Escolha o laboratório e anexe a foto ou o PDF do pedido médico.</p>
+      <div class="prog-label" id="progLabel">Passo 1 de 4</div>
+      <div class="prog" id="progBar"></div>
 
-        <label>Laboratório</label>
+      <!-- 1 Lab -->
+      <div class="card passo" data-passo="1">
+        <h1>Escolha o laboratório</h1>
+        <p class="sub">Alta Diagnósticos ou Lavoisier (parceria DASA em teste).</p>
         <div class="labs">
           <button type="button" data-lab="alta" class="on">Alta Diagnósticos</button>
           <button type="button" data-lab="lavoisier">Lavoisier</button>
         </div>
+        <button type="button" class="btn btn-primary" id="btnP1">Continuar</button>
+      </div>
 
-        <label>Seu nome (opcional neste teste)</label>
-        <input type="text" id="nome" placeholder="Nome para o card de teste" />
-
-        <label>Pedido médico</label>
+      <!-- 2 Foto -->
+      <div class="card passo hidden" data-passo="2">
+        <h1>Pedido médico</h1>
+        <p class="sub">Anexe a foto ou o PDF. Em seguida lemos os exames automaticamente.</p>
         <label class="file-box" for="arquivos">
           <strong>Toque para anexar</strong>
           <small>Imagem ou PDF · até 5 arquivos</small>
           <input type="file" id="arquivos" accept="image/*,.pdf,application/pdf" multiple />
         </label>
         <div id="listaArquivos" style="font-size:13px;color:var(--muted);margin-top:8px;"></div>
-
-        <button type="button" class="btn btn-primary" id="btnOcr">Ler pedido e buscar exames</button>
-        <div id="erro1" class="erro hidden"></div>
+        <div class="btn-row">
+          <button type="button" class="btn btn-back" data-voltar="1">Voltar</button>
+          <button type="button" class="btn btn-primary" id="btnOcr">Ler pedido</button>
+        </div>
+        <div id="erro2" class="erro hidden"></div>
       </div>
 
-      <div class="card hidden" id="passo2">
+      <!-- 3 OCR -->
+      <div class="card passo hidden" data-passo="3">
         <h1>Confira os exames</h1>
-        <p class="sub" id="resumoLinha">Revise o que lemos. Se o nome estiver errado, edite o texto. Se não achar, peça ajuda.</p>
+        <p class="sub" id="resumoLinha">Revise o que lemos. Se o nome estiver errado, edite o texto.</p>
         <div id="tabelaWrap"></div>
-        <button type="button" class="btn btn-sec" id="btnEnviar">Confirmar e registrar teste</button>
-        <button type="button" class="btn btn-ghost" id="btnAjuda">Preciso de ajuda para identificar o exame</button>
-        <div id="erro2" class="erro hidden"></div>
-        <div id="ok2" class="ok hidden"></div>
+        <div class="btn-row">
+          <button type="button" class="btn btn-back" data-voltar="2">Voltar</button>
+          <button type="button" class="btn btn-primary" id="btnP3">Continuar</button>
+        </div>
+        <button type="button" class="btn btn-ghost" id="btnAjudaCedo">Preciso de ajuda para identificar</button>
+        <div id="erro3" class="erro hidden"></div>
+      </div>
+
+      <!-- 4 Dados -->
+      <div class="card passo hidden" data-passo="4">
+        <h1>Seus dados</h1>
+        <p class="sub">Para registrar o pedido de teste e a equipe te achar se precisar.</p>
+        <label for="cpf">CPF</label>
+        <input type="text" id="cpf" inputmode="numeric" placeholder="000.000.000-00" maxlength="14" />
+        <button type="button" class="btn btn-edit" id="btnCpf" style="margin-top:8px">Buscar CPF</button>
+        <div id="cpfHint" class="hint hidden"></div>
+        <label for="nome">Nome completo</label>
+        <input type="text" id="nome" placeholder="Como no documento" />
+        <div class="grid2">
+          <div>
+            <label for="nasc">Nascimento</label>
+            <input type="date" id="nasc" />
+          </div>
+          <div>
+            <label for="telefone">WhatsApp</label>
+            <input type="tel" id="telefone" placeholder="(11) 99999-9999" />
+          </div>
+        </div>
+        <label for="email">E-mail</label>
+        <input type="email" id="email" placeholder="seu@email.com" />
+        <div class="btn-row">
+          <button type="button" class="btn btn-back" data-voltar="3">Voltar</button>
+          <button type="button" class="btn btn-sec" id="btnEnviar">Confirmar pedido de teste</button>
+        </div>
+        <button type="button" class="btn btn-ghost" id="btnAjuda">Confirmar e pedir ajuda nos exames</button>
+        <div id="erro4" class="erro hidden"></div>
+        <div id="ok4" class="ok hidden"></div>
       </div>
     </div>
 
-    <footer>DrApp · página sem link na home · noindex</footer>
+    <footer>DrApp · ambiente de teste · noindex</footer>
   </main>
 
   <script>
     const API = "https://pedidos.drapp.com.br/api/dasa-teste";
+    const PEDIDOS = "https://pedidos.drapp.com.br";
     const params = new URLSearchParams(location.search);
     const chave = params.get("k") || params.get("chave") || "";
+    const embed = params.get("embed") === "1";
+    if (embed) document.body.classList.add("embed");
 
     const gate = document.getElementById("gate");
     const app = document.getElementById("app");
-    if (!chave) {
-      gate.classList.remove("hidden");
-    } else {
-      app.classList.remove("hidden");
-    }
+    if (!chave) gate.classList.remove("hidden");
+    else app.classList.remove("hidden");
 
     let lab = "alta";
     let itens = [];
     let files = [];
     let editando = null;
+    let passo = 1;
+    const TOTAL = 4;
+
+    function pintarProg() {
+      document.getElementById("progLabel").textContent = "Passo " + passo + " de " + TOTAL;
+      const bar = document.getElementById("progBar");
+      bar.innerHTML = "";
+      for (let i = 1; i <= TOTAL; i++) {
+        const s = document.createElement("span");
+        if (i <= passo) s.className = "on";
+        bar.appendChild(s);
+      }
+      document.querySelectorAll(".passo").forEach(el => {
+        el.classList.toggle("hidden", Number(el.getAttribute("data-passo")) !== passo);
+      });
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function irPara(n) { passo = n; pintarProg(); }
 
     document.querySelectorAll(".labs button").forEach(btn => {
       btn.addEventListener("click", () => {
         lab = btn.getAttribute("data-lab");
         document.querySelectorAll(".labs button").forEach(b => b.classList.toggle("on", b === btn));
       });
+    });
+    document.getElementById("btnP1").onclick = () => irPara(2);
+    document.querySelectorAll("[data-voltar]").forEach(btn => {
+      btn.addEventListener("click", () => irPara(Number(btn.getAttribute("data-voltar"))));
     });
 
     const inputArq = document.getElementById("arquivos");
@@ -183,15 +228,57 @@
         r.readAsDataURL(file);
       });
     }
-
     function fmtPreco(n) {
       if (n == null || !Number.isFinite(n)) return "—";
       return n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
     }
-
     function esc(s) {
       return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
     }
+    function soDigitos(s) { return String(s || "").replace(/\D/g, ""); }
+
+    document.getElementById("cpf").addEventListener("input", function () {
+      let d = soDigitos(this.value).slice(0, 11);
+      if (d.length > 9) this.value = d.replace(/(\d{3})(\d{3})(\d{3})(\d{0,2})/, "$1.$2.$3-$4");
+      else if (d.length > 6) this.value = d.replace(/(\d{3})(\d{3})(\d{0,3})/, "$1.$2.$3");
+      else if (d.length > 3) this.value = d.replace(/(\d{3})(\d{0,3})/, "$1.$2");
+      else this.value = d;
+    });
+
+    document.getElementById("btnCpf").onclick = async () => {
+      const hint = document.getElementById("cpfHint");
+      const cpf = soDigitos(document.getElementById("cpf").value);
+      hint.classList.add("hidden");
+      if (cpf.length !== 11) {
+        hint.textContent = "Informe um CPF com 11 dígitos.";
+        hint.classList.remove("hidden");
+        return;
+      }
+      hint.textContent = "Buscando…";
+      hint.classList.remove("hidden");
+      try {
+        const res = await fetch(PEDIDOS + "/api/cpf?cpf=" + encodeURIComponent(cpf));
+        const j = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(j.mensagem || j.erro || ("HTTP " + res.status));
+        const nome = j.nome || j.nome_completo || "";
+        const nasc = j.nascimento || j.data_nascimento || "";
+        if (nome) document.getElementById("nome").value = nome;
+        if (nasc) {
+          const m = String(nasc).match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+          const iso = m ? (m[3] + "-" + m[2] + "-" + m[1]) : String(nasc).slice(0, 10);
+          if (/^\d{4}-\d{2}-\d{2}$/.test(iso)) document.getElementById("nasc").value = iso;
+        }
+        if (j.telefone && !document.getElementById("telefone").value) {
+          document.getElementById("telefone").value = String(j.telefone).replace(/^\+55\s*/, "");
+        }
+        if (j.email && !document.getElementById("email").value) {
+          document.getElementById("email").value = j.email;
+        }
+        hint.textContent = nome ? ("Encontramos: " + nome) : "CPF ok — complete nome e nascimento se faltarem.";
+      } catch (e) {
+        hint.textContent = e.message || "Não encontramos esse CPF. Preencha os dados à mão.";
+      }
+    };
 
     async function rematchItem(i) {
       const texto = (itens[i].texto_ocr || "").trim();
@@ -215,7 +302,7 @@
     function renderTabela() {
       const wrap = document.getElementById("tabelaWrap");
       if (!itens.length) {
-        wrap.innerHTML = "<p style='color:var(--muted)'>Nenhum exame lido. Você pode digitar abaixo ou pedir ajuda.</p>" +
+        wrap.innerHTML = "<p style='color:var(--muted)'>Nenhum exame lido. Digite abaixo ou peça ajuda.</p>" +
           "<label>Digitar exame</label><input type='text' id='manualExame' placeholder='Ex.: Hemograma completo' />" +
           "<button type='button' class='btn btn-primary' id='btnAddManual' style='margin-top:8px'>Adicionar</button>";
         document.getElementById("btnAddManual").onclick = async () => {
@@ -228,7 +315,7 @@
         };
         return;
       }
-      let html = "<table><thead><tr><th>Exame (pedido)</th><th></th><th>Status</th><th>Catálogo</th><th>Preço DrApp</th></tr></thead><tbody>";
+      let html = "<table><thead><tr><th>Exame (pedido)</th><th></th><th>Status</th><th>Catálogo</th><th>Preço</th></tr></thead><tbody>";
       itens.forEach((it, i) => {
         const badge = it.status === "match"
           ? "<span class='badge ok'>MATCH</span>"
@@ -241,19 +328,13 @@
           ? "<input class='item-edit' id='editInp' value=\"" + esc(it.texto_ocr) + "\" />"
           : "<div style='font-weight:600'>" + esc(it.texto_ocr) + "</div>";
         const acao = emEdicao
-          ? "<button type='button' class='btn-edit' data-salvar='" + i + "'>Buscar de novo</button>"
-          : "<button type='button' class='btn-edit' data-editar='" + i + "'>Editar texto</button>";
-        html += "<tr class='" + (emEdicao ? "row-edit" : "") + "'>" +
-          "<td>" + textoCell + "</td>" +
-          "<td>" + acao + "</td>" +
-          "<td>" + badge + "</td>" +
-          "<td>" + cat + "</td>" +
-          "<td>" + fmtPreco(it.match && it.match.preco_drapp) + "</td>" +
-          "</tr>";
+          ? "<button type='button' class='btn-edit' data-salvar='" + i + "'>Buscar</button>"
+          : "<button type='button' class='btn-edit' data-editar='" + i + "'>Editar</button>";
+        html += "<tr class='" + (emEdicao ? "row-edit" : "") + "'><td>" + textoCell + "</td><td>" + acao +
+          "</td><td>" + badge + "</td><td>" + cat + "</td><td>" + fmtPreco(it.match && it.match.preco_drapp) + "</td></tr>";
       });
       html += "</tbody></table>";
       wrap.innerHTML = html;
-
       wrap.querySelectorAll("[data-editar]").forEach(btn => {
         btn.addEventListener("click", () => {
           editando = Number(btn.getAttribute("data-editar"));
@@ -270,23 +351,21 @@
           if (!novo) return;
           itens[i].texto_ocr = novo;
           btn.disabled = true;
-          btn.textContent = "…";
           try {
             await rematchItem(i);
             editando = null;
             atualizarResumo();
             renderTabela();
           } catch (e) {
-            alert(e.message || "Não consegui buscar o exame.");
+            alert(e.message || "Falha ao buscar");
             btn.disabled = false;
-            btn.textContent = "Buscar de novo";
           }
         });
       });
     }
 
-    document.getElementById("btnOcr").addEventListener("click", async () => {
-      const erro = document.getElementById("erro1");
+    document.getElementById("btnOcr").onclick = async () => {
+      const erro = document.getElementById("erro2");
       erro.classList.add("hidden");
       if (!files.length) {
         erro.textContent = "Anexe o pedido médico.";
@@ -295,12 +374,11 @@
       }
       const btn = document.getElementById("btnOcr");
       btn.disabled = true;
-      btn.textContent = "Lendo pedido…";
+      btn.textContent = "Lendo…";
       try {
         const fotos = [];
         for (const f of files) {
-          const dataUrl = await fileToB64(f);
-          fotos.push({ base64: dataUrl, nome: f.name, tipo: f.type || "image/jpeg" });
+          fotos.push({ base64: await fileToB64(f), nome: f.name, tipo: f.type || "image/jpeg" });
         }
         const res = await fetch(API + "/ocr", {
           method: "POST",
@@ -312,26 +390,48 @@
         itens = j.itens || [];
         editando = null;
         atualizarResumo();
-        document.getElementById("passo2").classList.remove("hidden");
         renderTabela();
-        document.getElementById("passo2").scrollIntoView({ behavior: "smooth" });
+        irPara(3);
       } catch (e) {
         erro.textContent = e.message || "Falha no OCR";
         erro.classList.remove("hidden");
       } finally {
         btn.disabled = false;
-        btn.textContent = "Ler pedido e buscar exames";
+        btn.textContent = "Ler pedido";
       }
-    });
+    };
+
+    document.getElementById("btnP3").onclick = () => {
+      const erro = document.getElementById("erro3");
+      erro.classList.add("hidden");
+      if (!itens.filter(i => i.texto_ocr).length) {
+        erro.textContent = "Inclua ao menos um exame.";
+        erro.classList.remove("hidden");
+        return;
+      }
+      irPara(4);
+    };
 
     async function enviar(pedirAjuda) {
-      const erro = document.getElementById("erro2");
-      const ok = document.getElementById("ok2");
+      const erro = document.getElementById("erro4");
+      const ok = document.getElementById("ok4");
       erro.classList.add("hidden");
       ok.classList.add("hidden");
       const limpos = itens.filter(i => i.texto_ocr);
       if (!limpos.length) {
         erro.textContent = "Inclua ao menos um exame.";
+        erro.classList.remove("hidden");
+        return;
+      }
+      const nome = document.getElementById("nome").value.trim();
+      const telefone = document.getElementById("telefone").value.trim();
+      if (!nome || nome.split(/\s+/).length < 2) {
+        erro.textContent = "Informe o nome completo.";
+        erro.classList.remove("hidden");
+        return;
+      }
+      if (soDigitos(telefone).length < 10) {
+        erro.textContent = "Informe um WhatsApp válido.";
         erro.classList.remove("hidden");
         return;
       }
@@ -346,7 +446,11 @@
           body: JSON.stringify({
             chave,
             lab,
-            nome: document.getElementById("nome").value.trim() || undefined,
+            nome,
+            telefone,
+            email: document.getElementById("email").value.trim() || undefined,
+            cpf: soDigitos(document.getElementById("cpf").value) || undefined,
+            nascimento: document.getElementById("nasc").value || undefined,
             pedirAjuda,
             itens: limpos.map(it => ({
               texto_ocr: it.texto_ocr,
@@ -360,10 +464,11 @@
         });
         const j = await res.json().catch(() => ({}));
         if (!res.ok || !j.ok) throw new Error(j.erro || ("HTTP " + res.status));
-        ok.textContent = j.mensagem + " · token " + j.token + " · card " + j.deal_id;
+        ok.innerHTML = esc(j.mensagem) + "<br><small>token " + esc(j.token) + " · card " + esc(j.deal_id) + "</small>";
         ok.classList.remove("hidden");
         document.getElementById("btnEnviar").disabled = true;
         document.getElementById("btnAjuda").disabled = true;
+        document.getElementById("btnAjudaCedo").disabled = true;
       } catch (e) {
         erro.textContent = e.message || "Falha ao registrar";
         erro.classList.remove("hidden");
@@ -373,8 +478,14 @@
       }
     }
 
-    document.getElementById("btnEnviar").addEventListener("click", () => enviar(false));
-    document.getElementById("btnAjuda").addEventListener("click", () => enviar(true));
+    document.getElementById("btnEnviar").onclick = () => enviar(false);
+    document.getElementById("btnAjuda").onclick = () => enviar(true);
+    document.getElementById("btnAjudaCedo").onclick = () => {
+      irPara(4);
+      setTimeout(() => document.getElementById("btnAjuda").focus(), 100);
+    };
+
+    if (chave) pintarProg();
   </script>
 </body>
 </html>

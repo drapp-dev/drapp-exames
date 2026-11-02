@@ -19,6 +19,9 @@
       if (d && /^\d+$/.test(d)) {
         window.location.replace('https://pedidos.drapp.com.br/upload?antigo=1');
       }
+      // Ambiente de teste DASA: home com ?k=CHAVE monta o fluxo Alta/Lavoisier
+      // dentro de #orcamento (sem link público — só quem tem a chave).
+      window.__DRAPP_DASA_TESTE_K = (q.get('k') || q.get('chave') || '').trim();
     })();
   </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -1963,11 +1966,15 @@
 
   <!-- ═══ TOOL — ORÇAMENTO ══════════════════════════════════ -->
   <section class="tool-section" id="orcamento">
-    <div class="tool-section-header">
-      <div class="section-label">Rápido e gratuito</div>
-      <h2 class="section-heading">Monte seu orçamento agora</h2>
-      <p class="section-sub" style="color:rgba(255,255,255,0.7);">Em poucos passos você já sabe quanto vai economizar.</p>
+    <div id="dasaTesteBanner" style="display:none;max-width:980px;margin:0 auto 16px;padding:14px 16px;border-radius:12px;background:#fff7ed;border:1px solid #fdba74;color:#9a3412;font-size:14px;font-weight:600;">
+      Ambiente de teste DASA (Alta / Lavoisier) — sem WhatsApp/PDF. Pedidos viram card TESTE-DASA no admin.
     </div>
+    <div class="tool-section-header">
+      <div class="section-label" id="orcamentoLabel">Rápido e gratuito</div>
+      <h2 class="section-heading" id="orcamentoHeading">Monte seu orçamento agora</h2>
+      <p class="section-sub" id="orcamentoSub" style="color:rgba(255,255,255,0.7);">Em poucos passos você já sabe quanto vai economizar.</p>
+    </div>
+    <div id="dasaTesteMount" style="display:none;max-width:760px;margin:0 auto 24px;background:#fff;border-radius:16px;padding:8px 16px 16px;box-shadow:0 8px 28px rgba(0,0,0,.12);"></div>
 
     <div class="wiz-progresso">
       <div class="wiz-progresso-topo">
@@ -2821,6 +2828,36 @@
 
     // Backend (drapp-pipeline). CPF, fotos, criar pedido, catálogo e feedback.
     const PEDIDOS_API_URL = "https://pedidos.drapp.com.br";
+
+    // ── Modo teste DASA na home (?k=…) ─────────────────────────
+    (function ativarDasaTesteNaHome() {
+      const k = window.__DRAPP_DASA_TESTE_K || "";
+      if (!k) return;
+      const banner = document.getElementById("dasaTesteBanner");
+      const mount = document.getElementById("dasaTesteMount");
+      const page = document.querySelector("#orcamento .page");
+      const progresso = document.querySelector("#orcamento .wiz-progresso");
+      if (banner) banner.style.display = "block";
+      if (document.getElementById("orcamentoLabel")) document.getElementById("orcamentoLabel").textContent = "Teste DASA";
+      if (document.getElementById("orcamentoHeading")) document.getElementById("orcamentoHeading").textContent = "Orçamento Alta / Lavoisier";
+      if (document.getElementById("orcamentoSub")) document.getElementById("orcamentoSub").textContent = "Fluxo completo de teste: laboratório → pedido → exames → seus dados.";
+      if (progresso) progresso.style.display = "none";
+      if (page) page.style.display = "none";
+      if (mount) {
+        mount.style.display = "block";
+        const src = "dasa-teste/?k=" + encodeURIComponent(k) + "&embed=1";
+        mount.innerHTML = '<iframe title="Orçamento DASA teste" src="' + src + '" style="width:100%;min-height:920px;border:0;border-radius:12px;background:#f4f7fb;"></iframe>';
+      }
+      // CTA do hero leva ao bloco DASA
+      document.querySelectorAll('a[href="#orcamento"]').forEach(function (a) {
+        a.addEventListener("click", function () {
+          setTimeout(function () {
+            const el = document.getElementById("orcamento");
+            if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+          }, 50);
+        });
+      });
+    })();
     let quemExame = "eu";
     let contaLogada = null; // { cpf, nome, dependentes[] }
     let cpfPacienteValidado = false;
