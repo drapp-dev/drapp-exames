@@ -2008,7 +2008,7 @@
   <!-- ═══ TOOL — ORÇAMENTO ══════════════════════════════════ -->
   <section class="tool-section" id="orcamento">
     <div id="dasaTesteBanner" style="display:none;max-width:560px;margin:0 auto 16px;padding:14px 16px;border-radius:12px;background:#fff7ed;border:1px solid #fdba74;color:#9a3412;font-size:14px;font-weight:600;">
-      Ambiente de teste DASA — sem WhatsApp/PDF. Pedidos viram card TESTE-DASA no admin.
+      Fluxo OCR (A+ · Hermes · Alta · Lavoisier): lemos o pedido, você confirma os exames e preenche seus dados — os preços saem no PDF do orçamento.
     </div>
     <div class="tool-section-header">
       <div class="section-label" id="orcamentoLabel">Rápido e gratuito</div>
@@ -2143,6 +2143,13 @@
             </div>
 
             <div id="mobileSelectedList" class="mobile-selected-list"></div>
+          </div>
+
+          <!-- OCR (modo teste ?k=) — fora do card 1/2 p/ o assistente conseguir mostrar no passo 9 -->
+          <div id="ocrTesteStep" class="card" data-wizstep="9" style="display:none;margin-top:0;">
+            <p id="ocrTesteResumo" style="font-size:14px;color:var(--muted);margin:0 0 12px;">Lendo o pedido…</p>
+            <div id="ocrTesteTabela"></div>
+            <div id="ocrTesteErro" class="field-error" style="display:none;margin-top:10px;"></div>
           </div>
 
         </div>
@@ -2870,50 +2877,75 @@
     // Backend (drapp-pipeline). CPF, fotos, criar pedido, catálogo e feedback.
     const PEDIDOS_API_URL = "https://pedidos.drapp.com.br";
 
-    // ── Modo teste DASA na home (?k=…) — mesmo layout do wizard Fleury ──
-    (function ativarDasaTesteNaHome() {
-      const k = window.__DRAPP_DASA_TESTE_K || "";
-      if (!k) return;
+    // ── Modo OCR na home (?k=…) ───────────────────────────────
+    // Wizard (prints): foto → labs (multi) → OCR (só nomes) → CPF → contato → para quem → PDF.
+    window.__DRAPP_OCR_TESTE = {
+      ativo: !!(window.__DRAPP_DASA_TESTE_K),
+      chave: window.__DRAPP_DASA_TESTE_K || "",
+      labs: [],
+      itens: [],
+      editando: null,
+      rodando: false,
+    };
+    (function ativarOcrTesteNaHome() {
+      const modo = window.__DRAPP_OCR_TESTE;
+      if (!modo.ativo) return;
       const banner = document.getElementById("dasaTesteBanner");
       const mount = document.getElementById("dasaTesteMount");
-      const page = document.getElementById("orcamentoFleury");
       if (banner) banner.style.display = "block";
-      // Mantém títulos da home (print): "Monte seu orçamento agora"
-      if (page) page.style.display = "none";
-      if (mount) mount.style.display = "block";
+      if (mount) mount.style.display = "none";
 
-      function boot() {
-        if (!window.DrappDasaTeste || !mount) return;
-        window.DrappDasaTeste.init({
-          root: mount,
-          chave: k,
-          pathPrefix: "",
-          labelEl: document.getElementById("wizLabel"),
-          barraEl: document.getElementById("wizBarra"),
-          tituloEl: document.getElementById("wizTitulo"),
-          subEl: document.getElementById("wizSubtitulo"),
-          onEscolherFleury: function (sel) {
-            // Volta ao wizard Fleury da home com o lab escolhido
-            if (mount) mount.style.display = "none";
-            if (page) page.style.display = "";
-            if (banner) banner.style.display = "none";
-            try {
-              if (sel.lab === "hermes" && typeof drappToggleLab === "function") drappToggleLab("hermes");
-              else if (typeof drappToggleLab === "function") drappToggleLab("aplus");
-              if (typeof mostrarPasso === "function") mostrarPasso(1);
-            } catch (_) {}
-            var el = document.getElementById("orcamento");
-            if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-          },
+      // 4 marcas — multi-seleção (uma, várias ou todas)
+      const labSec = document.getElementById("labSelectorSection");
+      if (labSec) {
+        labSec.innerHTML =
+          '<div class="lab-selector-title" style="margin-bottom:6px;">Em quais laboratórios deseja orçar?</div>' +
+          '<p style="font-size:13px;color:var(--muted);margin:0 0 12px;">Pode marcar mais de um — inclusive todos.</p>' +
+          '<div class="dasa-marcas">' +
+            [
+              { id: "aplus", nome: "A+", logo: "logo-aplus.png" },
+              { id: "hermes", nome: "Hermes Pardini", logo: "logo-hermes.png" },
+              { id: "alta", nome: "Alta", logo: "logos/alta.png" },
+              { id: "lavoisier", nome: "Lavoisier", logo: "logos/lavoisier.svg" },
+            ].map(function (m) {
+              return (
+                '<button type="button" class="dasa-marca" data-lab-slug="' + m.id + '" aria-pressed="false">' +
+                  '<img src="' + m.logo + '" alt="' + m.nome + '">' +
+                  '<span>' + m.nome + '</span>' +
+                '</button>'
+              );
+            }).join("") +
+          '</div>';
+        function syncLabsOcr_() {
+          modo.labs = Array.prototype.map.call(
+            labSec.querySelectorAll(".dasa-marca.is-on"),
+            function (b) { return b.getAttribute("data-lab-slug"); }
+          ).filter(Boolean);
+        }
+        labSec.querySelectorAll(".dasa-marca").forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            btn.classList.toggle("is-on");
+            btn.setAttribute("aria-pressed", btn.classList.contains("is-on") ? "true" : "false");
+            syncLabsOcr_();
+          });
         });
+        syncLabsOcr_();
       }
-      const s = document.createElement("script");
-      s.src = "dasa-teste/fluxo-home.js";
-      s.onload = boot;
-      s.onerror = function () {
-        if (mount) mount.innerHTML = "<div class='card' style='color:#b91c1c;font-weight:700;'>Não carregou o fluxo DASA. Atualize a página.</div>";
-      };
-      document.head.appendChild(s);
+
+      // Só foto + OCR — esconde digitar / OU / “ainda não tem o pedido”
+      const digitarWrap = document.getElementById("digitarExamesWrap");
+      if (digitarWrap) digitarWrap.style.display = "none";
+      document.querySelectorAll(".wiz-ou-divisor").forEach(function (el) { el.style.display = "none"; });
+      const digitarCard = document.getElementById("btnAbrirDigitarExames");
+      if (digitarCard) {
+        const card = digitarCard.closest("[data-wizstep]");
+        if (card) card.style.display = "none";
+      }
+      const atencao = document.getElementById("atencaoPedidoFisico");
+      if (atencao) {
+        const wrap = atencao.closest("[data-wizstep]") || atencao;
+        wrap.style.display = "none";
+      }
     })();
     let quemExame = "eu";
     let contaLogada = null; // { cpf, nome, dependentes[] }
@@ -3428,6 +3460,16 @@
     }
 
     function obterLabsSelecionados() {
+      const modo = window.__DRAPP_OCR_TESTE;
+      if (modo && modo.ativo) {
+        const nomes = {
+          aplus: "A+ Medicina Diagnóstica",
+          hermes: "Hermes Pardini",
+          alta: "Alta",
+          lavoisier: "Lavoisier",
+        };
+        return (modo.labs || []).map(function (s) { return nomes[s] || s; });
+      }
       return labCheckboxes.filter(cb => cb.checked).map(cb => cb.value);
     }
 
@@ -4710,6 +4752,7 @@
     const WIZ_TITULOS = {
       1: ["Vamos montar seu orçamento", "Anexe o pedido médico ou digite os exames — o que for mais fácil."],
       2: ["Onde você quer orçar?", "Escolha um laboratório, ou compare os dois."],
+      9: ["Confira os exames", "Revise o que lemos no pedido. Se o nome estiver errado, edite o texto."],
       3: ["CPF de quem está pedindo o orçamento", "É o CPF de quem solicita. Se os exames forem de outra pessoa, o CPF dela vem depois."],
       4: ["Os exames são para quem?", "Para você mesmo ou para outra pessoa."],
       5: ["Contato de quem está pedindo", "Telefone e e-mail de quem solicita o orçamento."],
@@ -4717,14 +4760,20 @@
       7: ["Para onde enviamos?", "Pode marcar os dois."],
       8: ["Preencha os dados do paciente!", "quem irá realizar os exames."],
     };
+    if (window.__DRAPP_OCR_TESTE && window.__DRAPP_OCR_TESTE.ativo) {
+      WIZ_TITULOS[1] = ["Vamos montar seu orçamento", "Anexe o pedido médico para lermos os exames."];
+      WIZ_TITULOS[2] = ["Onde você quer orçar?", "Escolha um ou mais laboratórios — pode marcar todos."];
+      WIZ_TITULOS[9] = ["Confira os exames", "Só a lista lida no pedido — sem preços aqui. Os valores vão no PDF depois."];
+    }
     let passoAtual = 1;
     function totalPassos() { return sequenciaPassos().length; }
-    // Ordem visível: exames → lab → CPF de quem pede → contato de quem pede →
-    // exames para si ou outra pessoa. 6, 7 e 8 só no caminho "outra pessoa"
-    // (CPF do paciente, para onde enviar, contato do paciente).
+    // Ordem visível: exames → lab → [OCR no modo teste] → CPF → contato → para quem…
     // A barra usa a POSIÇÃO na sequência, não o número interno do data-wizstep.
     function sequenciaPassos() {
-      return quemExame === "outro" ? [1, 2, 3, 5, 4, 6, 7, 8] : [1, 2, 3, 5, 4];
+      const ocr = (window.__DRAPP_OCR_TESTE && window.__DRAPP_OCR_TESTE.ativo) ? [9] : [];
+      return quemExame === "outro"
+        ? [1, 2].concat(ocr).concat([3, 5, 4, 6, 7, 8])
+        : [1, 2].concat(ocr).concat([3, 5, 4]);
     }
     function ultimoPassoId() {
       const seq = sequenciaPassos();
@@ -4819,10 +4868,26 @@
     function validarPassoAtual() {
       switch (passoAtual) {
         case 1:
+          if (window.__DRAPP_OCR_TESTE && window.__DRAPP_OCR_TESTE.ativo) {
+            if (!imagensPedido.length) return "Anexe o pedido médico.";
+            return null;
+          }
           if (!temExamesOuFotos()) return "Anexe o pedido médico ou digite os exames.";
           return null;
         case 2:
-          return null; // sempre tem laboratório marcado por padrão
+          if (window.__DRAPP_OCR_TESTE && window.__DRAPP_OCR_TESTE.ativo) {
+            const labs = window.__DRAPP_OCR_TESTE.labs || [];
+            if (!labs.length) return "Escolha ao menos um laboratório.";
+          }
+          return null; // fluxo normal: lab marcado por padrão
+        case 9: {
+          const modo = window.__DRAPP_OCR_TESTE;
+          if (modo && modo.rodando) return "Aguarde a leitura do pedido…";
+          if (!modo || !modo.itens || !modo.itens.filter(function (i) { return i.texto_ocr; }).length) {
+            return "Confira ou adicione os exames lidos no pedido.";
+          }
+          return null;
+        }
         case 3: {
           if (!cpfValidado) return "Valide seu CPF antes de continuar.";
           if (!cpfConfirmado) return "Confirme se os dados encontrados estão certos.";
@@ -4877,8 +4942,152 @@
 
     const wizContinuarBtn = document.getElementById("wizContinuarBtn");
     const wizVoltarBtn = document.getElementById("wizVoltarBtn");
+    async function rodarOcrTeste_() {
+      const modo = window.__DRAPP_OCR_TESTE;
+      if (!modo || !modo.ativo) return;
+      const resumo = document.getElementById("ocrTesteResumo");
+      const tabela = document.getElementById("ocrTesteTabela");
+      const erroEl = document.getElementById("ocrTesteErro");
+      if (erroEl) { erroEl.style.display = "none"; erroEl.textContent = ""; }
+      if (resumo) resumo.textContent = "Lendo o pedido…";
+      if (tabela) tabela.innerHTML = "";
+      modo.rodando = true;
+      try {
+        const fotos = [];
+        for (let i = 0; i < imagensPedido.length; i++) {
+          const img = imagensPedido[i];
+          if (!img) continue;
+          let b64 = img.base64;
+          if (!b64 && img.preview && String(img.preview).indexOf("data:") === 0) {
+            b64 = String(img.preview).split(",")[1];
+          }
+          if (!b64 && img.file) {
+            b64 = await new Promise(function (resolve, reject) {
+              const r = new FileReader();
+              r.onload = function () {
+                const rlt = String(r.result || "");
+                resolve(rlt.includes(",") ? rlt.split(",")[1] : rlt);
+              };
+              r.onerror = reject;
+              r.readAsDataURL(img.file);
+            });
+          }
+          if (!b64) continue;
+          const mime = (img.file && img.file.type) || (/\.pdf$/i.test(img.nome || "") ? "application/pdf" : "image/jpeg");
+          fotos.push({
+            base64: "data:" + mime + ";base64," + b64,
+            nome: img.nome || (img.file && img.file.name) || ("arquivo-" + (i + 1)),
+            tipo: mime,
+          });
+        }
+        if (!fotos.length) throw new Error("Anexe o pedido médico antes de continuar.");
+        const labRef = (modo.labs && modo.labs[0]) || "aplus";
+        const res = await fetch(PEDIDOS_API_URL + "/api/dasa-teste/ocr", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "x-dasa-teste-chave": modo.chave },
+          body: JSON.stringify({
+            chave: modo.chave,
+            lab: labRef,
+            somenteOcr: true,
+            fotos: fotos,
+          }),
+        });
+        const j = await res.json().catch(function () { return {}; });
+        if (!res.ok || !j.ok) throw new Error(j.erro || ("HTTP " + res.status));
+        // Cliente só vê nomes — nunca match/preço nesta etapa
+        modo.itens = (j.itens || []).map(function (it) {
+          return { texto_ocr: it.texto_ocr || it.texto || "", status: "lido", match: null };
+        }).filter(function (it) { return it.texto_ocr; });
+        modo.editando = null;
+        renderOcrTesteTabela_();
+      } catch (e) {
+        if (resumo) resumo.textContent = "Não conseguimos ler o pedido.";
+        if (erroEl) {
+          erroEl.textContent = e.message || "Falha no OCR";
+          erroEl.style.display = "block";
+        }
+        modo.itens = [];
+      } finally {
+        modo.rodando = false;
+      }
+    }
+
+    function renderOcrTesteTabela_() {
+      const modo = window.__DRAPP_OCR_TESTE;
+      const wrap = document.getElementById("ocrTesteTabela");
+      const resumo = document.getElementById("ocrTesteResumo");
+      if (!modo || !wrap) return;
+      if (resumo) {
+        resumo.textContent = modo.itens.length
+          ? (modo.itens.length + " exame(s) lidos — confira se batem com o pedido. Sem preços nesta etapa.")
+          : "Nenhum exame lido — digite abaixo ou volte e anexe outra foto.";
+      }
+      function esc(s) {
+        return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
+      }
+      let html = "";
+      if (modo.itens.length) {
+        html += "<ul style='list-style:none;padding:0;margin:0 0 14px;'>";
+        modo.itens.forEach(function (it, i) {
+          const em = modo.editando === i;
+          html += "<li style='display:flex;gap:8px;align-items:center;padding:10px 0;border-top:1px solid var(--line);'>";
+          if (em) {
+            html += "<input id='ocrEditInp' value=\"" + esc(it.texto_ocr) + "\" style='flex:1;padding:8px 10px;border:1.5px solid var(--cyan);border-radius:8px;font-size:15px;'>";
+            html += "<button type='button' data-ocr-salvar='" + i + "' class='inline-btn' style='padding:8px 12px;font-size:12px;'>OK</button>";
+          } else {
+            html += "<div style='flex:1;font-weight:700;color:var(--dark);font-size:15px;'>" + esc(it.texto_ocr) + "</div>";
+            html += "<button type='button' data-ocr-editar='" + i + "' class='inline-btn' style='padding:6px 10px;font-size:11px;background:#fff;color:var(--blue);border:1px solid #93c5fd;'>Editar</button>";
+            html += "<button type='button' data-ocr-remover='" + i + "' class='inline-btn' style='padding:6px 10px;font-size:11px;background:#fff;color:#b91c1c;border:1px solid #fecaca;'>Remover</button>";
+          }
+          html += "</li>";
+        });
+        html += "</ul>";
+      }
+      html += "<div style='display:flex;gap:8px;align-items:center;flex-wrap:wrap;'>";
+      html += "<input type='text' id='ocrAddInp' placeholder='Adicionar exame (ex.: Hemograma)' style='flex:1;min-width:180px;padding:10px 12px;border:1.5px solid var(--line);border-radius:8px;font-size:14px;'>";
+      html += "<button type='button' class='inline-btn' id='ocrAddBtn' style='padding:10px 14px;'>Adicionar</button>";
+      html += "</div>";
+      wrap.innerHTML = html;
+
+      const addBtn = document.getElementById("ocrAddBtn");
+      if (addBtn) addBtn.onclick = function () {
+        const v = (document.getElementById("ocrAddInp").value || "").trim();
+        if (!v) return;
+        modo.itens.push({ texto_ocr: v, status: "lido", match: null });
+        modo.editando = null;
+        renderOcrTesteTabela_();
+      };
+      wrap.querySelectorAll("[data-ocr-editar]").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          modo.editando = Number(btn.getAttribute("data-ocr-editar"));
+          renderOcrTesteTabela_();
+          const inp = document.getElementById("ocrEditInp");
+          if (inp) inp.focus();
+        });
+      });
+      wrap.querySelectorAll("[data-ocr-salvar]").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          const i = Number(btn.getAttribute("data-ocr-salvar"));
+          const inp = document.getElementById("ocrEditInp");
+          const novo = (inp && inp.value || "").trim();
+          if (!novo) return;
+          modo.itens[i] = { texto_ocr: novo, status: "lido", match: null };
+          modo.editando = null;
+          renderOcrTesteTabela_();
+        });
+      });
+      wrap.querySelectorAll("[data-ocr-remover]").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          const i = Number(btn.getAttribute("data-ocr-remover"));
+          modo.itens.splice(i, 1);
+          modo.editando = null;
+          renderOcrTesteTabela_();
+        });
+      });
+    }
+
     if (wizContinuarBtn) {
-      wizContinuarBtn.addEventListener("click", function () {
+      wizContinuarBtn.addEventListener("click", async function () {
         const erro = validarPassoAtual();
         if (erro) {
           // Passo 3 sem confirmar: a seta vermelha apontando pro "correto!"
@@ -4890,8 +5099,18 @@
           if (!ehCpfSemConfirmar) mostrarErroWizard(erro);
           return;
         }
-        // Pulando pro passo 6 (dependente), zera o vínculo salvo do CPF anterior.
-        mostrarPasso(proximoPasso(passoAtual));
+        const prox = proximoPasso(passoAtual);
+        // Ao sair do lab (2) para OCR (9): dispara a leitura
+        if (passoAtual === 2 && prox === 9 && window.__DRAPP_OCR_TESTE && window.__DRAPP_OCR_TESTE.ativo) {
+          mostrarPasso(9);
+          wizContinuarBtn.disabled = true;
+          wizContinuarBtn.textContent = "Lendo pedido…";
+          await rodarOcrTeste_();
+          wizContinuarBtn.disabled = false;
+          wizContinuarBtn.textContent = "Continuar →";
+          return;
+        }
+        mostrarPasso(prox);
       });
     }
     if (wizVoltarBtn) {
@@ -4937,6 +5156,20 @@
       if (envioEmAndamento || pedidoJaEnviado) return;
       if (!validarFormularioBase()) return;
       if (!cpfValidado || !cpfConfirmado) return;
+
+      // Modo OCR (?k=): mesmos dados do lead + PDF pelo fluxo normal; exames só como lista.
+      const modoOcr = window.__DRAPP_OCR_TESTE;
+      if (modoOcr && modoOcr.ativo) {
+        if (!(modoOcr.labs || []).length) {
+          mostrarStatusCheckout("Escolha ao menos um laboratório.");
+          return;
+        }
+        const limposOcr = (modoOcr.itens || []).filter(function (i) { return i.texto_ocr; });
+        if (!limposOcr.length) {
+          mostrarStatusCheckout("Confira os exames lidos no pedido antes de finalizar.");
+          return;
+        }
+      }
 
       if (quemExame === "outro") {
         const cpfPacEhPass = ehPassaporteMarcado(document.getElementById("cpfPacienteEhPassaporte"));
@@ -5052,6 +5285,10 @@
         }
       }
 
+      const modoOcrEnvio = window.__DRAPP_OCR_TESTE;
+      const ocrExames = (modoOcrEnvio && modoOcrEnvio.ativo)
+        ? (modoOcrEnvio.itens || []).map(function (i) { return i.texto_ocr; }).filter(Boolean)
+        : [];
       const payload = {
         action: "criarPedido",
         idempotencyKey: getIdempotencyKeyPedido_(),
@@ -5063,6 +5300,7 @@
         enviarPara: enviarPara,
         contatoDependente: contatoDependente,
         labsSelecionados: obterLabsSelecionados(),
+        ocrExames: ocrExames.length ? ocrExames : undefined,
         paciente: {
           cpf: cpfPedido,
           telefone: telefonePrincipal,
