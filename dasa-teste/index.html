@@ -59,7 +59,7 @@
     .wiz-nav .secondary-btn { flex: 0 0 auto; width: auto; padding: 0 22px; }
     .wiz-nav .primary-btn { flex: 1; margin: 0; }
     .lab-selector-title { font-weight: 700; color: var(--text); }
-    .dasa-marcas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .dasa-marcas { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
     .dasa-marca {
       display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 16px 8px;
       border-radius: 12px; border: 2px solid #e2e8f0; background: #f8fafc; cursor: pointer;
@@ -115,7 +115,7 @@
       DrappDasaTeste.init({
         root: document.getElementById("mount"),
         chave: k,
-        logoBase: "../logos/",
+        pathPrefix: "../",
         labelEl: document.getElementById("wizLabel"),
         barraEl: document.getElementById("wizBarra"),
         tituloEl: document.getElementById("wizTitulo"),

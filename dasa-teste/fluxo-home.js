@@ -9,17 +9,18 @@
 
   const TITULOS = {
     1: ["Vamos montar seu orçamento", "Anexe o pedido médico — foto ou PDF."],
-    2: ["Onde você quer orçar?", "Escolha a marca: Alta, Lavoisier ou DASA."],
+    2: ["Onde você quer orçar?", "Escolha o laboratório: A+, Hermes, Alta ou Lavoisier."],
     3: ["Confira os exames", "Revise o que lemos. Se o nome estiver errado, edite o texto."],
     4: ["Seus dados", "CPF, contato e nome para registrar o pedido de teste."],
     5: ["Confirmar pedido", "Revise e envie. Sem WhatsApp/PDF neste teste."],
   };
 
-  // DASA (grupo) no teste usa catálogo Alta; o card fica marcado como alta.
+  // Marcas do form (DASA = grupo, não aparece). A+/Hermes = Fleury; Alta/Lavoisier = DASA.
   const MARCAS_BASE = [
-    { id: "alta", lab: "alta", nome: "Alta", file: "alta.png" },
-    { id: "lavoisier", lab: "lavoisier", nome: "Lavoisier", file: "lavoisier.svg" },
-    { id: "dasa", lab: "alta", nome: "DASA", file: "dasa.png" },
+    { id: "aplus", lab: "aplus", grupo: "fleury", nome: "A+", logo: "logo-aplus.png" },
+    { id: "hermes", lab: "hermes", grupo: "fleury", nome: "Hermes Pardini", logo: "logo-hermes.png" },
+    { id: "alta", lab: "alta", grupo: "dasa", nome: "Alta", logo: "logos/alta.png" },
+    { id: "lavoisier", lab: "lavoisier", grupo: "dasa", nome: "Lavoisier", logo: "logos/lavoisier.svg" },
   ];
 
   function esc(s) {
@@ -49,17 +50,24 @@
     var barraEl = opts.barraEl;
     var tituloEl = opts.tituloEl;
     var subEl = opts.subEl;
-    var logoBase = opts.logoBase || "logos/";
+    var pathPrefix = opts.pathPrefix || "";
     if (!root || !chave) return;
 
     var MARCAS = MARCAS_BASE.map(function (m) {
-      return { id: m.id, lab: m.lab, nome: m.nome, logo: logoBase + m.file };
+      return {
+        id: m.id,
+        lab: m.lab,
+        grupo: m.grupo,
+        nome: m.nome,
+        logo: pathPrefix + m.logo,
+      };
     });
 
     var estado = {
       passo: 1,
       marca: "alta",
       lab: "alta",
+      grupo: "dasa",
       files: [],
       itens: [],
       editando: null,
@@ -88,19 +96,21 @@
 
         '<div class="dasa-passo" data-p="2" style="display:none;">' +
           '<div class="card">' +
-            '<div class="lab-selector-title" style="margin-bottom:12px;">Em qual marca deseja orçar?</div>' +
+            '<div class="lab-selector-title" style="margin-bottom:12px;">Em qual laboratório deseja orçar?</div>' +
             '<div class="dasa-marcas">' +
               MARCAS.map(function (m) {
-                var fallback = logoBase + "lavoisier.jpg";
+                var fallback = pathPrefix + "logos/lavoisier.jpg";
                 return (
-                  '<button type="button" class="dasa-marca' + (m.id === "alta" ? " is-on" : "") + '" data-marca="' + m.id + '" data-lab="' + m.lab + '">' +
+                  '<button type="button" class="dasa-marca' + (m.id === "alta" ? " is-on" : "") +
+                    '" data-marca="' + m.id + '" data-lab="' + m.lab + '" data-grupo="' + m.grupo + '">' +
                     '<img src="' + m.logo + '" alt="' + esc(m.nome) + '" onerror="this.onerror=null;this.src=\'' + fallback + '\'">' +
-                    '<span>' + esc(m.nome) + '</span>' +
-                  '</button>'
+                    '<span>' + esc(m.nome) + "</span>" +
+                  "</button>"
                 );
               }).join("") +
             '</div>' +
           '</div>' +
+          '<div id="dasaErro2" class="erro" style="display:none;margin-top:12px;"></div>' +
           '<div class="wiz-nav" style="margin-top:16px;">' +
             '<button type="button" class="secondary-btn" id="dasaBack2">← Voltar</button>' +
             '<button type="button" class="primary-btn" id="dasaNext2">Continuar →</button>' +
@@ -224,6 +234,7 @@
         btn.classList.add("is-on");
         estado.marca = btn.getAttribute("data-marca");
         estado.lab = btn.getAttribute("data-lab");
+        estado.grupo = btn.getAttribute("data-grupo") || "dasa";
       });
     });
 
@@ -308,6 +319,20 @@
     }
 
     document.getElementById("dasaNext2").onclick = async function () {
+      showErr("dasaErro2");
+      // A+ / Hermes → fluxo Fleury da home (se o host registrou o callback)
+      if (estado.grupo === "fleury") {
+        if (typeof opts.onEscolherFleury === "function") {
+          opts.onEscolherFleury({
+            marca: estado.marca,
+            lab: estado.lab,
+            files: estado.files.slice(),
+          });
+          return;
+        }
+        showErr("dasaErro2", "A+ e Hermes usam o fluxo Fleury da home. Abra sem o parâmetro de teste DASA, ou escolha Alta/Lavoisier.");
+        return;
+      }
       showErr("dasaErro3");
       ir(3);
       document.getElementById("dasaResumo").textContent = "Lendo o pedido…";

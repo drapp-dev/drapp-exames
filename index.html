@@ -628,7 +628,7 @@
     .wiz-progresso-barra span.on { background: var(--orange); }
     .dasa-marcas {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, 1fr);
       gap: 10px;
     }
     .dasa-marca {
@@ -662,7 +662,7 @@
       background: #fff;
       box-shadow: 0 0 0 3px rgba(0,109,199,.18);
     }
-    @media (max-width: 520px) {
+    @media (max-width: 420px) {
       .dasa-marcas { grid-template-columns: 1fr; }
       .dasa-marca { flex-direction: row; justify-content: flex-start; padding: 12px 14px; }
       .dasa-marca img { height: 36px; width: 90px; }
@@ -2887,11 +2887,24 @@
         window.DrappDasaTeste.init({
           root: mount,
           chave: k,
-          logoBase: "logos/",
+          pathPrefix: "",
           labelEl: document.getElementById("wizLabel"),
           barraEl: document.getElementById("wizBarra"),
           tituloEl: document.getElementById("wizTitulo"),
           subEl: document.getElementById("wizSubtitulo"),
+          onEscolherFleury: function (sel) {
+            // Volta ao wizard Fleury da home com o lab escolhido
+            if (mount) mount.style.display = "none";
+            if (page) page.style.display = "";
+            if (banner) banner.style.display = "none";
+            try {
+              if (sel.lab === "hermes" && typeof drappToggleLab === "function") drappToggleLab("hermes");
+              else if (typeof drappToggleLab === "function") drappToggleLab("aplus");
+              if (typeof mostrarPasso === "function") mostrarPasso(1);
+            } catch (_) {}
+            var el = document.getElementById("orcamento");
+            if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+          },
         });
       }
       const s = document.createElement("script");
