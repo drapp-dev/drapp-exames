@@ -4732,8 +4732,11 @@
           titularEmail: payload.titularEmail,
           enviarPara: payload.enviarPara,
           contatoDependente: payload.contatoDependente,
-          // Lista do OCR (?k=) — sem isso o admin abre o card sem exames lidos.
-          ocrExames: Array.isArray(payload.ocrExames) ? payload.ocrExames : undefined,
+          // Lista do OCR (?k=) — obrigatória; a API recusa pedido OCR sem exames.
+          modoOcr: payload.modoOcr === true ? true : undefined,
+          ocrExames: Array.isArray(payload.ocrExames) && payload.ocrExames.length
+            ? payload.ocrExames
+            : undefined,
           fotosUrls: imagensPedido.map(img => img.url).filter(Boolean)
         })
       });
@@ -5290,9 +5293,15 @@
       }
 
       const modoOcrEnvio = window.__DRAPP_OCR_TESTE;
-      const ocrExames = (modoOcrEnvio && modoOcrEnvio.ativo)
+      const ocrAtivo = !!(modoOcrEnvio && modoOcrEnvio.ativo);
+      const ocrExames = ocrAtivo
         ? (modoOcrEnvio.itens || []).map(function (i) { return i.texto_ocr; }).filter(Boolean)
         : [];
+      if (ocrAtivo && !ocrExames.length) {
+        liberarBotaoFinalizar();
+        mostrarStatusCheckout("Confira os exames lidos no pedido antes de finalizar.");
+        return;
+      }
       const payload = {
         action: "criarPedido",
         idempotencyKey: getIdempotencyKeyPedido_(),
@@ -5304,6 +5313,7 @@
         enviarPara: enviarPara,
         contatoDependente: contatoDependente,
         labsSelecionados: obterLabsSelecionados(),
+        modoOcr: ocrAtivo || undefined,
         ocrExames: ocrExames.length ? ocrExames : undefined,
         paciente: {
           cpf: cpfPedido,
