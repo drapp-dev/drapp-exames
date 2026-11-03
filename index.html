@@ -4732,6 +4732,8 @@
           titularEmail: payload.titularEmail,
           enviarPara: payload.enviarPara,
           contatoDependente: payload.contatoDependente,
+          // Lista do OCR (?k=) — sem isso o admin abre o card sem exames lidos.
+          ocrExames: Array.isArray(payload.ocrExames) ? payload.ocrExames : undefined,
           fotosUrls: imagensPedido.map(img => img.url).filter(Boolean)
         })
       });
