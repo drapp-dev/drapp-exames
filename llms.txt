@@ -1,0 +1,54 @@
+# DrApp Exames
+
+> O DrApp conecta pacientes a laboratórios parceiros (Hermes Pardini, A+ Medicina Diagnóstica, do Grupo Fleury) com descontos de até 30% sobre o preço particular, sem assinatura nem mensalidade.
+
+O DrApp é um serviço brasileiro de orçamento de exames laboratoriais e de imagem. O paciente envia o pedido médico (ou digita os exames), escolhe o laboratório e recebe o orçamento com o preço particular e o preço DrApp lado a lado. Não há convênio nem plano de saúde: o paciente paga apenas pelos exames que escolher.
+
+## Principais páginas
+
+- [Página inicial e orçamento online](https://www.drapp.com.br/): Monte o orçamento de exames em poucos passos, escolha o laboratório e compare o preço particular com o preço DrApp antes de confirmar.
+- [Minha conta / acompanhar pedidos](https://www.drapp.com.br/conta/): Área do cliente para acompanhar o status do pedido, ver o orçamento completo e baixar o PDF.
+- [Aplicativo DrApp](https://app.drapp.com.br): Aplicativo web para receber avisos sobre o exame e novidades.
+
+## Blog
+
+- [Blog DrApp](https://www.drapp.com.br/blog/): Guias de saúde, exames de rotina e especialidades médicas explicados de forma simples.
+- [Exames Ginecológicos: Saiba quais são e para que servem!](https://www.drapp.com.br/blog/exames-ginecologicos/): A saúde ginecológica é vital para o bem-estar feminino em todas as fases da vida. Entenda a importância dos ex…
+- [Exames de sangue de rotina feminino: guia completo para a saúde da mulher!](https://www.drapp.com.br/blog/exames-de-sangue-de-rotina-feminino/): Parte fundamental de práticas que ajudam a manter a saúde em dia, os exames de sangue de rotina feminino são i…
+- [A importância de exames médicos preventivos e regulares](https://www.drapp.com.br/blog/a-importancia-de-exames-medicos-preventivos-e-regulares/): Em um mundo em constante movimento e ritmo acelerado, é fácil ignorar nosso bem mais precioso – a saúde. O vel…
+- [O que é exame FAN (fator antinuclear)?](https://www.drapp.com.br/blog/o-que-e-exame-fan-fator-antinuclear/): Quando existe a suspeita de doença autoimune, pode ser solicitado que o paciente realize o exame FAN, ou exame…
+- [Hemograma completo: seus benefícios e por que você deve fazer](https://www.drapp.com.br/blog/hemograma-completo-seus-beneficios-e-por-que-voce-deve-fazer/): O hemograma consta em muitos pedidos de exames, acompanhando a rotina de muitos pacientes e servindo como uma…
+- [Mamografia: conheça o exame e saiba quando agendar](https://www.drapp.com.br/blog/mamografia-conheca-o-exame-e-saiba-quando-agendar/): A detecção precoce do câncer de mama é a melhor forma de adotar um tratamento eficiente e com melhores chances…
+- [Os exames para detectar o câncer de mama](https://www.drapp.com.br/blog/os-exames-para-detectar-o-cancer-de-mama/): O câncer de mama, infelizmente, é um dos tipos mais comuns que acometem as mulheres no mundo todo. Não se sabe…
+- [Conheça os principais exames de rotina](https://www.drapp.com.br/blog/conheca-os-principais-exames-de-rotina/): Exames de rotina são pedidos por médicos para avaliar o estado de saúde em diferentes momentos da vida.
+## Como funciona
+
+1. Escolha os exames, enviando uma foto do pedido médico ou digitando os nomes dos exames.
+2. Selecione o laboratório: A+ Medicina Diagnóstica, Hermes Pardini ou compare os dois.
+3. Receba o orçamento sem custo e sem compromisso, com os preços no PDF e atendimento via WhatsApp.
+4. Realize o exame no laboratório parceiro, levando o pedido médico físico.
+
+## Fatos importantes
+
+- Desconto: até 30% em relação ao preço particular dos laboratórios parceiros.
+- Custo do serviço: o orçamento é gratuito. Não há assinatura, mensalidade nem taxa de adesão.
+- Laboratórios parceiros: Hermes Pardini, A+ Medicina Diagnóstica e Grupo Fleury.
+- Volume: mais de 1,3 milhão de exames realizados no Brasil.
+- Avaliação média: 4,85 de 5, com base em mais de 900 avaliações de clientes (informada pelo site).
+- Coleta em domicílio: disponível, sem taxa de visita.
+- Pedido médico: todos os exames exigem o pedido médico físico no dia do atendimento. Para exames de imagem, o pedido médico é obrigatório para gerar o desconto.
+- Sem pedido em mãos: o cliente pode digitar os exames e receberá apenas uma prévia de preço.
+- Privacidade: orçamento sigiloso e sem compromisso, com dados protegidos.
+
+## Perguntas frequentes
+
+- O DrApp cobra alguma taxa? Não. O orçamento é 100% gratuito e o cliente paga apenas pelos exames que escolher.
+- Quais laboratórios fazem parte do DrApp? Hermes Pardini, A+ Medicina Diagnóstica e Grupo Fleury.
+- Como funciona o orçamento? O cliente escolhe os exames, seleciona o laboratório e envia o pedido médico. A equipe retorna com o orçamento via WhatsApp, sem custo e sem compromisso.
+- Qual é o desconto oferecido? Até 30% em relação ao preço particular dos laboratórios parceiros, com o preço visível antes da confirmação.
+
+## Contato
+
+- Site: https://www.drapp.com.br
+- WhatsApp: +55 11 96907-2017
+- Idioma: português (Brasil)
