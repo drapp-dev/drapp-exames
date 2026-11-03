@@ -2145,8 +2145,10 @@
             <div id="mobileSelectedList" class="mobile-selected-list"></div>
           </div>
 
-          <!-- OCR (modo teste ?k=) — fora do card 1/2 p/ o assistente conseguir mostrar no passo 9 -->
-          <div id="ocrTesteStep" class="card" data-wizstep="9" style="display:none;margin-top:0;">
+          <!-- OCR (modo teste ?k=) — fora do card 1/2 p/ o assistente conseguir mostrar no passo 9.
+               NÃO pôr display:none inline: o assistente grava style.display em data-wizDisplay
+               e reaplica ao mostrar — com "none" o passo 3 (lista OCR) nunca aparecia. -->
+          <div id="ocrTesteStep" class="card" data-wizstep="9" style="margin-top:0;">
             <p id="ocrTesteResumo" style="font-size:14px;color:var(--muted);margin:0 0 12px;">Lendo o pedido…</p>
             <div id="ocrTesteTabela"></div>
             <div id="ocrTesteErro" class="field-error" style="display:none;margin-top:10px;"></div>
@@ -4763,7 +4765,7 @@
     if (window.__DRAPP_OCR_TESTE && window.__DRAPP_OCR_TESTE.ativo) {
       WIZ_TITULOS[1] = ["Vamos montar seu orçamento", "Anexe o pedido médico para lermos os exames."];
       WIZ_TITULOS[2] = ["Onde você quer orçar?", "Escolha um ou mais laboratórios — pode marcar todos."];
-      WIZ_TITULOS[9] = ["Confira os exames", "Só a lista lida no pedido — sem preços aqui. Os valores vão no PDF depois."];
+      WIZ_TITULOS[9] = ["Confira os exames", "Confira os exames extraídos dos Pedidos Médicos"];
     }
     let passoAtual = 1;
     function totalPassos() { return sequenciaPassos().length; }
