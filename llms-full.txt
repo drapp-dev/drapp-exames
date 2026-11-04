@@ -1,0 +1,145 @@
+# DrApp Exames
+
+> O DrApp conecta pacientes a laboratórios parceiros (Hermes Pardini, A+ Medicina Diagnóstica, do Grupo Fleury) com descontos de até 30% sobre o preço particular, sem assinatura nem mensalidade.
+
+O DrApp é um serviço brasileiro de orçamento de exames laboratoriais e de imagem. O paciente envia o pedido médico (ou digita os exames), escolhe o laboratório e recebe o orçamento com o preço particular e o preço DrApp lado a lado. Não há convênio nem plano de saúde: o paciente paga apenas pelos exames que escolher.
+
+## Principais páginas
+
+- [Página inicial e orçamento online](https://www.drapp.com.br/): Monte o orçamento de exames em poucos passos, escolha o laboratório e compare o preço particular com o preço DrApp antes de confirmar.
+- [Minha conta / acompanhar pedidos](https://www.drapp.com.br/conta/): Área do cliente para acompanhar o status do pedido, ver o orçamento completo e baixar o PDF.
+- [Aplicativo DrApp](https://app.drapp.com.br): Aplicativo web para receber avisos sobre o exame e novidades.
+
+## Blog
+
+- [Blog DrApp](https://www.drapp.com.br/blog/): Guias de saúde, exames de rotina e especialidades médicas explicados de forma simples.
+
+## Como funciona
+
+1. Escolha os exames, enviando uma foto do pedido médico ou digitando os nomes dos exames.
+2. Selecione o laboratório: A+ Medicina Diagnóstica, Hermes Pardini ou compare os dois.
+3. Receba o orçamento sem custo e sem compromisso, com os preços no PDF e atendimento via WhatsApp.
+4. Realize o exame no laboratório parceiro, levando o pedido médico físico.
+
+## Fatos importantes
+
+- Desconto: até 30% em relação ao preço particular dos laboratórios parceiros.
+- Custo do serviço: o orçamento é gratuito. Não há assinatura, mensalidade nem taxa de adesão.
+- Laboratórios parceiros: Hermes Pardini, A+ Medicina Diagnóstica e Grupo Fleury.
+- Volume: mais de 1,3 milhão de exames realizados no Brasil.
+- Avaliação média: 4,85 de 5, com base em mais de 900 avaliações de clientes (informada pelo site).
+- Coleta em domicílio: disponível, sem taxa de visita.
+- Pedido médico: todos os exames exigem o pedido médico físico no dia do atendimento. Para exames de imagem, o pedido médico é obrigatório para gerar o desconto.
+- Sem pedido em mãos: o cliente pode digitar os exames e receberá apenas uma prévia de preço.
+- Privacidade: orçamento sigiloso e sem compromisso, com dados protegidos.
+
+## Perguntas frequentes
+
+- O DrApp cobra alguma taxa? Não. O orçamento é 100% gratuito e o cliente paga apenas pelos exames que escolher.
+- Quais laboratórios fazem parte do DrApp? Hermes Pardini, A+ Medicina Diagnóstica e Grupo Fleury.
+- Como funciona o orçamento? O cliente escolhe os exames, seleciona o laboratório e envia o pedido médico. A equipe retorna com o orçamento via WhatsApp, sem custo e sem compromisso.
+- Qual é o desconto oferecido? Até 30% em relação ao preço particular dos laboratórios parceiros, com o preço visível antes da confirmação.
+
+## Contato
+
+- Site: https://www.drapp.com.br
+- WhatsApp: +55 11 96907-2017
+- Idioma: português (Brasil)
+
+## Todos os artigos do blog
+
+- [Como reverter pré-diabetes? Entenda tudo sobre o assunto](https://www.drapp.com.br/blog/como-reverter-pre-diabetes/): Você sabia que tem como reverter pré-diabetes? Confira neste artigo algumas dicas práticas e mudanças de estilo de vida que podem fazer toda a diferença (publicado em 2024-07-15)
+- [Saiba quais são as doenças respiratórias e como detectá-las](https://www.drapp.com.br/blog/quais-sao-as-doencas-respiratorias/): Você sabe quais são as doenças respiratórias que mais acometem a nossa população? Neste guia completo você confere quais são elas, sintomas e tratamentos! (publicado em 2024-07-15)
+- [Veja quais são os cuidados essenciais para manter a saúde dos olhos](https://www.drapp.com.br/blog/saude-dos-olhos/): Veja neste guia do DrApp quais cuidados você pode adotar como hábito para cuidar da visão, e entenda por que é importante cuidar da saúde dos olhos. (publicado em 2024-05-17)
+- [Dia Mundial da Saúde Digestiva: veja a data, importância e como cuidar](https://www.drapp.com.br/blog/dia-mundial-da-saude-digestiva/): Veja qual a importância do Dia Mundial da Saúde Digestiva, quais cuidados são indispensáveis e qual médico procurar para cuidar do trato digestivo. (publicado em 2024-05-16)
+- [Doença de Parkinson: entenda o que é, causas e tratamentos](https://www.drapp.com.br/blog/doenca-de-parkinson/) (publicado em 2024-04-15)
+- [Entenda o que é o autismo e como identificar em crianças e adultos](https://www.drapp.com.br/blog/o-que-e-o-autismo/) (publicado em 2024-04-04)
+- [Sintomas da Menopausa: Veja quais são eles e como aliviá-los](https://www.drapp.com.br/blog/sintomas-da-menopausa/) (publicado em 2024-04-04)
+- [Colesterol Alto: Entenda o que é e quais são os riscos para a saúde](https://www.drapp.com.br/blog/o-que-e-colesterol-alto/) (publicado em 2024-04-03)
+- [Desvio de coluna: O que é, sintomas e quais os tratamentos que existem](https://www.drapp.com.br/blog/desvio-de-coluna/) (publicado em 2024-03-27)
+- [Como tratar gastrite? Veja sintomas, causas e tratamentos da condição](https://www.drapp.com.br/blog/como-tratar-gastrite/) (publicado em 2024-03-22)
+- [O que pode causar arritmia cardíaca? Conheça os sintomas!](https://www.drapp.com.br/blog/o-que-pode-causar-arritmia-cardiaca/) (publicado em 2024-03-11)
+- [Como funciona o ciclo menstrual? Veja em diversos momentos da vida](https://www.drapp.com.br/blog/como-funciona-o-ciclo-menstrual/) (publicado em 2024-03-04)
+- [O que é alergia emocional? Saiba como ocorre, sintomas e como tratar](https://www.drapp.com.br/blog/o-que-e-alergia-emocional/) (publicado em 2024-02-19)
+- [Como fortalecer o sistema imunológico? Confira algumas dicas](https://www.drapp.com.br/blog/como-fortalecer-o-sistema-imunologico/): Você fica doente ou resfriado com frequência? Saiba como fortalecer o sistema imunológico e se manter mais saudável! (publicado em 2024-02-06)
+- [Cuidados com a pele no verão que você deve ter: Confira!](https://www.drapp.com.br/blog/cuidados-com-a-pele-no-verao/): Aprenda dicas essenciais de cuidados com a pele no verão e garanta uma temporada ao sol sem preocupações, mantendo sua pele radiante. Confira! (publicado em 2024-02-02)
+- [Exames Ginecológicos: Saiba quais são e para que servem!](https://www.drapp.com.br/blog/exames-ginecologicos/): A saúde ginecológica é vital para o bem-estar feminino em todas as fases da vida. Entenda a importância dos exames ginecológicos regulares. Confira! (publicado em 2024-02-02)
+- [Como prevenir catarata? Entenda as causas e veja 7 dicas para prevenir](https://www.drapp.com.br/blog/como-prevenir-catarata/): Sabia que existem maneiras de prevenir a catarata? Conheça 7 delas nesse artigo exclusivo da DrApp! (publicado em 2024-01-23)
+- [Janeiro Branco: Entenda o significado e importância dessa campanha](https://www.drapp.com.br/blog/janeiro-branco/): Confira a história, significado e importância da campanha Janeiro Branco nesse artigo completo da DrApp! (publicado em 2024-01-16)
+- [O que faz um endocrinologista? Conheça essa especialidade!](https://www.drapp.com.br/blog/o-que-faz-um-endocrinologista/): Conheça o papel do médico endocrinologista e suas áreas de atuação. Saiba quais são as principais doenças que ele trata e muito mais. Confira! (publicado em 2023-12-21)
+- [O que faz um Cirurgião Geral? Conheça essa especialidade!](https://www.drapp.com.br/blog/o-que-faz-um-cirurgiao-geral/): Conheça tudo sobre o cirurgião geral e quais são suas habilidades. Saiba quando procurá-lo, cirurgias realizadas e muito mais. Confira! (publicado em 2023-12-08)
+- [Qual a função do angiologista? Conheça tudo sobre essa especialidade!](https://www.drapp.com.br/blog/qual-a-funcao-do-angiologista/): Saiba qual a função do angiologista e como esse especialista trabalha. Se precisar, agende uma consulta com um profissional qualificado. Confira! (publicado em 2023-12-01)
+- [Qual a diferença entre homeopatia e fitoterapia? Descubra!](https://www.drapp.com.br/blog/qual-a-diferenca-entre-homeopatia-e-fitoterapia/): Descubra qual a diferença entre homeopatia e fitoterapia e conheça tudo sobre essas especialidades. Se precisar, agende uma consulta. Confira! (publicado em 2023-11-29)
+- [O que é Medicina Esportiva e como ela trabalha? Descubra!](https://www.drapp.com.br/blog/o-que-e-medicina-esportiva/): Descubra como a Medicina Esportiva atua na prevenção de lesões, otimização do desempenho e cuidados com atletas. Leia agora! (publicado em 2023-11-14)
+- [Novembro Azul: Qual é o significado e a importância dessa campanha?](https://www.drapp.com.br/blog/qual-o-significado-do-novembro-azul/): Entenda o significado do Novembro Azul, a campanha de conscientização sobre o câncer de próstata. A saúde masculina está em foco neste mês. Saiba mais! (publicado em 2023-10-31)
+- [Para que serve a acupuntura? Entenda os benefícios da terapia milenar!](https://www.drapp.com.br/blog/para-que-serve-acupuntura/): O DrApp irá lhe mostrar para que serve a acupuntura e seus benefícios. Descubra o que é, quem são os profissionais que a realizam e muito mais. Confira! (publicado em 2023-10-27)
+- [Qual a diferença entre psicólogo e psiquiatra? [Guia]](https://www.drapp.com.br/blog/qual-a-diferenca-entre-psicologo-e-psiquiatra/): Entenda qual a diferença entre psicólogo e psiquiatra e como eles atuam no campo da saúde mental. Saiba quais são as suas diferenças e formações. Confira! (publicado em 2023-10-23)
+- [Exames de sangue de rotina feminino: guia completo para a saúde da mulher!](https://www.drapp.com.br/blog/exames-de-sangue-de-rotina-feminino/) (publicado em 2023-10-05)
+- [A importância de exames médicos preventivos e regulares](https://www.drapp.com.br/blog/a-importancia-de-exames-medicos-preventivos-e-regulares/) (publicado em 2023-08-02)
+- [Agosto Dourado e a importância do aleitamento materno](https://www.drapp.com.br/blog/agosto-dourado-e-a-importancia-do-aleitamento-materno/) (publicado em 2021-08-11)
+- [Principais doenças cardíacas e como é o acompanhamento com cardiologista](https://www.drapp.com.br/blog/principais-doencas-cardiacas-e-como-e-o-acompanhamento-com-cardiologista/): As doenças do coração, como são conhecidas as doenças cardíacas ou doenças cardiovasculares, estão entre as principais causas de morte no Brasil e no mundo. (publicado em 2021-01-06)
+- [Quando procurar um urologista? Conheça a especialidade médica](https://www.drapp.com.br/blog/quando-procurar-um-urologista-conheca-a-especialidade-medica/): Entre tantas especialidades médicas, podemos identificar algumas que acompanharão diferentes etapas da vida, condições clínicas, sintomas e outras necessidades. (publicado em 2020-12-30)
+- [Conheça o aplicativo DrApp](https://www.drapp.com.br/blog/conheca-o-aplicativo-drapp/) (publicado em 2020-12-23)
+- [O que é exame FAN (fator antinuclear)?](https://www.drapp.com.br/blog/o-que-e-exame-fan-fator-antinuclear/): Quando existe a suspeita de doença autoimune, pode ser solicitado que o paciente realize o exame FAN, ou exame de fator antinuclear. (publicado em 2020-12-16)
+- [O que é uma teleconsulta? Saiba também como agendar](https://www.drapp.com.br/blog/o-que-e-uma-teleconsulta-saiba-tambem-como-agendar/) (publicado em 2020-12-09)
+- [Doenças autoimunes: conheça as mais comuns](https://www.drapp.com.br/blog/doencas-autoimunes-conheca-as-mais-comuns/) (publicado em 2020-12-02)
+- [Tudo o que você precisa saber sobre a tuberculose](https://www.drapp.com.br/blog/tudo-o-que-voce-precisa-saber-sobre-a-tuberculose/): Doença infecciosa que afeta prioritariamente os pulmões, a tuberculose ainda preocupa especialistas. (publicado em 2020-11-25)
+- [Conheça as principais doenças de pele](https://www.drapp.com.br/blog/conheca-as-principais-doencas-de-pele/) (publicado em 2020-11-18)
+- [Dermatologia clínica vs. dermatologia estética: qual procurar?](https://www.drapp.com.br/blog/dermatologia-clinica-vs-dermatologia-estetica-qual-procurar/) (publicado em 2020-11-11)
+- [Hemograma completo: seus benefícios e por que você deve fazer](https://www.drapp.com.br/blog/hemograma-completo-seus-beneficios-e-por-que-voce-deve-fazer/) (publicado em 2020-11-04)
+- [Mamografia: conheça o exame e saiba quando agendar](https://www.drapp.com.br/blog/mamografia-conheca-o-exame-e-saiba-quando-agendar/): A detecção precoce do câncer de mama é a melhor forma de adotar um tratamento eficiente e com melhores chances de resultado positivo. (publicado em 2020-10-28)
+- [Os exames para detectar o câncer de mama](https://www.drapp.com.br/blog/os-exames-para-detectar-o-cancer-de-mama/) (publicado em 2020-10-21)
+- [Quais são as causas do câncer de mama?](https://www.drapp.com.br/blog/quais-sao-as-causas-do-cancer-de-mama/) (publicado em 2020-10-14)
+- [O que é Lúpus?](https://www.drapp.com.br/blog/o-que-e-lupus/) (publicado em 2020-10-07)
+- [Relação entre alimentação e imunidade](https://www.drapp.com.br/blog/relacao-entre-alimentacao-e-imunidade/): Hábitos saudáveis são sempre bem-vindos principalmente para proteção do organismo contra doenças e infecções. Em tempos de pandemia e proteção contra vírus, (publicado em 2020-09-09)
+- [Quando procurar um médico nutrólogo](https://www.drapp.com.br/blog/quando-procurar-um-medico-nutrologo/) (publicado em 2020-08-26)
+- [Conheça o sistema imunológico e como seu corpo se defende de doenças](https://www.drapp.com.br/blog/conheca-o-sistema-imunologico-e-como-seu-corpo-se-defende-de-doencas/): Toda vez que um invasor, seja vírus, bactéria ou agente alérgeno, por exemplo, entra em contato com nosso organismo, um verdadeiro exército de células, tecidos, (publicado em 2020-08-19)
+- [As principais doenças cardíacas e circulatórias](https://www.drapp.com.br/blog/as-principais-doencas-cardiacas-e-circulatorias/) (publicado em 2020-08-12)
+- [Saúde mental: atividades rotineiras para se cuidar](https://www.drapp.com.br/blog/saude-mental-atividades-rotineiras-para-se-cuidar/) (publicado em 2020-07-29)
+- [Como é o acompanhamento de doenças crônicas?](https://www.drapp.com.br/blog/como-e-o-acompanhamento-de-doencas-cronicas/): Uma doença crônica, por definição, é um quadro de repetição e que, muito provavelmente, não tem cura. (publicado em 2020-06-10)
+- [Conheça os principais exames de rotina](https://www.drapp.com.br/blog/conheca-os-principais-exames-de-rotina/): Exames de rotina são pedidos por médicos para avaliar o estado de saúde em diferentes momentos da vida. (publicado em 2020-06-03)
+- [Exames laboratoriais vs. diagnóstico por imagem: conheça os diferenciais](https://www.drapp.com.br/blog/exames-laboratoriais-vs-diagnostico-por-imagem-conheca-os-diferenciais/) (publicado em 2020-05-27)
+- [Conheça mais sobre a rinite, sinusite e outras doenças respiratórias](https://www.drapp.com.br/blog/conheca-mais-sobre-a-rinite-sinusite-e-outras-doencas-respiratorias/) (publicado em 2020-05-20)
+- [Check-up anual: conheça e programe-se para cuidar da saúde](https://www.drapp.com.br/blog/check-up-anual-conheca-e-programe-se-para-cuidar-da-saude/) (publicado em 2020-05-06)
+- [Quem é o médico clínico geral?](https://www.drapp.com.br/blog/quem-e-o-medico-clinico-geral/): Você provavelmente sabe que existem diversas especialidades médicas e, consequentemente, médicos específicos para cada faixa etária, (publicado em 2020-04-29)
+- [Pronto atendimento: saiba quando e como procurar apoio médico](https://www.drapp.com.br/blog/pronto-atendimento-saiba-quando-e-como-procurar-apoio-medico/) (publicado em 2020-04-22)
+- [Saiba como agendar exames com DrApp](https://www.drapp.com.br/blog/saiba-como-agendar-exames-com-drapp/) (publicado em 2020-04-15)
+- [Não tem mais plano de saúde? Há alternativa melhor e mais econômica](https://www.drapp.com.br/blog/nao-tem-mais-plano-de-saude-ha-alternativa-melhor-e-mais-economica/): Embora a saúde universal e integral seja direito do cidadão brasileiro, consagrado na Constituição Federal.. (publicado em 2020-04-08)
+- [Plano de saúde com e sem coparticipação: qual a diferença?](https://www.drapp.com.br/blog/plano-de-saude-com-e-sem-coparticipacao-qual-a-diferenca/): Os planos de saúde e convênios médicos existem em diversos formatos, com diferentes coberturas (nacional ou regional), valores, (publicado em 2020-03-25)
+- [5 cuidados essenciais para a saúde da mulher](https://www.drapp.com.br/blog/5-cuidados-essenciais-para-a-saude-da-mulher/): Desde a puberdade até a terceira idade, a saúde da mulher é afetada por constantes mudanças, ciclos e também por eventos, como é a gravidez. (publicado em 2020-03-11)
+- [Saúde do homem: como prevenir doenças?](https://www.drapp.com.br/blog/saude-do-homem-como-prevenir-doencas/) (publicado em 2020-03-04)
+- [5 dicas para cuidar da saúde mental e viver melhor](https://www.drapp.com.br/blog/5-dicas-para-cuidar-da-saude-mental-e-viver-melhor/): Cuidar da saúde, você sabe, é um hábito essencial e deve ser feito em todas as instâncias da vida. (publicado em 2020-02-26)
+- [Saúde do idoso: conheça os cuidados essenciais](https://www.drapp.com.br/blog/ad-saude-do-idoso-conheca-os-cuidados-essenciais/) (publicado em 2020-02-19)
+- [Saúde da criança: por que é importante atualizar o cartão de vacina](https://www.drapp.com.br/blog/ad-saude-da-crianca-por-que-e-importante-atualizar-o-cartao-de-vacina/): Prevenir doenças e promover o crescimento saudável são os principais objetivos da vacinação de crianças. (publicado em 2020-02-12)
+- [Dicas para marcar consulta online com segurança](https://www.drapp.com.br/blog/dicas-para-marcar-consulta-online-com-seguranca/) (publicado em 2020-01-22)
+- [Conheça os direitos do paciente em consultas médicas](https://www.drapp.com.br/blog/conheca-os-direitos-do-paciente-em-consultas-medicas/) (publicado em 2020-01-15)
+- [Como escolher um médico online de confiança?](https://www.drapp.com.br/blog/como-escolher-um-medico-online-de-confianca/) (publicado em 2020-01-08)
+- [4 sinais de alerta para buscar um médico endocrinologista](https://www.drapp.com.br/blog/4-sinais-de-alerta-para-buscar-um-medico-endocrinologista/) (publicado em 2019-09-25)
+- [Emagrecer com saúde: por que algumas pessoas não conseguem perder peso?](https://www.drapp.com.br/blog/emagrecer-com-saude-por-que-algumas-pessoas-nao-conseguem-perder-peso/) (publicado em 2019-09-18)
+- [Você sabe o que é Síndrome Metabólica?](https://www.drapp.com.br/blog/voce-sabe-o-que-e-sindrome-metabolica/) (publicado em 2019-09-11)
+- [Conheça os problemas do sedentarismo na saúde](https://www.drapp.com.br/blog/conheca-os-problemas-do-sedentarismo-na-saude/) (publicado em 2019-09-04)
+- [Quando é indicada a Cirurgia do Aparelho Digestivo?](https://www.drapp.com.br/blog/quando-e-indicada-a-cirurgia-do-aparelho-digestivo/) (publicado em 2019-06-19)
+- [Conheça os principais tipos de psicoterapia](https://www.drapp.com.br/blog/conheca-os-principais-tipos-de-psicoterapia/) (publicado em 2019-06-12)
+- [Ecocardiograma: tudo sobre o ultrassom do coração](https://www.drapp.com.br/blog/ecocardiograma-tudo-sobre-o-ultrassom-do-coracao/) (publicado em 2019-06-05)
+- [O que é Coloproctologia? Saiba quando procurar um proctologista](https://www.drapp.com.br/blog/o-que-e-coloproctologia-saiba-quando-procurar-um-proctologista/) (publicado em 2019-05-29)
+- [Endocrinologia e metabologia: entenda a diferença](https://www.drapp.com.br/blog/endocrinologia-e-metabologia-entenda-a-diferenca/) (publicado em 2019-05-22)
+- [O que é Cirurgia da Mão? Conheça as principais](https://www.drapp.com.br/blog/o-que-e-cirurgia-da-mao-conheca-as-principais/) (publicado em 2019-05-16)
+- [Homeopatia, acupuntura e outros tipos de terapias alternativas](https://www.drapp.com.br/blog/homeopatia-acupuntura-e-outros-tipos-de-terapias-alternativas/) (publicado em 2019-05-14)
+- [Antes do Novembro Azul: por que procurar um urologista?](https://www.drapp.com.br/blog/antes-do-novembro-azul-por-que-procurar-um-urologista/) (publicado em 2019-05-09)
+- [Julho Amarelo: hepatites virais e o papel do médico infectologista](https://www.drapp.com.br/blog/julho-amarelo-hepatites-virais-e-o-papel-do-medico-infectologista/) (publicado em 2019-05-07)
+- [Qual a diferença entre médico nutrólogo e nutricionista?](https://www.drapp.com.br/blog/qual-a-diferenca-entre-medico-nutrologo-e-nutricionista/) (publicado em 2019-05-02)
+- [Otorrinolaringologista: o que é e quando procurar este especialista](https://www.drapp.com.br/blog/otorrinolaringologista-o-que-e-e-quando-procurar-este-especialista/) (publicado em 2019-04-30)
+- [Como tratar gripe e resfriado?](https://www.drapp.com.br/blog/como-tratar-gripe-e-resfriado/) (publicado em 2019-04-25)
+- [Prevenção do câncer de mama: quando procurar um mastologista?](https://www.drapp.com.br/blog/prevencao-do-cancer-de-mama-quando-procurar-um-mastologista/) (publicado em 2019-04-23)
+- [Sinais de alerta: quando procurar médico especialista?](https://www.drapp.com.br/blog/sinais-de-alerta-quando-procurar-medico-especialista/) (publicado em 2019-04-18)
+- [Quando marcar pediatra para meu filho?](https://www.drapp.com.br/blog/quando-marcar-pediatra-para-meu-filho/) (publicado em 2019-04-16)
+- [O que o dermatologista faz e como é a consulta?](https://www.drapp.com.br/blog/o-que-o-dermatologista-faz-e-como-e-a-consulta/) (publicado em 2019-04-11)
+- [Quando procurar um cardiologista?](https://www.drapp.com.br/blog/quando-procurar-um-cardiologista/) (publicado em 2019-04-09)
+- [O que é angiologia? A especialidade do sistema circulatório](https://www.drapp.com.br/blog/o-que-e-angiologia-a-especialidade-do-sistema-circulatorio/) (publicado em 2019-03-21)
+- [Afinal, nefrologista cuida de quê? Saiba quando buscar o especialista](https://www.drapp.com.br/blog/nefrologia-o-que-e-e-quando-procurar/): Afinal, nefrologista cuida de quê? Confira a resposta para essa pergunta e as informações mais importantes sobre essa especialidade da medicina. (publicado em 2019-03-19)
+- [Quando Procurar Um Alergologista? Conheça os Principais Sintomas](https://www.drapp.com.br/blog/medico-alergologista-quem-e-o-especialista-em-alergia-e-imunologia/): Entenda quais são os sintomas de doenças ou crises alérgicas e saiba quando procurar um alergologista. Confira também o que um alergista faz. (publicado em 2019-03-14)
+- [Como é a consulta com psiquiatra?](https://www.drapp.com.br/blog/como-e-a-consulta-com-psiquiatra/) (publicado em 2019-03-12)
+- [O que é neurocirurgia? Conheça essa especialidade médica](https://www.drapp.com.br/blog/o-que-e-neurocirurgia-conheca-essa-especialidade-medica/) (publicado em 2019-03-07)
+- [Ginecologia e Obstetrícia: conheça as subespecialidades](https://www.drapp.com.br/blog/ginecologia-e-obstetricia-conheca-as-subespecialidades/) (publicado em 2019-03-05)
+- [Quando procurar médico ginecologista?](https://www.drapp.com.br/blog/quando-procurar-medico-ginecologista/) (publicado em 2019-02-28)
+- [O que oftalmologista faz? 5 diagnósticos oftalmológicos](https://www.drapp.com.br/blog/o-que-oftalmologista-faz-5-diagnosticos-oftalmologicos/) (publicado em 2019-02-26)

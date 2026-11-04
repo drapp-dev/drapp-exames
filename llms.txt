@@ -13,14 +13,15 @@ O DrApp é um serviço brasileiro de orçamento de exames laboratoriais e de ima
 ## Blog
 
 - [Blog DrApp](https://www.drapp.com.br/blog/): Guias de saúde, exames de rotina e especialidades médicas explicados de forma simples.
-- [Exames Ginecológicos: Saiba quais são e para que servem!](https://www.drapp.com.br/blog/exames-ginecologicos/): A saúde ginecológica é vital para o bem-estar feminino em todas as fases da vida. Entenda a importância dos ex…
-- [Exames de sangue de rotina feminino: guia completo para a saúde da mulher!](https://www.drapp.com.br/blog/exames-de-sangue-de-rotina-feminino/): Parte fundamental de práticas que ajudam a manter a saúde em dia, os exames de sangue de rotina feminino são i…
-- [A importância de exames médicos preventivos e regulares](https://www.drapp.com.br/blog/a-importancia-de-exames-medicos-preventivos-e-regulares/): Em um mundo em constante movimento e ritmo acelerado, é fácil ignorar nosso bem mais precioso – a saúde. O vel…
-- [O que é exame FAN (fator antinuclear)?](https://www.drapp.com.br/blog/o-que-e-exame-fan-fator-antinuclear/): Quando existe a suspeita de doença autoimune, pode ser solicitado que o paciente realize o exame FAN, ou exame…
-- [Hemograma completo: seus benefícios e por que você deve fazer](https://www.drapp.com.br/blog/hemograma-completo-seus-beneficios-e-por-que-voce-deve-fazer/): O hemograma consta em muitos pedidos de exames, acompanhando a rotina de muitos pacientes e servindo como uma…
-- [Mamografia: conheça o exame e saiba quando agendar](https://www.drapp.com.br/blog/mamografia-conheca-o-exame-e-saiba-quando-agendar/): A detecção precoce do câncer de mama é a melhor forma de adotar um tratamento eficiente e com melhores chances…
-- [Os exames para detectar o câncer de mama](https://www.drapp.com.br/blog/os-exames-para-detectar-o-cancer-de-mama/): O câncer de mama, infelizmente, é um dos tipos mais comuns que acometem as mulheres no mundo todo. Não se sabe…
+- [Exames Ginecológicos: Saiba quais são e para que servem!](https://www.drapp.com.br/blog/exames-ginecologicos/): A saúde ginecológica é vital para o bem-estar feminino em todas as fases da vida. Entenda a importância dos exames ginecológicos regulares. Confira!
+- [Exames de sangue de rotina feminino: guia completo para a saúde da mulher!](https://www.drapp.com.br/blog/exames-de-sangue-de-rotina-feminino/)
+- [A importância de exames médicos preventivos e regulares](https://www.drapp.com.br/blog/a-importancia-de-exames-medicos-preventivos-e-regulares/)
+- [O que é exame FAN (fator antinuclear)?](https://www.drapp.com.br/blog/o-que-e-exame-fan-fator-antinuclear/): Quando existe a suspeita de doença autoimune, pode ser solicitado que o paciente realize o exame FAN, ou exame de fator antinuclear.
+- [Hemograma completo: seus benefícios e por que você deve fazer](https://www.drapp.com.br/blog/hemograma-completo-seus-beneficios-e-por-que-voce-deve-fazer/)
+- [Mamografia: conheça o exame e saiba quando agendar](https://www.drapp.com.br/blog/mamografia-conheca-o-exame-e-saiba-quando-agendar/): A detecção precoce do câncer de mama é a melhor forma de adotar um tratamento eficiente e com melhores chances de resultado positivo.
+- [Os exames para detectar o câncer de mama](https://www.drapp.com.br/blog/os-exames-para-detectar-o-cancer-de-mama/)
 - [Conheça os principais exames de rotina](https://www.drapp.com.br/blog/conheca-os-principais-exames-de-rotina/): Exames de rotina são pedidos por médicos para avaliar o estado de saúde em diferentes momentos da vida.
+
 ## Como funciona
 
 1. Escolha os exames, enviando uma foto do pedido médico ou digitando os nomes dos exames.
@@ -52,3 +53,7 @@ O DrApp é um serviço brasileiro de orçamento de exames laboratoriais e de ima
 - Site: https://www.drapp.com.br
 - WhatsApp: +55 11 96907-2017
 - Idioma: português (Brasil)
+
+## Optional
+
+- [Lista completa de artigos do blog](https://www.drapp.com.br/llms-full.txt): todos os artigos, com data de publicação.
