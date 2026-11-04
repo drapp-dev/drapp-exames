@@ -80,7 +80,13 @@
           "telephone": "+55-11-96907-2017",
           "email": "info@drapp.com.br",
           "availableLanguage": "pt-BR"
-        }
+        },
+        "sameAs": [
+          "https://www.instagram.com/drapp.br",
+          "https://www.youtube.com/@drapp",
+          "https://www.linkedin.com/company/34626046/",
+          "https://www.facebook.com/DrAppBRASIL"
+        ]
       },
       {
         "@type": "WebSite",
@@ -103,8 +109,7 @@
         },
         "about": {
           "@id": "https://www.drapp.com.br/#organization"
-        },
-        "dateModified": "2026-11-04"
+        }
       },
       {
         "@type": "WebApplication",
@@ -2004,7 +2009,7 @@
         </div>
         <div class="stat-item">
           <div class="stat-number"><em>4,85</em><svg width="0.85em" height="0.85em" viewBox="0 0 20 20" fill="#f59e0b" aria-hidden="true" style="vertical-align:-0.12em;margin-left:2px;"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg></div>
-          <div class="stat-label">Avaliação média de +900 clientes</div>
+          <div class="stat-label">Avaliação média de +900 clientes<span style="display:block;font-size:12px;opacity:.7;margin-top:2px;">Coletada na ferramenta de feedback do site</span></div>
         </div>
       </div>
     </div>
@@ -2616,6 +2621,7 @@
     <div class="section-label">O que nossos pacientes dizem</div>
     <h2 class="section-heading" style="margin-bottom:8px;">Mais de <em>1 milhão</em> de histórias</h2>
     <p class="section-sub">Quem usou o DrApp não volta a pagar preço cheio.</p>
+    <p class="section-sub" style="font-size:14px;opacity:.75;margin-top:-4px;">Alguns depoimentos são de quando o DrApp oferecia descontos maiores. Hoje o desconto é de até 30%.</p>
 
     <div class="testimonials-carousel-wrap">
       <button class="carousel-btn carousel-btn-prev" aria-label="Depoimento anterior">&#8592;</button>
@@ -2734,7 +2740,19 @@
       Rua Coronel Melo de Oliveira, 1121 · CEP 05011-040 · São Paulo – SP</p>
       <p style="margin:0 0 6px;">E-mail: <a href="mailto:info@drapp.com.br" style="color:rgba(255,255,255,0.7);">info@drapp.com.br</a> · WhatsApp: <a href="https://wa.me/5511969072017" style="color:rgba(255,255,255,0.7);">(11) 96907-2017</a></p>
       <p style="margin:0 0 6px;">O DrApp é um intermediário de orçamentos de exames com laboratórios parceiros. Não realiza exames, não faz diagnóstico e não substitui a orientação de um profissional de saúde.</p>
-      <p style="margin:0;">Página atualizada em <time datetime="2026-11-04">04/11/2026</time>.</p>
+      <p id="siteUpdatedWrap" style="margin:0;" hidden>Site atualizado em <time id="siteUpdated"></time>.</p>
+      <script>
+        (function () {
+          try {
+            var d = new Date(document.lastModified);
+            if (isNaN(d)) return;
+            var t = document.getElementById('siteUpdated');
+            t.setAttribute('datetime', d.toISOString().slice(0, 10));
+            t.textContent = d.toLocaleDateString('pt-BR');
+            document.getElementById('siteUpdatedWrap').hidden = false;
+          } catch (e) {}
+        })();
+      </script>
     </div>
     <div style="margin-top:12px;font-size:14px;">
       <a href="politica.html" style="color:rgba(255,255,255,0.45);text-decoration:none;">Política de Privacidade</a>
