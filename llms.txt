@@ -1,6 +1,6 @@
 # DrApp Exames
 
-> O DrApp conecta pacientes a laboratórios parceiros (Hermes Pardini, A+ Medicina Diagnóstica, do Grupo Fleury) com descontos de até 30% sobre o preço particular, sem assinatura nem mensalidade.
+> O DrApp conecta pacientes a laboratórios parceiros (A+ Medicina Diagnóstica e Hermes Pardini, do Grupo Fleury) com descontos de até 30% sobre o preço particular, sem assinatura nem mensalidade.
 
 O DrApp é um serviço brasileiro de orçamento de exames laboratoriais e de imagem. O paciente envia o pedido médico (ou digita os exames), escolhe o laboratório e recebe o orçamento com o preço particular e o preço DrApp lado a lado. Não há convênio nem plano de saúde: o paciente paga apenas pelos exames que escolher.
 
@@ -33,7 +33,7 @@ O DrApp é um serviço brasileiro de orçamento de exames laboratoriais e de ima
 
 - Desconto: até 30% em relação ao preço particular dos laboratórios parceiros.
 - Custo do serviço: o orçamento é gratuito. Não há assinatura, mensalidade nem taxa de adesão.
-- Laboratórios parceiros: Hermes Pardini, A+ Medicina Diagnóstica e Grupo Fleury.
+- Laboratórios parceiros: A+ Medicina Diagnóstica e Hermes Pardini, do Grupo Fleury.
 - Volume: mais de 1,3 milhão de exames realizados no Brasil.
 - Coleta em domicílio: disponível, sem taxa de visita.
 - Pedido médico: todos os exames exigem o pedido médico físico no dia do atendimento. Para exames de imagem, o pedido médico é obrigatório para gerar o desconto.
@@ -43,7 +43,7 @@ O DrApp é um serviço brasileiro de orçamento de exames laboratoriais e de ima
 ## Perguntas frequentes
 
 - O DrApp cobra alguma taxa? Não. O orçamento é 100% gratuito e o cliente paga apenas pelos exames que escolher.
-- Quais laboratórios fazem parte do DrApp? Hermes Pardini, A+ Medicina Diagnóstica e Grupo Fleury.
+- Quais laboratórios fazem parte do DrApp? A+ Medicina Diagnóstica e Hermes Pardini, do Grupo Fleury.
 - Como funciona o orçamento? O cliente escolhe os exames, seleciona o laboratório e envia o pedido médico. A equipe retorna com o orçamento via WhatsApp, sem custo e sem compromisso.
 - Qual é o desconto oferecido? Até 30% em relação ao preço particular dos laboratórios parceiros, com o preço visível antes da confirmação.
 
