@@ -8,7 +8,7 @@ O DrApp é um serviço brasileiro de orçamento de exames laboratoriais e de ima
 
 - [Página inicial e orçamento online](https://www.drapp.com.br/): Monte o orçamento de exames em poucos passos, escolha o laboratório e compare o preço particular com o preço DrApp antes de confirmar.
 - [Minha conta / acompanhar pedidos](https://www.drapp.com.br/conta/): Área do cliente para acompanhar o status do pedido, ver o orçamento completo e baixar o PDF.
-- [Sobre o DrApp](https://www.drapp.com.br/sobre/): Quem somos, como funciona, como o DrApp ganha dinheiro e dados da empresa.
+- [Sobre o DrApp](https://www.drapp.com.br/sobre/): Quem somos, história (fundado em 2019), como funciona e dados da empresa.
 - [Contato](https://www.drapp.com.br/contato/): WhatsApp, e-mail, endereço e CNPJ.
 - [Termos de Uso](https://www.drapp.com.br/termos/): Regras do serviço e limites de responsabilidade.
 - [Aplicativo DrApp](https://app.drapp.com.br): Aplicativo web para receber avisos sobre o exame e novidades.
