@@ -56,6 +56,7 @@ O DrApp é um serviço brasileiro de orçamento de exames laboratoriais e de ima
 - Como envio o pedido médico? Em foto, PDF ou link de receita digital, como a do Memed. Você pode enviar mais de um pedido; se forem de pessoas diferentes, identifique o paciente de cada um. Também é possível digitar os nomes dos exames, mas nesse caso você recebe só uma prévia de preço. Para exames de imagem, o pedido médico é obrigatório para ter o desconto.
 - Quanto tempo leva para receber o orçamento? Você recebe o orçamento até as 10h do dia útil seguinte ao envio do pedido. Os orçamentos da A+ e da Hermes Pardini chegam de forma independente, então um pode chegar antes do outro.
 - O que é o token e qual a validade do orçamento? O token é um código único do seu orçamento. Junto com o CPF, ele garante o desconto no laboratório. O orçamento vale por 7 dias corridos. Se o prazo passou ou o exame será depois disso, peça a renovação, sem custo, de preferência 2 dias antes da data do exame.
+- Como acompanho o meu pedido? Acesse Minha conta, informe o CPF e o telefone com WhatsApp usados no pedido e digite o código que chegar por WhatsApp. Lá você vê o status do pedido, abre o orçamento completo e baixa o PDF.
 - Preciso fazer todos os exames do orçamento? Não. Os valores são individuais por exame. Você pode fazer só os que quiser: apresente o token e diga ao laboratório quais exames fará, sem precisar de um novo orçamento.
 - O DrApp agenda o exame para mim? Não. O agendamento é feito com o laboratório. Exames de sangue em geral não precisam de agendamento: você vai à unidade com o CPF e o token. Ultrassom, tomografia e ressonância precisam ser agendados por telefone, e o contato do laboratório está no passo a passo do orçamento.
 - Os laboratórios fazem coleta em domicílio? Sim, sem taxa de visita. A A+ (serviço a+ até você) e a Hermes Pardini (Pardini até você) fazem a coleta em casa ou onde você estiver. A Hermes Pardini atende São Paulo, Osasco, Guarulhos, Santo André, São Bernardo do Campo e São Caetano do Sul. A A+ confirma a cobertura pelo seu endereço. Agende com o laboratório e informe o CPF e o token.
@@ -65,12 +66,12 @@ O DrApp é um serviço brasileiro de orçamento de exames laboratoriais e de ima
 - Um exame do meu pedido não apareceu no orçamento. Por quê? Provavelmente ele não faz parte da parceria com o laboratório escolhido ou o laboratório não o realiza. A equipe avisa qual exame ficou de fora. Eletroencefalograma e colonoscopia, por exemplo, não são realizados pelos laboratórios parceiros.
 - Como recebo o resultado do exame? Pelo próprio laboratório, em geral no aplicativo ou no site dele, ou na unidade. O DrApp não tem acesso aos resultados. Dúvidas sobre o resultado devem ser tiradas com o laboratório ou com o médico que pediu o exame.
 - Posso fazer o orçamento para um familiar? Sim. Basta informar os dados do paciente: nome completo, CPF, data de nascimento, e-mail e telefone. O contato pode ser o WhatsApp do próprio familiar.
-- Como falo com a equipe do DrApp? Pelo WhatsApp (11) 96907-2017 ou pelo e-mail info@drapp.com.br. O atendimento funciona de segunda a sexta, das 8h30 às 18h. Mensagens fora desse horário são respondidas no início do próximo expediente.
+- Como falo com a equipe do DrApp? Pelo WhatsApp (11) 96907-2017 ou pelo e-mail info@drapp.com.br. O número do DrApp é só para mensagens de WhatsApp: não fazemos ligações. O atendimento funciona de segunda a sexta, das 8h30 às 18h. Mensagens fora desse horário são respondidas no início do próximo expediente.
 
 ## Contato
 
 - Site: https://www.drapp.com.br
-- WhatsApp: +55 11 96907-2017
+- WhatsApp: +55 11 96907-2017 (somente mensagens; o DrApp não faz ligações)
 - Idioma: português (Brasil)
 
 ## Optional
