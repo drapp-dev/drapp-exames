@@ -9,6 +9,7 @@ O DrApp é um serviço brasileiro de orçamento de exames laboratoriais e de ima
 - [Página inicial e orçamento online](https://www.drapp.com.br/): Monte o orçamento de exames em poucos passos, escolha o laboratório e compare o preço particular com o preço DrApp antes de confirmar.
 - [Minha conta / acompanhar pedidos](https://www.drapp.com.br/conta/): Área do cliente para acompanhar o status do pedido, ver o orçamento completo e baixar o PDF.
 - [Sobre o DrApp](https://www.drapp.com.br/sobre/): Quem somos, história (fundado em 2018), como funciona e dados da empresa.
+- [Unidades e exames em casa](https://www.drapp.com.br/unidades/): Unidades da A+ Medicina Diagnóstica e da Hermes Pardini no estado de São Paulo e coleta em domicílio sem taxa de visita.
 - [Contato](https://www.drapp.com.br/contato/): WhatsApp, e-mail, endereço e CNPJ.
 - [Termos de Uso](https://www.drapp.com.br/termos/): Regras do serviço e limites de responsabilidade.
 - [Aplicativo DrApp](https://app.drapp.com.br): Aplicativo web para receber avisos sobre o exame e novidades.
@@ -37,7 +38,7 @@ O DrApp é um serviço brasileiro de orçamento de exames laboratoriais e de ima
 - Desconto: até 30% em relação ao preço particular dos laboratórios parceiros.
 - Custo do serviço: o orçamento é gratuito. Não há assinatura, mensalidade nem taxa de adesão.
 - Laboratórios parceiros: A+ Medicina Diagnóstica e Hermes Pardini, do Grupo Fleury.
-- Volume: mais de 1,3 milhão de exames realizados no Brasil.
+- Volume: mais de 1,3 milhão de exames realizados no estado de São Paulo.
 - Coleta em domicílio: disponível, sempre sem taxa de visita. Hermes Pardini ("Pardini até você") atende São Paulo, Osasco, Guarulhos, Santo André, São Bernardo do Campo e São Caetano do Sul; a A+ ("a+ até você") confirma a cobertura pelo endereço.
 - Pedido médico: todos os exames exigem o pedido médico físico no dia do atendimento. Para exames de imagem, o pedido médico é obrigatório para gerar o desconto.
 - Sem pedido em mãos: o cliente pode digitar os exames e receberá apenas uma prévia de preço.
@@ -46,6 +47,7 @@ O DrApp é um serviço brasileiro de orçamento de exames laboratoriais e de ima
 ## Perguntas frequentes
 
 - O que é o DrApp Exames? O DrApp é uma plataforma digital que consegue orçamentos de exames com desconto em laboratórios parceiros. Não é laboratório, clínica nem plano de saúde, e não realiza exames: você faz o exame no laboratório que escolher.
+- Em quais regiões o DrApp atende? O DrApp atende o estado de São Paulo. Os exames são feitos nas unidades da A+ Medicina Diagnóstica e da Hermes Pardini no estado, e a coleta em domicílio segue a cobertura de cada laboratório.
 - Quais laboratórios fazem parte do DrApp? A A+ Medicina Diagnóstica e a Hermes Pardini, ambas do Grupo Fleury. São laboratórios distintos, com tabelas de preço independentes, por isso você recebe um orçamento de cada um para comparar. O DrApp é uma plataforma independente e não é o Fleury.
 - O DrApp aceita convênio ou plano de saúde? Não. O DrApp é uma alternativa ao convênio: você paga o valor do exame, já com desconto sobre o preço particular, diretamente no laboratório. Não há mensalidade, carência nem assinatura.
 - Qual é o desconto oferecido? Até 30% em relação ao preço particular dos laboratórios parceiros. O percentual varia por exame e por laboratório. O valor que aparece no orçamento já é o valor com desconto, então você vê o preço antes de confirmar.
@@ -57,7 +59,7 @@ O DrApp é um serviço brasileiro de orçamento de exames laboratoriais e de ima
 - Preciso fazer todos os exames do orçamento? Não. Os valores são individuais por exame. Você pode fazer só os que quiser: apresente o token e diga ao laboratório quais exames fará, sem precisar de um novo orçamento.
 - O DrApp agenda o exame para mim? Não. O agendamento é feito com o laboratório. Exames de sangue em geral não precisam de agendamento: você vai à unidade com o CPF e o token. Ultrassom, tomografia e ressonância precisam ser agendados por telefone, e o contato do laboratório está no passo a passo do orçamento.
 - Os laboratórios fazem coleta em domicílio? Sim, sem taxa de visita. A A+ (serviço a+ até você) e a Hermes Pardini (Pardini até você) fazem a coleta em casa ou onde você estiver. A Hermes Pardini atende São Paulo, Osasco, Guarulhos, Santo André, São Bernardo do Campo e São Caetano do Sul. A A+ confirma a cobertura pelo seu endereço. Agende com o laboratório e informe o CPF e o token.
-- Onde ficam as unidades dos laboratórios? No estado de São Paulo, a A+ Medicina Diagnóstica tem cerca de 40 unidades, na capital e em Alphaville (Barueri), Granja Viana (Cotia), Guarulhos, Jundiaí, Osasco, Santo André e São Bernardo do Campo. A Hermes Pardini tem unidades na capital, em Guarulhos, Osasco e Mogi das Cruzes. Você escolhe a unidade ao agendar; os endereços estão nos sites dos laboratórios.
+- Onde ficam as unidades dos laboratórios? A A+ Medicina Diagnóstica, no estado de São Paulo, tem cerca de 40 unidades, na capital e em Alphaville (Barueri), Granja Viana (Cotia), Guarulhos, Jundiaí, Osasco, Santo André e São Bernardo do Campo. A Hermes Pardini tem unidades na capital, em Guarulhos, Osasco e Mogi das Cruzes. Você escolhe a unidade ao agendar; os endereços estão nos sites dos laboratórios.
 - Preciso de jejum ou de preparo? Depende do exame. Para a maioria dos exames de sangue, o jejum habitual é de 8 a 12 horas, mas cada exame pode ter um preparo específico. Confirme o preparo com o laboratório ao ligar ou antes de ir.
 - Exames com contraste custam a mais? Na A+ Medicina Diagnóstica, o contraste já está incluído no orçamento quando o pedido médico indica contraste. Na Hermes Pardini ele é cobrado à parte, direto no laboratório. Confirme o valor atual com a equipe do DrApp.
 - Um exame do meu pedido não apareceu no orçamento. Por quê? Provavelmente ele não faz parte da parceria com o laboratório escolhido ou o laboratório não o realiza. A equipe avisa qual exame ficou de fora. Eletroencefalograma e colonoscopia, por exemplo, não são realizados pelos laboratórios parceiros.

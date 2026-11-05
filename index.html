@@ -141,6 +141,14 @@
           },
           {
             "@type": "Question",
+            "name": "Em quais regiões o DrApp atende?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "O DrApp atende o estado de São Paulo. Os exames são feitos nas unidades da A+ Medicina Diagnóstica e da Hermes Pardini no estado, e a coleta em domicílio segue a cobertura de cada laboratório."
+            }
+          },
+          {
+            "@type": "Question",
             "name": "Quais laboratórios fazem parte do DrApp?",
             "acceptedAnswer": {
               "@type": "Answer",
@@ -232,7 +240,7 @@
             "name": "Onde ficam as unidades dos laboratórios?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "No estado de São Paulo, a A+ Medicina Diagnóstica tem cerca de 40 unidades, na capital e em Alphaville (Barueri), Granja Viana (Cotia), Guarulhos, Jundiaí, Osasco, Santo André e São Bernardo do Campo. A Hermes Pardini tem unidades na capital, em Guarulhos, Osasco e Mogi das Cruzes. Você escolhe a unidade ao agendar; os endereços estão nos sites dos laboratórios."
+              "text": "A A+ Medicina Diagnóstica, no estado de São Paulo, tem cerca de 40 unidades, na capital e em Alphaville (Barueri), Granja Viana (Cotia), Guarulhos, Jundiaí, Osasco, Santo André e São Bernardo do Campo. A Hermes Pardini tem unidades na capital, em Guarulhos, Osasco e Mogi das Cruzes. Você escolhe a unidade ao agendar; os endereços estão nos sites dos laboratórios."
             }
           },
           {
@@ -1560,6 +1568,16 @@
     .testimonial-name { font-size: 17px; font-weight: 700; color: var(--text); }
     .testimonial-detail { font-size: 14px; color: var(--muted); }
 
+    /* ─── UNIDADES / EM CASA (home) ──────────────────── */
+    .home-units { background: #fff; padding: 60px 24px; }
+    .home-units-grid { max-width: 1080px; margin: 28px auto 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+    .home-units-card { background: #f7fbff; border: 1px solid #d9e5ee; border-radius: 16px; padding: 22px 22px 24px; min-width: 0; }
+    .home-units-card .big { font-size: 34px; font-weight: 900; color: var(--blue); line-height: 1.1; }
+    .home-units-card h3 { font-size: 18px; font-weight: 800; color: var(--text); margin: 8px 0 6px; }
+    .home-units-card p { color: var(--muted); line-height: 1.6; }
+    .home-units-more { text-align: center; margin-top: 28px; }
+    .home-units-more a { display: inline-block; padding: 12px 24px; border-radius: 999px; background: var(--orange); color: #fff; font-weight: 700; text-decoration: none; }
+
     /* ─── FAQ (home) ─────────────────────────────────── */
     .home-faq { background: #f7fbff; padding: 60px 24px; }
     .faq-wrap { max-width: 820px; margin: 28px auto 0; }
@@ -2108,7 +2126,7 @@
     <div class="hero-inner">
       <div class="hero-eyebrow">
         <span class="hero-eyebrow-dot"></span>
-        +1.326.000 exames realizados no Brasil
+        +1.326.000 exames realizados no estado de São Paulo
       </div>
 
       <h1>Exames nos <em>melhores laboratórios</em><br>do Brasil, a preços especiais.</h1>
@@ -2218,7 +2236,7 @@
       <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:20px;max-width:760px;margin:0 auto;">
         <div style="display:flex;gap:14px;align-items:flex-start;background:#fff;border-radius:14px;padding:20px;border:1px solid #e2e8f0;box-shadow:0 2px 8px rgba(0,0,0,0.04);">
           <span style="font-size:26px;flex-shrink:0;">🏆</span>
-          <span style="font-size:18px;font-weight:600;color:var(--text);line-height:1.6;"><strong>+1,3 milhão</strong> de exames já realizados no Brasil</span>
+          <span style="font-size:18px;font-weight:600;color:var(--text);line-height:1.6;"><strong>+1,3 milhão</strong> de exames já realizados no estado de São Paulo</span>
         </div>
         <div style="display:flex;gap:14px;align-items:flex-start;background:#fff;border-radius:14px;padding:20px;border:1px solid #e2e8f0;box-shadow:0 2px 8px rgba(0,0,0,0.04);">
           <span style="font-size:26px;flex-shrink:0;">🔒</span>
@@ -2826,6 +2844,31 @@
 
   </main>
 
+  <!-- ═══ UNIDADES / EM CASA ═════════════════════════════════ -->
+  <section class="home-units" id="unidades">
+    <div class="section-label">Onde fazer seus exames</div>
+    <h2 class="section-heading" style="margin-bottom:8px;">Em casa ou em <em>unidades de São Paulo</em></h2>
+    <p class="section-sub">O DrApp atende o estado de São Paulo, com a A+ Medicina Diagnóstica e a Hermes Pardini.</p>
+    <div class="home-units-grid">
+      <div class="home-units-card">
+        <div class="big">R$ 0</div>
+        <h3>Coleta em casa, sem taxa de visita</h3>
+        <p>A A+ (a+ até você) e a Hermes Pardini (Pardini até você) vão até a sua casa ou o seu trabalho. Use o CPF e o token do orçamento.</p>
+      </div>
+      <div class="home-units-card">
+        <div class="big">40</div>
+        <h3>Unidades da A+ Medicina Diagnóstica</h3>
+        <p>Na capital, em Alphaville, Granja Viana, Guarulhos, Jundiaí, Osasco, Santo André e São Bernardo do Campo.</p>
+      </div>
+      <div class="home-units-card">
+        <div class="big">8</div>
+        <h3>Unidades da Hermes Pardini</h3>
+        <p>Na capital, em Guarulhos, Mogi das Cruzes e Osasco.</p>
+      </div>
+    </div>
+    <p class="home-units-more"><a href="/unidades/">Ver unidades e coleta em domicílio →</a></p>
+  </section>
+
   <!-- ═══ FAQ ═══════════════════════════════════════════════ -->
   <section class="home-faq" id="faq">
     <div class="section-label">Perguntas frequentes</div>
@@ -2836,6 +2879,10 @@
       <details class="faq-item">
         <summary>O que é o DrApp Exames?</summary>
         <p>O DrApp é uma plataforma digital que consegue orçamentos de exames com desconto em laboratórios parceiros. Não é laboratório, clínica nem plano de saúde, e não realiza exames: você faz o exame no laboratório que escolher.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Em quais regiões o DrApp atende?</summary>
+        <p>O DrApp atende o estado de São Paulo. Os exames são feitos nas unidades da A+ Medicina Diagnóstica e da Hermes Pardini no estado, e a coleta em domicílio segue a cobertura de cada laboratório. <a href="/unidades/">Ver unidades e coleta em domicílio</a>.</p>
       </details>
       <details class="faq-item">
         <summary>Quais laboratórios fazem parte do DrApp?</summary>
@@ -2881,11 +2928,11 @@
       </details>
       <details class="faq-item">
         <summary>Os laboratórios fazem coleta em domicílio?</summary>
-        <p>Sim, sem taxa de visita. A A+ (serviço a+ até você) e a Hermes Pardini (Pardini até você) fazem a coleta em casa ou onde você estiver. A Hermes Pardini atende São Paulo, Osasco, Guarulhos, Santo André, São Bernardo do Campo e São Caetano do Sul. A A+ confirma a cobertura pelo seu endereço. Agende com o laboratório e informe o CPF e o token.</p>
+        <p>Sim, sem taxa de visita. A A+ (serviço a+ até você) e a Hermes Pardini (Pardini até você) fazem a coleta em casa ou onde você estiver. A Hermes Pardini atende São Paulo, Osasco, Guarulhos, Santo André, São Bernardo do Campo e São Caetano do Sul. A A+ confirma a cobertura pelo seu endereço. Agende com o laboratório e informe o CPF e o token. <a href="/unidades/">Ver unidades e coleta em domicílio</a>.</p>
       </details>
       <details class="faq-item">
         <summary>Onde ficam as unidades dos laboratórios?</summary>
-        <p>No estado de São Paulo, a A+ Medicina Diagnóstica tem cerca de 40 unidades, na capital e em Alphaville (Barueri), Granja Viana (Cotia), Guarulhos, Jundiaí, Osasco, Santo André e São Bernardo do Campo. A Hermes Pardini tem unidades na capital, em Guarulhos, Osasco e Mogi das Cruzes. Você escolhe a unidade ao agendar; os endereços estão nos sites dos laboratórios.</p>
+        <p>A A+ Medicina Diagnóstica, no estado de São Paulo, tem cerca de 40 unidades, na capital e em Alphaville (Barueri), Granja Viana (Cotia), Guarulhos, Jundiaí, Osasco, Santo André e São Bernardo do Campo. A Hermes Pardini tem unidades na capital, em Guarulhos, Osasco e Mogi das Cruzes. Você escolhe a unidade ao agendar; os endereços estão nos sites dos laboratórios. <a href="/unidades/">Ver unidades e coleta em domicílio</a>.</p>
       </details>
       <details class="faq-item">
         <summary>Preciso de jejum ou de preparo?</summary>
@@ -2984,6 +3031,8 @@
       <a href="politica.html" style="color:rgba(255,255,255,0.45);text-decoration:none;">Política de Privacidade</a>
       <span style="color:rgba(255,255,255,0.2);margin:0 8px;">·</span>
       <a href="/termos/" style="color:rgba(255,255,255,0.45);text-decoration:none;">Termos de Uso</a>
+      <span style="color:rgba(255,255,255,0.2);margin:0 8px;">·</span>
+      <a href="/unidades/" style="color:rgba(255,255,255,0.45);text-decoration:none;">Unidades</a>
       <span style="color:rgba(255,255,255,0.2);margin:0 8px;">·</span>
       <a href="/sobre/" style="color:rgba(255,255,255,0.45);text-decoration:none;">Sobre</a>
       <span style="color:rgba(255,255,255,0.2);margin:0 8px;">·</span>
