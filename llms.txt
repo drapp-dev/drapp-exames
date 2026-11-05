@@ -8,7 +8,7 @@ O DrApp é um serviço brasileiro de orçamento de exames laboratoriais e de ima
 
 - [Página inicial e orçamento online](https://www.drapp.com.br/): Monte o orçamento de exames em poucos passos, escolha o laboratório e compare o preço particular com o preço DrApp antes de confirmar.
 - [Minha conta / acompanhar pedidos](https://www.drapp.com.br/conta/): Área do cliente para acompanhar o status do pedido, ver o orçamento completo e baixar o PDF.
-- [Sobre o DrApp](https://www.drapp.com.br/sobre/): Quem somos, história (fundado em 2019), como funciona e dados da empresa.
+- [Sobre o DrApp](https://www.drapp.com.br/sobre/): Quem somos, história (fundado em 2018), como funciona e dados da empresa.
 - [Contato](https://www.drapp.com.br/contato/): WhatsApp, e-mail, endereço e CNPJ.
 - [Termos de Uso](https://www.drapp.com.br/termos/): Regras do serviço e limites de responsabilidade.
 - [Aplicativo DrApp](https://app.drapp.com.br): Aplicativo web para receber avisos sobre o exame e novidades.
@@ -45,10 +45,24 @@ O DrApp é um serviço brasileiro de orçamento de exames laboratoriais e de ima
 
 ## Perguntas frequentes
 
-- O DrApp cobra alguma taxa? Não. O orçamento é 100% gratuito e o cliente paga apenas pelos exames que escolher.
-- Quais laboratórios fazem parte do DrApp? A+ Medicina Diagnóstica e Hermes Pardini, do Grupo Fleury.
-- Como funciona o orçamento? O cliente escolhe os exames, seleciona o laboratório e envia o pedido médico. A equipe retorna com o orçamento via WhatsApp, sem custo e sem compromisso.
-- Qual é o desconto oferecido? Até 30% em relação ao preço particular dos laboratórios parceiros, com o preço visível antes da confirmação.
+- O que é o DrApp Exames? O DrApp é uma plataforma digital que consegue orçamentos de exames com desconto em laboratórios parceiros. Não é laboratório, clínica nem plano de saúde, e não realiza exames: você faz o exame no laboratório que escolher.
+- Quais laboratórios fazem parte do DrApp? A A+ Medicina Diagnóstica e a Hermes Pardini, ambas do Grupo Fleury. São laboratórios distintos, com tabelas de preço independentes, por isso você recebe um orçamento de cada um para comparar. O DrApp é uma plataforma independente e não é o Fleury.
+- O DrApp aceita convênio ou plano de saúde? Não. O DrApp é uma alternativa ao convênio: você paga o valor do exame, já com desconto sobre o preço particular, diretamente no laboratório. Não há mensalidade, carência nem assinatura.
+- Qual é o desconto oferecido? Até 30% em relação ao preço particular dos laboratórios parceiros. O percentual varia por exame e por laboratório. O valor que aparece no orçamento já é o valor com desconto, então você vê o preço antes de confirmar.
+- O DrApp cobra alguma taxa? Como é o pagamento? Não. O orçamento é gratuito e o DrApp não cobra nada do paciente. O pagamento dos exames é feito diretamente no laboratório, no dia do atendimento. O parcelamento depende da política de cada laboratório, então pergunte ao agendar.
+- Como funciona o orçamento? Você envia o pedido médico e a equipe orça os exames nos dois laboratórios parceiros. Você recebe os valores com desconto e um código chamado token, um para cada laboratório. Com o CPF e o token, você vai ao laboratório escolhido e paga o valor com desconto.
+- Como envio o pedido médico? Em foto, PDF ou link de receita digital, como a do Memed. Você pode enviar mais de um pedido; se forem de pessoas diferentes, identifique o paciente de cada um. Também é possível digitar os nomes dos exames, mas nesse caso você recebe só uma prévia de preço. Para exames de imagem, o pedido médico é obrigatório para ter o desconto.
+- Quanto tempo leva para receber o orçamento? Pedidos enviados até as 14h em dia útil recebem retorno até as 18h do mesmo dia. Pedidos enviados depois das 14h, à noite ou no fim de semana são respondidos no próximo dia útil. Os orçamentos dos dois laboratórios podem chegar em momentos diferentes.
+- O que é o token e qual a validade do orçamento? O token é um código único do seu orçamento. Junto com o CPF, ele garante o desconto no laboratório. O orçamento vale por 7 dias corridos. Se o prazo passou ou o exame será depois disso, peça a renovação, sem custo, de preferência 2 dias antes da data do exame.
+- Preciso fazer todos os exames do orçamento? Não. Os valores são individuais por exame. Você pode fazer só os que quiser: apresente o token e diga ao laboratório quais exames fará, sem precisar de um novo orçamento.
+- O DrApp agenda o exame para mim? Não. O agendamento é feito com o laboratório. Exames de sangue em geral não precisam de agendamento: você vai à unidade com o CPF e o token. Ultrassom, tomografia e ressonância precisam ser agendados por telefone, e o contato do laboratório está no passo a passo do orçamento.
+- Os laboratórios fazem coleta em domicílio? Sim. A A+ e a Hermes Pardini oferecem coleta domiciliar, sem taxa de visita, conforme o CEP. Para saber se atendem a sua região, ligue para o laboratório, informe o CEP e diga que você tem o token.
+- Preciso de jejum ou de preparo? Depende do exame. Para a maioria dos exames de sangue, o jejum habitual é de 8 a 12 horas, mas cada exame pode ter um preparo específico. Confirme o preparo com o laboratório ao ligar ou antes de ir.
+- Exames com contraste custam a mais? Na A+ Medicina Diagnóstica, o contraste já está incluído no orçamento quando o pedido médico indica contraste. Na Hermes Pardini ele é cobrado à parte, direto no laboratório. Confirme o valor atual com a equipe do DrApp.
+- Um exame do meu pedido não apareceu no orçamento. Por quê? Provavelmente ele não faz parte da parceria com o laboratório escolhido ou o laboratório não o realiza. A equipe avisa qual exame ficou de fora. Eletroencefalograma e colonoscopia, por exemplo, não são realizados pelos laboratórios parceiros.
+- Como recebo o resultado do exame? Pelo próprio laboratório, em geral no aplicativo ou no site dele, ou na unidade. O DrApp não tem acesso aos resultados. Dúvidas sobre o resultado devem ser tiradas com o laboratório ou com o médico que pediu o exame.
+- Posso fazer o orçamento para um familiar? Sim. Basta informar os dados do paciente: nome completo, CPF, data de nascimento, e-mail e telefone. O contato pode ser o WhatsApp do próprio familiar.
+- Como falo com a equipe do DrApp? Pelo WhatsApp (11) 96907-2017 ou pelo e-mail info@drapp.com.br. O atendimento funciona de segunda a sexta, das 8h30 às 18h. Mensagens fora desse horário são respondidas no início do próximo expediente.
 
 ## Contato
 
