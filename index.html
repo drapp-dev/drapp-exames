@@ -1440,6 +1440,18 @@
     .testimonial-name { font-size: 17px; font-weight: 700; color: var(--text); }
     .testimonial-detail { font-size: 14px; color: var(--muted); }
 
+    /* ─── BLOG (home) ────────────────────────────────── */
+    .home-blog { background: #fff; padding: 60px 24px; }
+    .home-blog-grid { max-width: 1080px; margin: 28px auto 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+    .home-blog-card { display: flex; flex-direction: column; background: #f7fbff; border: 1px solid #d9e5ee; border-radius: 16px; overflow: hidden; text-decoration: none; color: inherit; transition: box-shadow .15s, transform .15s; }
+    .home-blog-card:hover, .home-blog-card:focus-visible { box-shadow: 0 8px 24px rgba(0,53,112,.12); transform: translateY(-2px); }
+    .home-blog-card img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block; background: #e6eef5; }
+    .home-blog-card-body { padding: 16px 18px 20px; }
+    .home-blog-card time { font-size: 13px; color: var(--muted); }
+    .home-blog-card h3 { font-size: 18px; line-height: 1.35; font-weight: 800; color: var(--text); margin-top: 6px; }
+    .home-blog-more { text-align: center; margin-top: 28px; }
+    .home-blog-more a { display: inline-block; padding: 12px 24px; border-radius: 999px; border: 1px solid #b9cde0; background: #fff; color: var(--blue-deep); font-weight: 700; text-decoration: none; }
+
     /* ─── FOOTER ─────────────────────────────────────── */
     .footer {
       background: var(--blue-deep);
@@ -2617,34 +2629,6 @@
       <div class="testimonials-grid" id="testimonialsGrid">
 
         <div class="testimonial-card">
-          <p class="testimonial-text">"É impressionante a economia que fiz em meus exames laboratoriais. Na média, tenho economizado quase 80%!"</p>
-          <div class="testimonial-author">
-            <div class="testimonial-avatar">
-              <img src="assets/depoimentos/unnamed.jpg" alt="Fausto Di Giacomo Filho"
-                onerror="this.style.display='none';this.parentElement.innerHTML='F';">
-            </div>
-            <div>
-              <div class="testimonial-name">Fausto Di Giacomo Filho</div>
-              <div class="testimonial-detail">CRECI/SP · Corretor de Imóveis</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="testimonial-card">
-          <p class="testimonial-text">"Em dois dias do primeiro contato já estava com os meus exames agendados. Paguei 64% a menos do que o preço de tabela!"</p>
-          <div class="testimonial-author">
-            <div class="testimonial-avatar">
-              <img src="assets/depoimentos/zeca.png" alt="José Ferraz de Camargo"
-                onerror="this.style.display='none';this.parentElement.innerHTML='J';">
-            </div>
-            <div>
-              <div class="testimonial-name">José Ferraz de Camargo</div>
-              <div class="testimonial-detail">CRECI/SP · Corretor de Imóveis</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="testimonial-card">
           <p class="testimonial-text">"Recomendo fortemente o DrApp da CAASP. É realmente livre de burocracia, fiz tudo pelo celular: super moderno!"</p>
           <div class="testimonial-author">
             <div class="testimonial-avatar">
@@ -2707,6 +2691,37 @@
   </section>
 
   </main>
+
+  <!-- ═══ BLOG ═══════════════════════════════════════════════ -->
+  <section class="home-blog" id="blog">
+    <div class="section-label">Blog DrApp</div>
+    <h2 class="section-heading" style="margin-bottom:8px;">Guias de <em>saúde e exames</em></h2>
+    <p class="section-sub">Entenda para que serve cada exame e como se preparar.</p>
+    <div class="home-blog-grid">
+      <a class="home-blog-card" href="/blog/conheca-os-principais-exames-de-rotina/">
+        <img src="/blog/img/2020/04/senior-man-during-routine-examination-at-the-docto-RNTDFPR.jpg" alt="" width="640" height="360" loading="lazy" decoding="async">
+        <div class="home-blog-card-body">
+          <time datetime="2020-06-03">3 de junho de 2020</time>
+          <h3>Conheça os principais exames de rotina</h3>
+        </div>
+      </a>
+      <a class="home-blog-card" href="/blog/check-up-anual-conheca-e-programe-se-para-cuidar-da-saude/">
+        <img src="/blog/img/2020/04/young-woman-speaking-to-patient-W5G8Y83.jpg" alt="" width="640" height="360" loading="lazy" decoding="async">
+        <div class="home-blog-card-body">
+          <time datetime="2020-05-06">6 de maio de 2020</time>
+          <h3>Check-up anual: conheça e programe-se para cuidar da saúde</h3>
+        </div>
+      </a>
+      <a class="home-blog-card" href="/blog/exames-de-sangue-de-rotina-feminino/">
+        <img src="/blog/img/2023/10/exames-de-sangue-de-rotina-feminino-1.jpg" alt="" width="640" height="360" loading="lazy" decoding="async">
+        <div class="home-blog-card-body">
+          <time datetime="2023-10-05">5 de outubro de 2023</time>
+          <h3>Exames de sangue de rotina feminino: guia completo para a saúde da mulher!</h3>
+        </div>
+      </a>
+    </div>
+    <p class="home-blog-more"><a href="/blog/">Ver todos os artigos →</a></p>
+  </section>
 
   <!-- ═══ FOOTER ═════════════════════════════════════════════ -->
   <footer class="footer">
