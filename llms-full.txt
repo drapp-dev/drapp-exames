@@ -27,7 +27,7 @@ O DrApp é um serviço brasileiro de orçamento de exames laboratoriais e de ima
 - Custo do serviço: o orçamento é gratuito. Não há assinatura, mensalidade nem taxa de adesão.
 - Laboratórios parceiros: A+ Medicina Diagnóstica e Hermes Pardini, do Grupo Fleury.
 - Volume: mais de 1,3 milhão de exames realizados no Brasil.
-- Coleta em domicílio: disponível, sem taxa de visita.
+- Coleta em domicílio: disponível, sempre sem taxa de visita. Hermes Pardini ("Pardini até você") atende São Paulo, Osasco, Guarulhos, Santo André, São Bernardo do Campo e São Caetano do Sul; a A+ ("a+ até você") confirma a cobertura pelo endereço.
 - Pedido médico: todos os exames exigem o pedido médico físico no dia do atendimento. Para exames de imagem, o pedido médico é obrigatório para gerar o desconto.
 - Sem pedido em mãos: o cliente pode digitar os exames e receberá apenas uma prévia de preço.
 - Privacidade: orçamento sigiloso e sem compromisso, com dados protegidos.
@@ -45,7 +45,8 @@ O DrApp é um serviço brasileiro de orçamento de exames laboratoriais e de ima
 - O que é o token e qual a validade do orçamento? O token é um código único do seu orçamento. Junto com o CPF, ele garante o desconto no laboratório. O orçamento vale por 7 dias corridos. Se o prazo passou ou o exame será depois disso, peça a renovação, sem custo, de preferência 2 dias antes da data do exame.
 - Preciso fazer todos os exames do orçamento? Não. Os valores são individuais por exame. Você pode fazer só os que quiser: apresente o token e diga ao laboratório quais exames fará, sem precisar de um novo orçamento.
 - O DrApp agenda o exame para mim? Não. O agendamento é feito com o laboratório. Exames de sangue em geral não precisam de agendamento: você vai à unidade com o CPF e o token. Ultrassom, tomografia e ressonância precisam ser agendados por telefone, e o contato do laboratório está no passo a passo do orçamento.
-- Os laboratórios fazem coleta em domicílio? Sim. A A+ e a Hermes Pardini oferecem coleta domiciliar, sempre sem taxa de visita. A disponibilidade depende do CEP: para saber se atendem a sua região, ligue para o laboratório, informe o CEP e diga que você tem o token.
+- Os laboratórios fazem coleta em domicílio? Sim, sem taxa de visita. A A+ (serviço a+ até você) e a Hermes Pardini (Pardini até você) fazem a coleta em casa ou onde você estiver. A Hermes Pardini atende São Paulo, Osasco, Guarulhos, Santo André, São Bernardo do Campo e São Caetano do Sul. A A+ confirma a cobertura pelo seu endereço. Agende com o laboratório e informe o CPF e o token.
+- Onde ficam as unidades dos laboratórios? No estado de São Paulo, a A+ Medicina Diagnóstica tem cerca de 40 unidades, na capital e em Alphaville (Barueri), Granja Viana (Cotia), Guarulhos, Jundiaí, Osasco, Santo André e São Bernardo do Campo. A Hermes Pardini tem unidades na capital, em Guarulhos, Osasco e Mogi das Cruzes. Você escolhe a unidade ao agendar; os endereços estão nos sites dos laboratórios.
 - Preciso de jejum ou de preparo? Depende do exame. Para a maioria dos exames de sangue, o jejum habitual é de 8 a 12 horas, mas cada exame pode ter um preparo específico. Confirme o preparo com o laboratório ao ligar ou antes de ir.
 - Exames com contraste custam a mais? Na A+ Medicina Diagnóstica, o contraste já está incluído no orçamento quando o pedido médico indica contraste. Na Hermes Pardini ele é cobrado à parte, direto no laboratório. Confirme o valor atual com a equipe do DrApp.
 - Um exame do meu pedido não apareceu no orçamento. Por quê? Provavelmente ele não faz parte da parceria com o laboratório escolhido ou o laboratório não o realiza. A equipe avisa qual exame ficou de fora. Eletroencefalograma e colonoscopia, por exemplo, não são realizados pelos laboratórios parceiros.
