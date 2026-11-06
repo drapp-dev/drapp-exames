@@ -3854,17 +3854,31 @@
       }
     }
 
-    // Carrega catálogo uma vez ao abrir a página (pipeline / Postgres — sem Apps Script)
-    (async function carregarCatalogo() {
-      try {
-        const r = await fetch(PEDIDOS_API_URL + "/api/catalogo");
-        catalogo = await r.json();
-        // Mantém mapeamentoLabs atualizado
-        mapeamentoLabs = {};
-        (catalogo.mapeamento || []).forEach(m => { if (m.sA && m.sH) mapeamentoLabs[m.sH] = m.sA; });
-        renderExamesFrequentes();
-      } catch (_) {}
-    })();
+    // Catálogo (exames + preços dos 2 labs, ~295 KB) é carregado SOB DEMANDA, não mais ao abrir a página.
+    // Hoje a busca por digitação está escondida (#secaoDigitar), então ninguém precisa dele na entrada.
+    // Quem precisar (modo "digitar", ou o futuro fluxo OCR → exames dos labs) chama: await garantirCatalogo();
+    // Carrega uma vez só; se falhar, a próxima chamada tenta de novo.
+    let catalogoPromise = null;
+    function garantirCatalogo() {
+      if (catalogo) return Promise.resolve(catalogo);
+      if (!catalogoPromise) {
+        catalogoPromise = (async function () {
+          try {
+            const r = await fetch(PEDIDOS_API_URL + "/api/catalogo");
+            catalogo = await r.json();
+            // Mantém mapeamentoLabs atualizado
+            mapeamentoLabs = {};
+            (catalogo.mapeamento || []).forEach(m => { if (m.sA && m.sH) mapeamentoLabs[m.sH] = m.sA; });
+            renderExamesFrequentes();
+            return catalogo;
+          } catch (_) {
+            catalogoPromise = null;
+            return null;
+          }
+        })();
+      }
+      return catalogoPromise;
+    }
 
     function moeda(valor) {
       return Number(valor || 0).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
@@ -4699,6 +4713,7 @@
       } else {
         secaoFoto.style.display    = "none";
         secaoDigitar.style.display = "block";
+        garantirCatalogo(); // busca por digitação precisa do catálogo
         if (resumoPrecos)  resumoPrecos.style.display  = "block";
         if (resumoInfoBox) resumoInfoBox.style.display = "block";
         if (resumoTitulo)  resumoTitulo.style.display  = "";
